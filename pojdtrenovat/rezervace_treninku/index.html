@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rezervace tréninku – SSGI Hockey</title>
+  <style>
+    body { font-family: Arial; background: #111; color: #fff; padding: 2rem; }
+    h1 { color: red; }
+    .trenink { background: #222; padding: 1rem; margin: 1rem 0; border-left: 5px solid red; }
+    .form { background: #333; padding: 1rem; margin-top: 1rem; }
+    label { display: block; margin-top: 0.5rem; }
+    input, textarea, select { width: 100%; padding: 0.5rem; margin-top: 0.3rem; background: #222; color: #fff; border: 1px solid #555; }
+    button { background: red; color: white; padding: 0.6rem 1.5rem; border: none; margin-top: 1rem; cursor: pointer; }
+    .success { color: limegreen; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Rezervace tréninku</h1>
+  <div id="treninky"></div>
+  <!-- Tréninky zadej ručně nebo napojíme později -->
+  <div class="trenink" data-id="1" data-volno="10">
+    <h2>18. 5. 2025 – ZS Brno, hala A</h2>
+    <p>Volná místa: <strong>10</strong></p>
+    <button onclick="showForm(1)">Rezervovat</button>
+  </div>
+
+  <div class="trenink" data-id="2" data-volno="12">
+    <h2>20. 5. 2025 – ZS Vyškov</h2>
+    <p>Volná místa: <strong>12</strong></p>
+    <button onclick="showForm(2)">Rezervovat</button>
+  </div>
+
+  <div class="trenink" data-id="3" data-volno="8">
+    <h2>22. 5. 2025 – ZS Rosice</h2>
+    <p>Volná místa: <strong>8</strong></p>
+    <button onclick="showForm(3)">Rezervovat</button>
+  </div>
+
+  <div class="form" id="rezForm" style="display:none">
+    <h3>Rezervace</h3>
+    <form onsubmit="submitForm(event)">
+      <input type="hidden" id="treninkId">
+      <label>Jméno a příjmení rodiče:
+        <input type="text" id="rodic" required>
+      </label>
+      <label>Telefon:
+        <input type="text" id="telefon" required>
+      </label>
+      <label>Jméno, příjmení a ročník hráče:
+        <textarea id="hrac" required></textarea>
+      </label>
+      <button type="submit">Odeslat rezervaci</button>
+      <div id="result" class="success"></div>
+    </form>
+  </div>
+  
+
+  <script>
+    function showForm(id) {
+      document.getElementById("treninkId").value = id;
+      document.getElementById("rezForm").style.display = "block";
+      document.getElementById("result").innerHTML = "";
+    }
+
+    async function submitForm(e) {
+      e.preventDefault();
+      const treninkId = document.getElementById("treninkId").value;
+      const rodic = document.getElementById("rodic").value;
+      const telefon = document.getElementById("telefon").value;
+      const hrac = document.getElementById("hrac").value;
+
+      const data = { treninkId, rodic, telefon, hrac };
+
+      const response = await fetch("https://script.google.com/macros/s/AKfycby1s06kfaLxnw7VBVl7kdG_1veecmmJ65mJR6SJkfWUvVjoWk6UVcLPlF2-On2Qi0n_/exec", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      });
+
+      const result = await response.json();
+      if (result.status === "OK") {
+        document.getElementById("result").innerText = "Rezervace úspěšně odeslána!";
+        e.target.reset();
+      } else {
+        document.getElementById("result").innerText = "Chyba při odesílání.";
+      }
+    }
+  </script>
+<script>
+async function nactiTreninky() {
+  const res = await fetch("https://script.google.com/macros/s/AKfycbxU0x6JKlp6Iafp9Vu-vwZtoN2wmD2DwpjwvooX11KkWm0jNtXy3zNORtxpD-TTFSMH/exec");
+  const treninky = await res.json();
+  const container = document.getElementById("treninky");
+
+  treninky.forEach(t => {
+    const div = document.createElement("div");
+    div.className = "trenink";
+    div.style.border = "1px solid red";
+    div.style.margin = "10px";
+    div.style.padding = "10px";
+
+    div.innerHTML = `
+      <h3>${t.datum} – ${t.adresa}</h3>
+      <p><strong>Volná místa:</strong> ${t.volnaMista} z ${t.kapacita}</p>
+      <button onclick="rezervuj(${t.id})" ${t.volnaMista === 0 ? 'disabled' : ''}>
+        Rezervovat
+      </button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function rezervuj(id) {
+  alert("Rezervace pro trénink ID " + id + " – to doděláme v dalším kroku 😉");
+}
+
+nactiTreninky();
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tréninky - Rezervace</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #111;
+      color: #fff;
+      padding: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #222;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #444;
+      text-align: left;
+    }
+    th {
+      background-color: #c00;
+    }
+    tr:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Rezervace tréninků</h1>
+  <p>Zde najdete aktuální nabídku tréninkových jednotek.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Datum</th>
+        <th>Adresa</th>
+        <th>Kapacita</th>
+        <th>Volná místa</th>
+      </tr>
+    </thead>
+    <tbody id="treninky-body">
+      <tr><td colspan="4">Načítání...</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    const endpoint = "https://script.google.com/macros/s/AKfycbwVcsMZBPenp6EPqmCSTiRPZ3Af6lJKo-Ruzyz6nZbHADaeskaaWXlYUjzgL15v0IoL/exec";
+
+    fetch(endpoint)
+      .then(response => response.json())
+      .then(data => {
+        const tbody = document.getElementById("treninky-body");
+        tbody.innerHTML = "";
+
+        if (data.length === 0) {
+          tbody.innerHTML = "<tr><td colspan='4'>Žádné tréninky nejsou k dispozici.</td></tr>";
+          return;
+        }
+
+        data.forEach(trenink => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${trenink.datum}</td>
+            <td>${trenink.adresa}</td>
+            <td>${trenink.kapacita}</td>
+            <td>${trenink.volnaMista}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error("Chyba při načítání dat:", error);
+        document.getElementById("treninky-body").innerHTML =
+          "<tr><td colspan='4'>Chyba při načítání dat.</td></tr>";
+      });
+  </script>
+</body>
+</html>
