@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -183,3 +184,190 @@
 
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trenéři | Pojdtrenovat.cz</title>
+  <link rel="stylesheet" href="styl.css" />
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .trainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: #1a1a1a;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      border-left: 4px solid #e60000;
+      border-radius: 8px;
+    }
+
+    .trainer-photo {
+      width: 160px;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .trainer-text {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    h2 {
+      color: #e60000;
+      margin-top: 3rem;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    #ssgi {
+      background: #222;
+      padding: 2rem 1rem;
+      border-left: 4px solid #e60000;
+      border-radius: 8px;
+      margin-bottom: 3rem;
+    }
+
+    #ssgi img {
+      max-width: 150px;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .trainer {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .trainer-photo {
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
+      }
+
+      .trainer-text {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+    <h1>Pojdtrenovat.cz</h1>
+    <nav>
+      <a href="index.html">Úvod</a>
+      <a href="treneri.html">Trenéři</a>
+      <a href="rezervace.html">Rezervace</a>
+    </nav>
+  </header>
+
+<main>
+  <!-- Sekce SSGI -->
+  <section id="ssgi">
+  <h2>Co je SSGI Hockey?</h2>
+  <p>
+    SSGI (Sport Sense and Game Intelligence) je moderní tréninkový koncept zaměřený na rozvoj herního myšlení,
+    rychlého rozhodování a technických dovedností přímo v kontextu hry. Věříme, že herní inteligence je základním
+    stavebním kamenem výkonnosti každého hráče.
+  </p>
+</section>
+
+
+
+  <h2>Náš tým trenérů</h2>
+
+  <!-- Pavel Marek -->
+  <section class="trainer">
+    <img src="images/pavelmarek.jpg" alt="Pavel Marek" class="trainer-photo" />
+    <div class="trainer-text">
+      <h3 style="color:#e60000;">Pavel Marek – Hlavní trenér</h3>
+      <p><strong>*1981</strong>, Licence B, extraliga mládeže, trenér od roku 1998, dovednostní trenér od 2013</p>
+      <p><strong>Hlavní zaměření:</strong> technika bruslení, herní činnosti, korekce a zapracování situací do hry</p>
+    </div>
+  </section>
+
+  <!-- Dominika -->
+  <section class="trainer">
+    <img src="images/dominikazapalacova.jpg" alt="Dominika Zapalačová" class="trainer-photo wide-photo" />
+    <div class="trainer-text">
+      <h3 style="color:#e60000;">Dominika Zapalačová – Trenér suché SSGI</h3>
+      <p><strong>*1991</strong>, bývalá atletka (sprinty), vicemistryně Evropy v softbale</p>
+      <p><strong>Vzdělání / kurzy / semináře:</strong></p>
+      <ul>
+        <li>UK FTVS – specializace atletika</li>
+        <li>Masérka pro sportovní a rekondiční masáže</li>
+        <li>Základy a silový trénink dětí a mladistvých</li>
+        <li>Nejčastější zranění při běhu</li>
+        <li>Držení těla a jeho vliv na zdraví a výkon</li>
+        <li>Funkční diagnostika a trénink</li>
+        <li>Školení trenérů 3. třída 14+ (softball)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Filip Marek -->
+  <section class="trainer">
+    <img src="images/filipmarek.jpg" alt="Filip Marek" class="trainer-photo" />
+    <div class="trainer-text">
+      <h3 style="color:#e60000;">Filip Marek – Skill coach SSGI</h3>
+      <p><strong>*2005</strong>, Licence C, student Licence B, extraliga mládeže, 3 roky praxe</p>
+      <p><strong>Zaměření:</strong> práce s holí, herní činnosti, střelba</p>
+    </div>
+  </section>
+
+  <h2>Asistenti</h2>
+
+  <!-- Asistenti -->
+  <section class="trainer">
+    <img src="images/davidpetrzilek.jpg" alt="David Petržílek" class="trainer-photo" />
+    <div class="trainer-text">
+      <h3 style="color:#e60000;">David Petržílek – Skills asistent</h3>
+    </div>
+  </section>
+
+  <section class="trainer">
+    <img src="images/maxkotrba.jpg" alt="Max Kotrba" class="trainer-photo" />
+    <div class="trainer-text">
+      <h3 style="color:#e60000;">Max Kotrba – Skills asistent</h3>
+    </div>
+  </section>
+
+  <section class="trainer">
+    <img src="images/tomassmetanka.jpg" alt="Tomáš Smetánka" class="trainer-photo" />
+    <div class="trainer-text">
+      <h3 style="color:#e60000;">Tomáš Smetánka – Skills asistent</h3>
+    </div>
+  </section>
+
+</main>
+<footer>
+    © 2025 PojdTrenovat.cz | Všechna práva vyhrazena
+  </footer>
+
+</body>
+</html>
+>>>>>>> f1d6928 (Initial commit - rozšíření webu)
