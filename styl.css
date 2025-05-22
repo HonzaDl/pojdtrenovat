@@ -18,6 +18,7 @@ header {
   gap: 0.7rem;
   text-align: center;
   box-shadow: 0 2px 5px rgba(230, 0, 0, 0.3); /* jemný stín */
+  position: relative; /* důležité pro absolutně pozicovaný fb odkaz */
 }
 
 header h1 {
@@ -57,6 +58,36 @@ nav a:hover,
 nav a:focus {
   color: #fff;
   background-color: #b30000;
+  outline: none;
+}
+
+/* Facebook ikona v záhlaví */
+.fb-icon {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  background-color: #1877f2; /* Facebook modrá */
+  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(24, 119, 242, 0.6);
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  z-index: 10; /* aby byla nahoře */
+}
+
+.fb-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.fb-icon:hover,
+.fb-icon:focus {
+  background-color: #145dbf;
   outline: none;
 }
 
@@ -146,6 +177,17 @@ footer {
     margin: 1rem;
     padding: 0 0.7rem;
   }
+
+  .fb-icon {
+    top: 1rem;
+    right: 1rem;
+    width: 30px;
+    height: 30px;
+  }
+  .fb-icon svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 /* Hlavní velký vodoznak na pozadí celé stránky */
@@ -178,19 +220,6 @@ body::before {
   height: 300px;
   pointer-events: none;
   z-index: 0;
-}
-
-/* Responsivní úpravy pro mobilní zařízení */
-@media (max-width: 600px) {
-  .vodoznak {
-    background-size: 500px;
-  }
-
-  body::before {
-    background-size: 130px;
-    width: 130px;
-    height: 130px;
-  }
 }
 
 /* Zajištění, aby obsah byl nad vodoznaky */
