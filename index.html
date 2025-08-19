@@ -1,48 +1,99 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PojdTrenovat.cz</title>
-  <link rel="stylesheet" href="styl.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Úvodní stránka</title>
+  <style>
+    /* --- Globální styl --- */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+      color: #333;
+    }
+
+    /* --- Sekce odkazů --- */
+    #uvodni-odkazy {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin: 40px 20px;
+    }
+
+    .odkazy-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .odkaz-item {
+      flex: 1 1 220px; /* flexibilní šířka, min 220px */
+      padding: 20px;
+      border-radius: 10px;
+      background-color: #f0f0f0;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .odkaz-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .odkaz-item a {
+      display: block;
+      font-weight: bold;
+      font-size: 1.3em;
+      margin-bottom: 12px;
+      text-decoration: none;
+      color: #1a1a1a;
+    }
+
+    .text-misto {
+      font-size: 1em;
+      color: #333;
+      line-height: 1.4;
+      min-height: 40px; /* zachová prostor i když je text prázdný */
+    }
+  </style>
 </head>
 <body>
-  <div class="vodoznak"></div>
-  <header>
-    <h1>Pojdtrenovat.cz</h1>
-    <nav>
-      <a href="index.html">Úvod</a>
-      <a href="treneri.html">Trenéři</a>
-      <a href="rezervace.html">Rezervace</a>
-    </nav>
-  </header>
 
-  <main>
-    <section class="sloupce">
-      <div class="sloupec">
-        <h2>SSGI</h2>
-        <p>Moderní tréninkový koncept zaměřený na rozvoj herního myšlení, rychlého rozhodování a technických dovedností v kontextu hry.</p>
-      </div>
-      <div class="sloupec">
-        <h2>Pohybové dovednosti</h2>
-        <p>Rozvoj základních motorických schopností a dovedností, které jsou klíčové nejen pro hokej, ale i celkový sportovní růst hráče.</p>
-      </div>
-      <div class="sloupec">
-        <h2>Tejpování</h2>
-        <p>Podpora regenerace, prevence zranění a stabilizace pohybového aparátu pomocí moderních tejpovacích technik.</p>
-      </div>
-      <div class="sloupec">
-        <h2>Akce na ledě</h2>
-        <p>Individuální i skupinové tréninky, kempy a speciální akce zaměřené na rozvoj hokejových dovedností.</p>
-      </div>
-    </section>
-  </main>
+  <h1>Vítejte na stránkách</h1>
 
-  <footer>
-    <p>Kontakt: <strong>Filip (Majki) Marek</strong><br>
-    Tel: <a href="tel:+420773316080">773 316 080</a><br>
-    E-mail: <a href="mailto:pojdtrenovat@gmail.com">pojdtrenovat@gmail.com</a></p>
-    <p>&copy; 2025 PojdTrenovat.cz</p>
-  </footer>
+  <section id="uvodni-odkazy">
+    <div class="odkazy-grid">
+      <!-- Odkaz 1 -->
+      <div class="odkaz-item">
+        <a href="ssgi.html">SSGI Hockey</a>
+        <div class="text-misto">Krátký popis služby SSGI Hockey – dá se kdykoliv upravit.</div>
+      </div>
+
+      <!-- Odkaz 2 -->
+      <div class="odkaz-item">
+        <a href="pohybove-dovednosti.html">Pohybové dovednosti</a>
+        <div class="text-misto">Krátký popis pohybových dovedností – snadno editovatelné.</div>
+      </div>
+
+      <!-- Odkaz 3 -->
+      <div class="odkaz-item">
+        <a href="tejpovani.html">Tejpování</a>
+        <div class="text-misto">Krátký popis tejpování – lze měnit podle potřeby.</div>
+      </div>
+
+      <!-- Odkaz 4 -->
+      <div class="odkaz-item">
+        <a href="akce-na-lede.html">Akce na ledě</a>
+        <div class="text-misto">Krátký popis akcí na ledě – kontakt: Filip Marek (pouze zde).</div>
+      </div>
+    </div>
+  </section>
+
 </body>
 </html>
