@@ -5,41 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PojdTrenovat.cz</title>
   <link rel="stylesheet" href="styl.css" />
-<style>
-  body::before {
-    content: "";
-    background: url("images/ssgihockey.jpg") no-repeat top right;
-    background-size: 300px;
-    opacity: 0.07;
-    position: fixed;
-    top: 0;
-    right: 0;
-    z-index: 0;
-    width: 300px;
-    height: 300px;
-    pointer-events: none;
-  }
-
-  body,
-  main,
-  header,
-  footer {
-    position: relative;
-    z-index: 0;
-  }
-
-  @media (max-width: 600px) {
-    body::before {
-      background-size: 150px;
-      width: 150px;
-      height: 150px;
-  }
-}
-</style>
-
 </head>
 <body>
-<div class="vodoznak"></div>
+  <div class="vodoznak"></div>
   <header>
     <h1>Pojdtrenovat.cz</h1>
     <nav>
@@ -50,30 +18,31 @@
   </header>
 
   <main>
-    <section id="ssgi">
-
-      <img src="images/ssgihockey.jpg" alt="SSGI logo" class="ssgi-logo" />
-      <h2>Co je SSGI Hockey?</h2>
-      <p>
-        SSGI (Sport Sense and Game Intelligence) je moderní tréninkový koncept zaměřený na rozvoj herního myšlení,
-        rychlého rozhodování a technických dovedností přímo v kontextu hry. Věříme, že herní inteligence je základním
-        stavebním kamenem výkonnosti každého hráče.
-      </p>
-    </section>
-
-    <section>
-      <h2>Vítejte na Pojdtrenovat.cz</h2>
-      <p>
-        Individuální dovednostní tréninky pro malé i velké hokejisty. Moderní přístup, zkušený tým a důraz na rozvoj herního myšlení.
-      </p>
-      <p>
-        <a href="nastym.html" class="btn">Poznej náš tým trenérů</a>
-      </p>
+    <section class="sloupce">
+      <div class="sloupec">
+        <h2>SSGI</h2>
+        <p>Moderní tréninkový koncept zaměřený na rozvoj herního myšlení, rychlého rozhodování a technických dovedností v kontextu hry.</p>
+      </div>
+      <div class="sloupec">
+        <h2>Pohybové dovednosti</h2>
+        <p>Rozvoj základních motorických schopností a dovedností, které jsou klíčové nejen pro hokej, ale i celkový sportovní růst hráče.</p>
+      </div>
+      <div class="sloupec">
+        <h2>Tejpování</h2>
+        <p>Podpora regenerace, prevence zranění a stabilizace pohybového aparátu pomocí moderních tejpovacích technik.</p>
+      </div>
+      <div class="sloupec">
+        <h2>Akce na ledě</h2>
+        <p>Individuální i skupinové tréninky, kempy a speciální akce zaměřené na rozvoj hokejových dovedností.</p>
+      </div>
     </section>
   </main>
 
   <footer>
-    &copy; 2025 PojdTrenovat.cz | Všechna práva vyhrazena
+    <p>Kontakt: <strong>Filip (Majki) Marek</strong><br>
+    Tel: <a href="tel:+420773316080">773 316 080</a><br>
+    E-mail: <a href="mailto:pojdtrenovat@gmail.com">pojdtrenovat@gmail.com</a></p>
+    <p>&copy; 2025 PojdTrenovat.cz</p>
   </footer>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* Základní stylování pro celé tělo */
+/* Základní stylování */
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,10 +14,10 @@ header {
   border-bottom: 2px solid #e60000;
   display: flex;
   flex-direction: column;
-  align-items: center; /* zarovnání na střed */
+  align-items: center;
   gap: 0.7rem;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(230, 0, 0, 0.3); /* jemný stín */
+  box-shadow: 0 2px 5px rgba(230, 0, 0, 0.3);
 }
 
 header h1 {
@@ -28,15 +28,8 @@ header h1 {
   letter-spacing: 1px;
 }
 
-/* Logo v hlavičce */
-.header-logo {
-  max-height: 50px;
-  margin-top: 0.3rem;
-}
-
-/* Navigace pod hlavičkou - zarovnáno na střed */
+/* Navigace */
 nav {
-  margin-top: 0.8rem;
   display: flex;
   gap: 1.2rem;
   justify-content: center;
@@ -60,95 +53,45 @@ nav a:focus {
   outline: none;
 }
 
-/* Hlavní obsah */
-main {
-  max-width: 900px;
+/* Sloupce */
+.sloupce {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1200px;
   margin: 2rem auto;
   padding: 0 1rem;
 }
 
-/* SSGI sekce */
-#ssgi {
+.sloupec {
   background-color: #222;
-  padding: 1rem 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
   border-left: 4px solid #e60000;
-  border-radius: 8px;
-  margin-bottom: 2.5rem;
 }
 
-.ssgi-logo {
-  max-width: 150px;
-  margin-bottom: 1rem;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* velikosti fotek trenérů */
-.trainer-photo {
-  width: 160px;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-/* Tlačítko */
-.btn {
-  display: block;
-  margin: 1rem auto 0 auto;
-  width: fit-content; /* volitelné, aby to nebylo 100% */
-  background-color: #e60000;
-  color: white;
-  padding: 0.5rem 1.2rem;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: 700;
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.25s ease;
-  box-shadow: 0 3px 6px rgba(230, 0, 0, 0.6);
-}
-
-.btn:hover,
-.btn:focus {
-  background-color: #b30000;
-  outline: none;
+.sloupec h2 {
+  margin-top: 0;
+  color: #e60000;
 }
 
 /* Paticka */
 footer {
   background-color: #111;
-  padding: 1rem 2rem;
+  padding: 1.5rem;
   text-align: center;
   color: #aaa;
   font-size: 0.9rem;
-  margin-top: 5rem;
+  margin-top: 3rem;
   letter-spacing: 0.05em;
 }
 
-/* Mobilní responzivita */
-@media (max-width: 600px) {
-  header {
-    padding: 1rem;
-    gap: 0.5rem;
-  }
-
-  nav {
-    gap: 0.8rem;
-  }
-
-  nav a {
-    font-size: 0.9rem;
-    padding: 0.4rem 0.7rem;
-  }
-
-  main {
-    margin: 1rem;
-    padding: 0 0.7rem;
-  }
+footer a {
+  color: #fff;
+  text-decoration: none;
 }
 
-/* Hlavní velký vodoznak na pozadí celé stránky */
+/* Vodoznak */
 .vodoznak {
   content: "";
   background: url("images/ssgihockey.jpg") no-repeat center center;
@@ -163,45 +106,30 @@ footer {
   pointer-events: none;
 }
 
-/* Druhý vodoznak – menší, v pravém horním rohu */
-body::before {
-  content: "";
-  border: 2px solid red;
-  background-color: rgba(255, 0, 0, 0.1); /* pro test */
-  background: url("images/ssgihockey.jpg") no-repeat top right;
-  background-size: 300px;
-  opacity: 0.07;
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 300px;
-  height: 300px;
-  pointer-events: none;
-  z-index: 0;
+/* Responsivní úpravy */
+@media (max-width: 1000px) {
+  .sloupce {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-/* Responsivní úpravy pro mobilní zařízení */
 @media (max-width: 600px) {
-  .vodoznak {
-    background-size: 500px;
+  .sloupce {
+    grid-template-columns: 1fr;
   }
 
-  body::before {
-    background-size: 130px;
-    width: 130px;
-    height: 130px;
+  nav {
+    gap: 0.8rem;
+  }
+
+  nav a {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.7rem;
   }
 }
 
-/* Zajištění, aby obsah byl nad vodoznaky */
+/* Obsah je vždy nad vodoznakem */
 body, main, header, footer {
   position: relative;
   z-index: 1;
 }
-
-img.wide-photo {
-  width: 300px;
-  transform: scale(0.8);
-  transform-origin: top left;
-}
-
