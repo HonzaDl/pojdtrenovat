@@ -19,13 +19,20 @@ a:hover {
 /* === Hlavička === */
 .site-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  position: relative;
   background: #000;
   color: #fff;
   padding: 15px;
 }
 
+.header-container {
+  display: flex;
+  justify-content: center; /* nadpis uprostřed */
+  align-items: center;
+  position: relative;
+}
 .site-branding {
   display: flex;
   align-items: center;
@@ -39,6 +46,8 @@ a:hover {
 }
 
 .site-logo {
+  position: absolute;
+  right: 0; /* logo úplně vpravo */
   max-height: 40px;
   width: auto;
 }
