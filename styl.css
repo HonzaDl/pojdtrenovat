@@ -1,165 +1,193 @@
-/* === Reset a základ === */
+/* Reset a základ */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #e0e0e0; /* tmavší šedé pozadí */
-  color: #111;
-  line-height: 1.6;
+  background-color: #f8f8f8;
+  color: #000;
 }
 
-a {
-  color: #b30000; /* červená */
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* === Hlavička === */
-.site-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  background: #000;
+/* Header */
+header {
+  background-color: #000;
   color: #fff;
   padding: 15px;
-}
-
-.header-container {
-  display: flex;
-  justify-content: center; /* nadpis uprostřed */
-  align-items: center;
-  position: relative;
-}
-.site-branding {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.site-title {
-  font-size: 1.5em;
-  font-weight: bold;
-  text-transform: lowercase;
-}
-
-.site-logo {
-  position: absolute;
-  right: 0; /* logo úplně vpravo */
-  max-height: 40px;
-  width: auto;
-}
-
-/* === Navigace === */
-.site-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 15px;
-  margin: 0;
-  padding: 0;
-}
-
-.site-nav a {
-  color: #fff;
-  font-weight: bold;
-}
-
-/* === Úvodní odkazy (SSGI atd.) === */
-.main-links {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 30px 0;
-  gap: 15px;
-}
-
-.main-links a {
-  font-size: 1.3em;
-  font-weight: bold;
-  color: #b30000;
-}
-
-/* === Trenéři === */
-.treneri {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
-}
-
-.treneri h2 {
-  color: #b30000;
-  margin-bottom: 15px;
-}
-
-.trener {
   text-align: center;
-  margin: 15px;
 }
 
-.trener img {
-  max-width: 180px;
-  border-radius: 10px;
-  display: block;
-  margin: 0 auto 10px auto;
+header h1 {
+  margin: 0;
+  font-size: 2em;
+  color: #E10600; /* červený nadpis */
 }
 
-.asistenti {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+/* Navigace */
+nav {
+  margin-top: 10px;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+nav a:hover,
+nav a.active {
+  color: #E10600;
+}
+
+/* Hlavní obsah */
+main {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+main h2 {
+  text-align: center;
+  margin: 40px 0 20px;
+  color: #E10600;
+}
+
+/* GRID pro úvodní odkazy */
+.odkazy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
 }
 
-/* === Rezervace === */
-.rezervace {
-  text-align: center;
-  margin: 40px auto;
-  padding: 20px;
-  max-width: 600px;
+.odkaz-item {
   background: #fff;
-  border-radius: 10px;
-}
-
-.rezervace h2 {
-  color: #b30000;
-  margin-bottom: 20px;
-}
-
-/* === Kontakt === */
-.kontakt {
-  background: #000;
-  color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   padding: 20px;
   text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.odkaz-item:hover {
+  transform: translateY(-5px);
+}
+
+.odkaz-item h3 {
+  color: #E10600;
+  margin: 10px 0;
+}
+
+.odkaz-item p {
+  font-size: 0.95em;
+  color: #333;
+}
+
+/* Sekce trenérů */
+.treneri {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.trener {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.trener:hover {
+  transform: translateY(-5px);
+}
+
+.trener img {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.trener h3 {
+  color: #E10600;
+  margin: 10px 0 5px;
+}
+
+.trener p {
+  font-size: 0.95em;
+  color: #333;
+}
+
+.rezervace-form {
+  max-width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.rezervace-form label {
+  font-weight: bold;
+  color: #E10600;
+}
+
+.rezervace-form input,
+.rezervace-form select,
+.rezervace-form textarea {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rezervace-form button {
+  background-color: #E10600;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.rezervace-form button:hover {
+  background-color: #b80000;
+}
+
+
+
+
+/* Footer */
+footer {
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  padding: 15px;
   margin-top: 40px;
+  font-size: 0.9em;
 }
 
-.kontakt a {
-  color: #b30000;
-}
-
-/* === Responsivita === */
+/* Responsivní design */
 @media (max-width: 768px) {
-  .site-header {
+  nav {
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    gap: 5px;
   }
 
-  .site-nav ul {
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
+  .treneri,
+  .odkazy-grid {
+    grid-template-columns: 1fr; /* na mobilu 1 na řádek */
   }
 
-  .site-logo {
-    max-height: 30px;
-  }
-
-  .asistenti {
-    flex-direction: column;
-    align-items: center;
+  header h1 {
+    font-size: 1.5em;
   }
 }
