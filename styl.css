@@ -1,26 +1,26 @@
-/* Základ */
+/* Reset a základ */
 body {
   margin: 0;
-  padding: 0;
   font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  color: #222;
+  background-color: #f8f8f8;
+  color: #000;
 }
 
-/* Hlavička */
+/* Header */
 header {
-  background: #000; /* černá */
+  background-color: #000;
   color: #fff;
-  padding: 20px;
+  padding: 15px;
   text-align: center;
 }
 
 header h1 {
   margin: 0;
   font-size: 2em;
-  color: #cc0000; /* červená */
+  color: #E10600; /* červený nadpis */
 }
 
+/* Navigace */
 nav {
   margin-top: 10px;
 }
@@ -28,77 +28,166 @@ nav {
 nav a {
   color: #fff;
   text-decoration: none;
-  margin: 0 15px;
+  margin: 0 10px;
   font-weight: bold;
 }
 
-nav a:hover {
-  color: #cc0000;
+nav a:hover,
+nav a.active {
+  color: #E10600;
 }
 
-/* Úvodní odkazy (4 sloupce) */
+/* Hlavní obsah */
+main {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+main h2 {
+  text-align: center;
+  margin: 40px 0 20px;
+  color: #E10600;
+}
+
+/* GRID pro úvodní odkazy */
 .odkazy-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
 }
 
 .odkaz-item {
-  background: white;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
 }
 
 .odkaz-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-.odkaz-item a {
-  display: block;
-  font-size: 1.3em;
-  font-weight: bold;
-  color: #000;
-  text-decoration: none;
+.odkaz-item h3 {
+  color: #E10600;
+  margin: 10px 0;
 }
 
-.odkaz-item a:hover {
-  color: #cc0000;
+.odkaz-item p {
+  font-size: 0.95em;
+  color: #333;
 }
 
-/* Obsah podstránek */
-main {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 0 20px;
+/* Sekce trenérů */
+.treneri {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.trener {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
 }
+
+.trener:hover {
+  transform: translateY(-5px);
+}
+
+.trener img {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.trener h3 {
+  color: #E10600;
+  margin: 10px 0 5px;
+}
+
+.trener p {
+  font-size: 0.95em;
+  color: #333;
+}
+
+.rezervace-form {
+  max-width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.rezervace-form label {
+  font-weight: bold;
+  color: #E10600;
+}
+
+.rezervace-form input,
+.rezervace-form select,
+.rezervace-form textarea {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rezervace-form button {
+  background-color: #E10600;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.rezervace-form button:hover {
+  background-color: #b80000;
+}
+
+
+
 
 /* Footer */
 footer {
-  background: #000;
+  background-color: #000;
   color: #fff;
   text-align: center;
-  padding: 25px;
+  padding: 15px;
   margin-top: 40px;
+  font-size: 0.9em;
 }
 
-footer a {
-  color: #cc0000;
-  text-decoration: none;
-  font-weight: bold;
-}
+/* Responsivní design */
+@media (max-width: 768px) {
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 
-footer a:hover {
-  color: #ff3333;
-  text-decoration: underline;
+  .treneri,
+  .odkazy-grid {
+    grid-template-columns: 1fr; /* na mobilu 1 na řádek */
+  }
+
+  header h1 {
+    font-size: 1.5em;
+  }
 }
