@@ -23,30 +23,20 @@ header h1 {
 /* Navigace */
 nav {
   margin-top: 10px;
+  display: flex;
+  justify-content: center; /* vodorovně uprostřed */
+  gap: 20px; /* mezera mezi odkazy */
 }
 
 nav a {
   color: #fff;
   text-decoration: none;
-  margin: 0 10px;
   font-weight: bold;
+  font-size: 1em;
 }
 
 nav a:hover,
 nav a.active {
-  color: #E10600;
-}
-
-/* Hlavní obsah */
-main {
-  padding: 20px;
-  max-width: 1200px;
-  margin: auto;
-}
-
-main h2 {
-  text-align: center;
-  margin: 40px 0 20px;
   color: #E10600;
 }
 
