@@ -1,7 +1,7 @@
 /* Reset a základ */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', Arial, sans-serif;
   background-color: #f8f8f8;
   color: #000;
 }
@@ -24,8 +24,8 @@ header h1 {
 nav {
   margin-top: 10px;
   display: flex;
-  justify-content: center; /* vodorovně uprostřed */
-  gap: 20px; /* mezera mezi odkazy */
+  justify-content: center; /* odkazy vedle sebe */
+  gap: 20px;
 }
 
 nav a {
@@ -40,14 +40,28 @@ nav a.active {
   color: #E10600;
 }
 
+/* Hlavní obsah */
+main {
+  padding: 20px 30px; /* odsazení textu od levého a pravého okraje */
+  max-width: 1200px;
+  margin: auto;
+}
+
+main h2 {
+  text-align: center;
+  margin: 40px 0 20px;
+  color: #E10600;
+}
+
 /* GRID pro úvodní odkazy */
-.odkazy-grid {
+.odkazy-grid, .odkazy {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
+  margin-top: 30px;
 }
 
-.odkaz-item {
+.odkaz-item, .odkaz {
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -57,18 +71,20 @@ nav a.active {
   transition: transform 0.2s;
 }
 
-.odkaz-item:hover {
+.odkaz-item:hover, .odkaz:hover {
   transform: translateY(-5px);
 }
 
-.odkaz-item h3 {
+.odkaz-item h3, .odkaz h3 {
   color: #E10600;
+  font-weight: 700;
+  font-size: 1.2em;
   margin: 10px 0;
 }
 
-.odkaz-item p {
-  font-size: 0.95em;
+.odkaz-item p, .odkaz p {
   color: #333;
+  font-size: 1em;
 }
 
 /* Sekce trenérů */
@@ -109,6 +125,7 @@ nav a.active {
   color: #333;
 }
 
+/* Rezervace formulář */
 .rezervace-form {
   max-width: 600px;
   margin: auto;
@@ -151,9 +168,6 @@ nav a.active {
   background-color: #b80000;
 }
 
-
-
-
 /* Footer */
 footer {
   background-color: #000;
@@ -167,13 +181,12 @@ footer {
 /* Responsivní design */
 @media (max-width: 768px) {
   nav {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+    flex-direction: row;
   }
 
   .treneri,
-  .odkazy-grid {
+  .odkazy-grid,
+  .odkazy {
     grid-template-columns: 1fr; /* na mobilu 1 na řádek */
   }
 

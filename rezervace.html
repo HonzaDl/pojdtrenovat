@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rezervace | Pojdtrenovat.cz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styl.css">
 </head>
 <body>
@@ -18,21 +19,20 @@
 
   <main>
     <h2>Rezervace tréninku</h2>
-    <p>Pro rezervaci tréninku vyplňte formulář níže nebo nás kontaktujte přímo.</p>
+    <p>Formulář pro rezervaci tréninku bude brzy aktivní. Sledujte nás pro aktualizace!</p>
 
-    <!-- Formulář rezervace -->
     <form action="mailto:pojdtrenovat@gmail.com" method="post" enctype="text/plain" class="rezervace-form">
       <label for="jmeno">Jméno a příjmení:</label>
-      <input type="text" id="jmeno" name="jmeno" required>
+      <input type="text" id="jmeno" name="jmeno">
 
       <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required>
+      <input type="email" id="email" name="email">
 
       <label for="telefon">Telefon:</label>
-      <input type="tel" id="telefon" name="telefon" required>
+      <input type="tel" id="telefon" name="telefon">
 
       <label for="typ_treninku">Typ tréninku:</label>
-      <select id="typ_treninku" name="typ_treninku" required>
+      <select id="typ_treninku" name="typ_treninku">
         <option value="ssgi">SSGI</option>
         <option value="pohybove_dovednosti">Pohybové dovednosti</option>
         <option value="tejpovani">Tejpování</option>
@@ -40,7 +40,7 @@
       </select>
 
       <label for="datum">Preferovaný datum:</label>
-      <input type="date" id="datum" name="datum" required>
+      <input type="date" id="datum" name="datum">
 
       <label for="poznamka">Poznámka:</label>
       <textarea id="poznamka" name="poznamka" rows="4"></textarea>
