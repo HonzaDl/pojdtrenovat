@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Rezervace – PojdTrenovat.cz</title>
-  <link rel="stylesheet" href="styl.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rezervace | Pojdtrenovat.cz</title>
+  <link rel="stylesheet" href="styl.css">
 </head>
 <body>
   <header>
@@ -12,17 +12,45 @@
     <nav>
       <a href="index.html">Úvod</a>
       <a href="treneri.html">Trenéři</a>
-      <a href="rezervace.html">Rezervace</a>
+      <a href="rezervace.html" class="active">Rezervace</a>
     </nav>
   </header>
 
   <main>
     <h2>Rezervace tréninku</h2>
-    <p>Brzy si zde budete moci rezervovat svůj trénink online.</p>
+    <p>Pro rezervaci tréninku vyplňte formulář níže nebo nás kontaktujte přímo.</p>
+
+    <!-- Formulář rezervace -->
+    <form action="mailto:pojdtrenovat@gmail.com" method="post" enctype="text/plain" class="rezervace-form">
+      <label for="jmeno">Jméno a příjmení:</label>
+      <input type="text" id="jmeno" name="jmeno" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="telefon">Telefon:</label>
+      <input type="tel" id="telefon" name="telefon" required>
+
+      <label for="typ_treninku">Typ tréninku:</label>
+      <select id="typ_treninku" name="typ_treninku" required>
+        <option value="ssgi">SSGI</option>
+        <option value="pohybove_dovednosti">Pohybové dovednosti</option>
+        <option value="tejpovani">Tejpování</option>
+        <option value="akce_na_lede">Akce na ledě</option>
+      </select>
+
+      <label for="datum">Preferovaný datum:</label>
+      <input type="date" id="datum" name="datum" required>
+
+      <label for="poznamka">Poznámka:</label>
+      <textarea id="poznamka" name="poznamka" rows="4"></textarea>
+
+      <button type="submit">Odeslat rezervaci</button>
+    </form>
   </main>
 
   <footer>
-    © 2025 PojdTrenovat.cz | Všechna práva vyhrazena
+    <p>Kontakt: Pavel Marek, tel. 608 910 109, email: pojdtrenovat@gmail.com</p>
   </footer>
 </body>
 </html>
