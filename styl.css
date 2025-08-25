@@ -84,16 +84,22 @@ body::before {
 
 /* === Responzivní zobrazení === */
 @media (max-width: 600px) {
+   .header {
+    flex-direction: column;      /* nadpis nahoře, navigace a logo pod ním */
+    align-items: center;
+    gap: 10px;                   /* mezery mezi nadpisem, navigací a logem */
+  }
+
   .nav {
     flex-direction: row;  /* stále v řádku */
-    flex-wrap: wrap;      /* pokud se nevejdou, zalomí se */
+    flex-wrap: nowrap;      /* pokud se nevejdou, zalomí se */
     justify-content: center;
     gap: 10px;            /* menší mezery */
   }
 
   .nav-logo {
     height: 25px;         /* menší logo na mobilu */
-    margin-left: 15px;
+    margin-left: 0;
   }
 }
 
