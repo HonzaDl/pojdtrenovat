@@ -142,23 +142,30 @@ body::before {
   }
 }
 
-/* Tlačítko pro návrat na domovskou stránku */
-.back-to-home {
-  display: inline-block;
-  background-color: #E10600;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
+*/Tlačítko na zpět
+ .back-btn {
+  display: inline-flex;           /* aby šipka a text byly hezky vedle sebe */
+  align-items: center;
+  gap: 0.4rem;                    /* mezera mezi šipkou a textem */
+  color: #fff;                     /* bílý text a šipka */
+  text-decoration: none;           /* odstraní podtržení */
+  font-weight: 700;
+  padding: 0.5rem 1rem;            /* velikost tlačítka */
+  border-radius: 6px;              /* zaoblené rohy */
+  background-color: #111;           /* tmavé pozadí */
+  border: 2px solid #fff;           /* bílý okraj */
+  transition: all 0.25s ease;      
+  cursor: pointer;
+  font-size: 1rem;
 }
 
-.back-to-home:hover {
-  background-color: #b80000;
+.back-btn:hover {
+  background-color: #e60000;       /* červené pozadí při hover */
+  border-color: #e60000;           /* červený okraj při hover */
+  color: #fff;                     /* text zůstane bílý */
 }
+
+
 
  
 /* Hlavní obsah */
