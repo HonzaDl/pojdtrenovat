@@ -143,17 +143,19 @@ body::before {
 }
 
 */Tlačítko na zpět
- .back-btn {
+ a.back-btn:link,
+ a.back-btn:visited {
+  color: #000 !important;        /* výchozí černá */
   display: inline-flex;           /* aby šipka a text byly hezky vedle sebe */
   align-items: center;
   gap: 0.4rem;                    /* mezera mezi šipkou a textem */
-  color: #fff;                     /* bílý text a šipka */
-  text-decoration: none;           /* odstraní podtržení */
+  color: #000 !important;                    /* černý text a šipka */
+  text-decoration: none !important;          /* bez podtržení */
   font-weight: 700;
   padding: 0.5rem 1rem;            /* velikost tlačítka */
   border-radius: 6px;              /* zaoblené rohy */
-  background-color: #111;           /* tmavé pozadí */
-  border: 2px solid #fff;           /* bílý okraj */
+  background-color: #111;          /* tmavé pozadí */
+  border: 2px solid #000;          /* černý okraj */
   transition: all 0.25s ease;      
   cursor: pointer;
   font-size: 1rem;
@@ -162,7 +164,7 @@ body::before {
 .back-btn:hover {
   background-color: #e60000;       /* červené pozadí při hover */
   border-color: #e60000;           /* červený okraj při hover */
-  color: #fff;                     /* text zůstane bílý */
+  color: #fff !important;                     /* text zůstane bílý */
 }
 
 
@@ -328,3 +330,39 @@ footer {
 .gallery-item:hover img {
   transform: scale(1.1); /* zvětšení na 150% */
 }
+.back-btn {
+  color: #000 !important;       /* černý text */
+  text-decoration: none !important;
+  font-weight: bold;
+}
+
+.back-btn:hover {
+  color: #fff !important;       /* bílé písmo */
+  background-color: #e60000 !important;
+  border-color: #e60000 !important;
+}
+/* Obecně všechny odkazy černé */
+a {
+  color: black;
+  text-decoration: none; /* bez podtržení */
+}
+
+/* Při najetí myší červené */
+a:hover {
+  color: red;
+}
+
+/* Pokud chceš konkrétní odkaz červený pořád */
+a.red-link {
+  color: red;
+}
+
+/* Pokud chceš konkrétní odkaz černý pořád */
+a.black-link {
+  color: black;
+}
+/* Pokud chceš konkrétní odkaz bílý pořád */
+a.white-link {
+  color: white;
+}
+
