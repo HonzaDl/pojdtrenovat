@@ -142,6 +142,24 @@ body::before {
   }
 }
 
+/* Tlačítko pro návrat na domovskou stránku */
+.back-to-home {
+  display: inline-block;
+  background-color: #E10600;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.back-to-home:hover {
+  background-color: #b80000;
+}
+
  
 /* Hlavní obsah */
 main {
