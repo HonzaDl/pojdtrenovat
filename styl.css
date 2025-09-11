@@ -230,3 +230,37 @@ footer {
     opacity: 0.05;          /* můžeš upravit průhlednost */
   }
 }
+/* Základní reset / box sizing */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* kontejner pro galerii */
+.gallery {
+  display: grid;
+  gap: 16px; /* vzdálenost mezi obrázky */
+  padding: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  /* vysvětlivka: min šířka obrázku 200px, pokud prostor, roztáhne se na 1fr */
+}
+
+/* každý prvek galerie */
+.gallery-item {
+  overflow: hidden; /* důležité, aby při zvětšení obrázek nepřesahoval hranice */
+  position: relative;
+}
+
+/* obrázek uvnitř každého prvku galerie */
+.gallery-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease; /* plynulý efekt při hover */
+}
+
+/* efekt při najetí */
+.gallery-item:hover img {
+  transform: scale(1.1); /* zvětšení na 110% */
+}
