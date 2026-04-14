@@ -3,110 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rezervace | pojdtrenovat.cz</title>
+<title>Rezervace tréninků</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
-  body {
-    font-family: Roboto, sans-serif;
-    background:#f4f6f8;
-    margin:0;
-    padding:16px;
-    color:#111;
-  }
+body{
+  font-family:Roboto,sans-serif;
+  margin:0;
+  padding:16px;
+  background:#f4f6f8;
+}
 
-  h1 {
-    color:#000;
-    margin-bottom:10px;
-  }
+.topbar{
+  background:#000;
+  color:#fff;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
 
-  h2 {
-    color:#000;
-    margin-top:20px;
-  }
+#calendar{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;
+}
 
-  /* KALENDÁŘ */
-  #calendar {
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap:10px;
-  }
+.card{
+  background:#fff;
+  padding:12px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  cursor:pointer;
+  border-left:4px solid #e00000;
+}
 
-  .card {
-    background:#fff;
-    border-radius:12px;
-    padding:12px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
-    cursor:pointer;
-    transition:0.2s;
-    border-left:4px solid #e00000; /* ČERVENÁ */
-  }
+.card small{color:#666;display:block;margin-top:5px}
 
-  .card:hover {
-    transform: translateY(-2px);
-  }
+.training{
+  background:#fff;
+  padding:12px;
+  margin:10px 0;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  border-left:4px solid #000;
+}
 
-  .card small {
-    display:block;
-    margin-top:5px;
-    color:#666;
-  }
+input,button{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border-radius:8px;
+}
 
-  /* DETAIL */
-  #detail {
-    margin-top:20px;
-  }
+button{
+  background:#000;
+  color:#fff;
+  border:none;
+}
 
-  .training {
-    background:#fff;
-    padding:12px;
-    border-radius:12px;
-    margin:10px 0;
-    box-shadow:0 2px 8px rgba(0,0,0,0.08);
-    border-left:4px solid #000; /* ČERNÁ */
-  }
-
-  input {
-    width:100%;
-    padding:10px;
-    margin-top:6px;
-    border:1px solid #ddd;
-    border-radius:8px;
-    font-size:14px;
-  }
-
-  button {
-    width:100%;
-    padding:10px;
-    margin-top:8px;
-    border:none;
-    border-radius:8px;
-    background:#000; /* ČERNÁ */
-    color:#fff;
-    font-size:14px;
-    cursor:pointer;
-  }
-
-  button:hover {
-    background:#e00000; /* ČERVENÁ hover */
-  }
-
-  .full {
-    color:#e00000;
-    font-weight:bold;
-    margin-top:8px;
-  }
-
-  .topbar {
-    background:#000;
-    color:#fff;
-    padding:12px;
-    border-radius:10px;
-    margin-bottom:16px;
-  }
-
+.full{color:#e00000;font-weight:bold}
 </style>
 </head>
 
@@ -117,7 +74,6 @@
 </div>
 
 <div id="calendar">Načítám...</div>
-
 <div id="detail"></div>
 
 <script>
@@ -126,70 +82,69 @@ const supabaseClient = supabase.createClient(
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
-// KALENDÁŘ
-async function loadCalendar() {
-
-  const { data, error } = await supabaseClient
+// LOAD CALENDAR
+async function loadCalendar(){
+  const {data,error}=await supabaseClient
     .from("treninky")
     .select("*")
     .order("datum");
 
-  if (error) {
+  if(error){
     console.log(error);
     return;
   }
 
-  const cal = document.getElementById("calendar");
-  cal.innerHTML = "";
+  const cal=document.getElementById("calendar");
+  cal.innerHTML="";
 
-  let grouped = {};
+  let grouped={};
 
-  data.forEach(t => {
-    if (!grouped[t.datum]) grouped[t.datum] = [];
+  data.forEach(t=>{
+    if(!grouped[t.datum]) grouped[t.datum]=[];
     grouped[t.datum].push(t);
   });
 
-  for (const date in grouped) {
+  for(const date in grouped){
 
-    const div = document.createElement("div");
-    div.className = "card";
+    const div=document.createElement("div");
+    div.className="card";
 
-    div.innerHTML = `
+    div.innerHTML=`
       <b>${date}</b>
       <small>${grouped[date].length} tréninků</small>
     `;
 
-    div.onclick = () => showDay(grouped[date], date);
+    div.onclick=()=>showDay(grouped[date],date);
 
     cal.appendChild(div);
   }
 }
 
-// DETAIL DNE
-async function showDay(treninky, date) {
+// SHOW DAY (FIXED)
+async function showDay(treninky,date){
 
-  const detail = document.getElementById("detail");
-  detail.innerHTML = `<h2>📅 ${date}</h2>`;
+  const detail=document.getElementById("detail");
+  detail.innerHTML=`<h2>📅 ${date}</h2>`;
 
-  for (let t of treninky) {
+  for(const t of treninky){
 
-    const { count } = await supabaseClient
+    const {count}=await supabaseClient
       .from("rezervace")
-      .select("*", { count:"exact", head:true })
-      .eq("trening_id", t.id);
+      .select("*",{count:"exact",head:true})
+      .eq("trening_id",t.id);
 
-    const obsazeno = count || 0;
-    const volno = t.kapacita - obsazeno;
+    const obsazeno=count||0;
+    const volno=t.kapacita-obsazeno;
 
-    const div = document.createElement("div");
-    div.className = "training";
+    const div=document.createElement("div");
+    div.className="training";
 
-    div.innerHTML = `
+    div.innerHTML=`
       <b>${t.nazev}</b><br>
       🕒 ${t.cas_od} - ${t.cas_do}<br>
       👥 ${obsazeno}/${t.kapacita}
 
-      ${volno > 0 ? `
+      ${volno>0 ? `
         <input id="n-${t.id}" placeholder="Jméno">
         <input id="e-${t.id}" placeholder="Email">
         <button onclick="reserve('${t.id}')">Rezervovat</button>
@@ -200,28 +155,24 @@ async function showDay(treninky, date) {
   }
 }
 
-// REZERVACE
-async function reserve(id) {
+// RESERVE
+async function reserve(id){
 
-  const name = document.getElementById("n-" + id).value;
-  const email = document.getElementById("e-" + id).value;
+  const name=document.getElementById("n-"+id).value;
+  const email=document.getElementById("e-"+id).value;
 
-  if (!name || !email) {
-    alert("Vyplň jméno a email");
-    return;
-  }
+  if(!name||!email) return alert("Vyplň údaje");
 
-  const { error } = await supabaseClient
+  const {error}=await supabaseClient
     .from("rezervace")
-    .insert([{ trening_id: id, jmeno: name, email }]);
+    .insert([{trening_id:id,jmeno:name,email}]);
 
-  if (error) {
+  if(error){
     console.log(error);
-    alert("Chyba rezervace");
-    return;
+    return alert("Chyba rezervace");
   }
 
-  alert("Rezervace hotová 💪");
+  alert("Rezervováno 💪");
   loadCalendar();
 }
 
