@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+
+<body>
+<h1>Admin - přidání tréninku</h1>
+
+<input id="nazev" placeholder="Název"><br>
+<input id="datum" type="date"><br>
+<input id="od" type="time"><br>
+<input id="do" type="time"><br>
+<input id="kapacita" type="number" placeholder="Kapacita"><br>
+
+<button onclick="add()">Přidat</button>
+
+<script>
+const supabaseClient = supabase.createClient(
+  "https://kgmdyhiwkkviswluuwkg.supabase.co",
+  "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
+);
+
+async function add() {
+  const nazev = document.getElementById("nazev").value;
+  const datum = document.getElementById("datum").value;
+  const od = document.getElementById("od").value;
+  const doo = document.getElementById("do").value;
+  const kapacita = document.getElementById("kapacita").value;
+
+  const { error } = await supabaseClient
+    .from("treninky")
+    .insert([{
+      nazev,
+      datum,
+      cas_od: od,
+      cas_do: doo,
+      kapacita
+    }]);
+
+  if (error) {
+    alert("Chyba");
+    console.log(error);
+  } else {
+    alert("Přidáno 💪");
+  }
+}
+</script>
+
+</body>
+</html>
