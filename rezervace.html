@@ -138,8 +138,14 @@ async function rezervuj(id) {
 load();
 </script>
 <script>
-console.log("JS FUNGUJE");
-document.body.innerHTML += "<h2>JS FUNGUJE</h2>";
+console.log("SUPABASE CLIENT:", supabaseClient);
+
+const { data, error } = await supabaseClient
+  .from("treninky")
+  .select("*");
+
+console.log("DATA:", data);
+console.log("ERROR:", error);
 </script>
 </body>
 </html>
