@@ -3,42 +3,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rezervace | Pojdtrenovat.cz</title>
+  <title>Rezervace tréninků | pojdtrenovat.cz</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styl.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <style>
+    .rez-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    input {
+      padding: 8px;
+      margin-top: 5px;
+      width: 100%;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      background: black;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .full {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
 </head>
+
 <body>
-  <header class="header">
-<div class="header-left">
-  <h1 class="site-title">pojdtrenovat.cz</h1>
-</div>  
+
+<header class="header">
+  <h1 class="site-title">Rezervace tréninků</h1>
   <nav class="nav">
     <a href="index.html">Úvod</a>
-    <a href="treneri.html">Trenéři</a>
     <a href="rezervace.html">Rezervace</a>
   </nav>
-<div class="logos-right">
-<img src="images/logoo.jpg" alt="POJĎ TRÉNOVAT" class="new-logo">
-<img src="images/ssgihockey.jpg" alt="SSGI logo" class="nav-logo"></div>
-
 </header>
 
-<a href="javascript:history.back()" class="back-btn">← Zpět</a>
+<div class="rez-container" id="list"></div>
 
-  <main>
-  <h2>Rezervace tréninku</h2>
-  <p>Rezervace bude brzy možná. Sledujte nás a až to bude možné, rezervujte si u nás trenénik. </p>
-<br>Děkujeme !</br>
+<script>
+const supabaseClient = supabase.createClient(
+  "TVUJ_SUPABASE_URL",
+  "TVUJ_SUPABASE_ANON_KEY"
+);
 
-</main>
+async function load() {
+  const { data: treningy } = await supabaseClient
+    .from("treningy")
+    .select("*")
+    .order("datum");
 
+  const container = document.getElementById("list");
+  container.innerHTML = "";
 
-  <footer>
-    <p>Kontakt: Pavel Marek, tel. 608 910 109, email: <a href="mailto:pojdtrenovat@gmail.com?subject=Rezervace%20tréninku&body=Dobrý%20den,%20mám%20zájem%20o%20rezervaci..." class="red-link">
-  pojdtrenovat@gmail.com
-</a>
-</p>
-  </footer>
+  for (let t of treningy) {
+
+    const { count } = await supabaseClient
+      .from("rezervace")
+      .select("*", { count: "exact", head: true })
+      .eq("trening_id", t.id);
+
+    const volno = t.kapacita - count;
+
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <h2>${t.nazev || "Trénink"}</h2>
+      <p>${t.datum} | ${t.cas_od} - ${t.cas_do}</p>
+
+      <div class="row">
+        <div><b>Kapacita:</b> ${volno}/${t.kapacita}</div>
+        ${volno <= 0 ? '<div class="full">PLNO</div>' : ''}
+      </div>
+
+      ${volno > 0 ? `
+        <input id="jmeno-${t.id}" placeholder="Jméno">
+        <input id="email-${t.id}" placeholder="Email">
+        <button onclick="rezervuj('${t.id}')">Rezervovat</button>
+      ` : ''}
+    `;
+
+    container.appendChild(div);
+  }
+}
+
+async function rezervuj(id) {
+  const jmeno = document.getElementById("jmeno-" + id).value;
+  const email = document.getElementById("email-" + id).value;
+
+  if (!jmeno || !email) {
+    alert("Vyplň jméno a email");
+    return;
+  }
+
+  await supabaseClient.from("rezervace").insert([
+    { trening_id: id, jmeno, email }
+  ]);
+
+  alert("Rezervace hotová 💪");
+  load();
+}
+
+load();
+</script>
+
+</body>
+</html>
 
 </body>
 </html>
