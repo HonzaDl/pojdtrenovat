@@ -90,7 +90,7 @@ button{
 
 <!-- LOGIN -->
 <div id="login">
-  <h2>Admin login</h2>
+  <h2>Administrace treninků</h2>
   <input id="email" placeholder="Email">
   <input id="password" type="password" placeholder="Heslo">
   <button onclick="login()">Přihlásit</button>
@@ -121,7 +121,7 @@ button{
 </div>
 
 <script>
-
+misto: document.getElementById("f-misto").value,
 const supabaseClient = supabase.createClient(
   "https://kgmdyhiwkkviswluuwkg.supabase.co",
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
