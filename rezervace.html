@@ -3,31 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kalendář tréninků</title>
+<title>Rezervace | pojdtrenovat.cz</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styl.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
 body{
   font-family:Roboto,sans-serif;
   margin:0;
-  padding:16px;
   background:#f4f6f8;
 }
 
-.topbar{
-  background:#000;
-  color:#fff;
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:15px;
-}
-
+/* KALENDÁŘ */
 #calendar{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
   gap:10px;
+  padding:16px;
 }
 
 .card{
@@ -40,6 +34,11 @@ body{
 }
 
 .card small{color:#666;display:block;margin-top:5px}
+
+/* DETAIL */
+#detail{
+  padding:16px;
+}
 
 .training{
   background:#fff;
@@ -55,6 +54,7 @@ input,button{
   padding:10px;
   margin-top:6px;
   border-radius:8px;
+  font-family:Roboto;
 }
 
 button{
@@ -63,26 +63,49 @@ button{
   border:none;
 }
 
-.full{color:#e00000;font-weight:bold}
+.full{
+  color:#e00000;
+  font-weight:bold;
+}
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-  <h1>Kalendář tréninků</h1>
-</div>
+<!-- 🔥 TVŮJ ORIGINÁLNÍ HEADER -->
+<header class="header">
+  <div class="header-left">
+    <h1 class="site-title">pojdtrenovat.cz</h1>
+  </div>
 
+  <nav class="nav">
+    <a href="index.html">Úvod</a>
+    <a href="treneri.html">Trenéři</a>
+    <a href="rezervace.html">Rezervace</a>
+  </nav>
+
+  <div class="logos-right">
+    <img src="images/logoo.jpg" class="new-logo">
+    <img src="images/ssgihockey.jpg" class="nav-logo">
+  </div>
+</header>
+
+<a href="javascript:history.back()" class="back-btn">← Zpět</a>
+
+<!-- 📅 KALENDÁŘ -->
 <div id="calendar">Načítám...</div>
+
+<!-- 📍 DETAIL -->
 <div id="detail"></div>
 
 <script>
+
 const supabaseClient = supabase.createClient(
   "https://kgmdyhiwkkviswluuwkg.supabase.co",
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
-// LOAD
+// -------------------- KALENDÁŘ --------------------
 async function loadCalendar(){
 
   const {data,error}=await supabaseClient
@@ -121,7 +144,7 @@ async function loadCalendar(){
   }
 }
 
-// SHOW DAY
+// -------------------- DETAIL --------------------
 async function showDay(treninky,date){
 
   const detail=document.getElementById("detail");
@@ -160,7 +183,7 @@ async function showDay(treninky,date){
   }
 }
 
-// RESERVE
+// -------------------- RESERVACE --------------------
 async function reserve(id){
 
   const name=document.getElementById("n-"+id).value;
@@ -182,6 +205,7 @@ async function reserve(id){
 }
 
 loadCalendar();
+
 </script>
 
 </body>
