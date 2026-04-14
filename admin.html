@@ -2,20 +2,50 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8">
-  <title>Admin</title>
+  <title>Admin panel</title>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      padding:20px;
+      background:#f4f6f8;
+    }
+
+    input, button {
+      width:100%;
+      padding:10px;
+      margin:5px 0;
+    }
+
+    button {
+      background:black;
+      color:white;
+      border:none;
+    }
+
+    .box {
+      background:white;
+      padding:15px;
+      border-radius:10px;
+    }
+  </style>
 </head>
 
 <body>
-<h1>Admin - přidání tréninku</h1>
 
-<input id="nazev" placeholder="Název"><br>
-<input id="datum" type="date"><br>
-<input id="od" type="time"><br>
-<input id="do" type="time"><br>
-<input id="kapacita" type="number" placeholder="Kapacita"><br>
+<h1>Admin – přidání tréninku</h1>
 
-<button onclick="add()">Přidat</button>
+<div class="box">
+  <input id="nazev" placeholder="Název">
+  <input id="datum" type="date">
+  <input id="od" type="time">
+  <input id="do" type="time">
+  <input id="kapacita" type="number" placeholder="Kapacita">
+
+  <button onclick="add()">Přidat trénink</button>
+</div>
 
 <script>
 const supabaseClient = supabase.createClient(
@@ -41,13 +71,14 @@ async function add() {
     }]);
 
   if (error) {
-    alert("Chyba");
     console.log(error);
-  } else {
-    alert("Přidáno 💪");
+    return alert("Chyba");
   }
+
+  alert("Přidáno 💪");
 }
 </script>
 
 </body>
+</html>
 </html>
