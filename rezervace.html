@@ -54,34 +54,34 @@
     .full {
       color:red;
       font-weight:bold;
-  
-  #calendar {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 30px;
-}
+    }
 
-.calendar-day {
-  background: #ffffff;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+    #calendar {
+      display:flex;
+      flex-direction:column;
+      gap:15px;
+      margin-bottom:30px;
+    }
 
-.calendar-title {
-  font-weight: bold;
-  font-size: 18px;
-  margin-bottom: 10px;
-}
+    .calendar-day {
+      background:#fff;
+      padding:15px;
+      border-radius:10px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    }
 
-.calendar-item {
-  padding: 8px;
-  border-left: 4px solid black;
-  margin: 5px 0;
-  background: #f8f8f8;
-  border-radius: 5px;
-}
+    .calendar-title {
+      font-weight:bold;
+      font-size:18px;
+      margin-bottom:10px;
+    }
+
+    .calendar-item {
+      padding:8px;
+      border-left:4px solid black;
+      margin:5px 0;
+      background:#f8f8f8;
+      border-radius:5px;
     }
   </style>
 </head>
@@ -92,54 +92,13 @@
   <h1>Rezervace tréninků</h1>
 </div>
 
-<h2>Kalendář tréninků</h2>
-<div id="calendar"></div>
+<h2>Kalendář</h2>
+<div id="calendar">Načítám...</div>
+
+<h2>Tréninky</h2>
 <div id="list">Načítám...</div>
 
 <script>
- async function loadCalendar() {
-  const { data, error } = await supabaseClient
-    .from("treninky")
-    .select("*")
-    .order("datum");
-
-  if (error) {
-    console.log(error);
-    return;
-  }
-
-  const cal = document.getElementById("calendar");
-  cal.innerHTML = "";
-
-  let grouped = {};
-
-  data.forEach(t => {
-    if (!grouped[t.datum]) grouped[t.datum] = [];
-    grouped[t.datum].push(t);
-  });
-
-  for (const date in grouped) {
-
-    const dayDiv = document.createElement("div");
-    dayDiv.className = "calendar-day";
-
-    let html = `<div class="calendar-title">${date}</div>`;
-
-    grouped[date].forEach(t => {
-      html += `
-        <div class="calendar-item">
-          <b>${t.nazev}</b><br>
-          ${t.cas_od} - ${t.cas_do}
-        </div>
-      `;
-    });
-
-    dayDiv.innerHTML = html;
-    cal.appendChild(dayDiv);
-  }
-}
-  }
-} 
 const supabaseClient = supabase.createClient(
   "https://kgmdyhiwkkviswluuwkg.supabase.co",
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
@@ -155,6 +114,7 @@ async function load() {
 
   if (error) {
     container.innerHTML = "Chyba načítání";
+    console.log(error);
     return;
   }
 
@@ -199,7 +159,6 @@ async function reserve(id) {
     return;
   }
 
-  // kontrola kapacity ještě před zápisem
   const { count } = await supabaseClient
     .from("rezervace")
     .select("*", { count: "exact", head: true })
@@ -231,8 +190,52 @@ async function reserve(id) {
   load();
 }
 
-load();
-loadCalendar();
+async function loadCalendar() {
+  const { data, error } = await supabaseClient
+    .from("treninky")
+    .select("*")
+    .order("datum");
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  const cal = document.getElementById("calendar");
+  cal.innerHTML = "";
+
+  let grouped = {};
+
+  data.forEach(t => {
+    if (!grouped[t.datum]) grouped[t.datum] = [];
+    grouped[t.datum].push(t);
+  });
+
+  for (const date in grouped) {
+
+    const dayDiv = document.createElement("div");
+    dayDiv.className = "calendar-day";
+
+    let html = `<div class="calendar-title">${date}</div>`;
+
+    grouped[date].forEach(t => {
+      html += `
+        <div class="calendar-item">
+          <b>${t.nazev}</b><br>
+          ${t.cas_od} - ${t.cas_do}
+        </div>
+      `;
+    });
+
+    dayDiv.innerHTML = html;
+    cal.appendChild(dayDiv);
+  }
+}
+
+window.onload = () => {
+  load();
+  loadCalendar();
+};
 </script>
 
 </body>
