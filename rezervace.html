@@ -159,7 +159,42 @@ async function rezervuj(id) {
   alert("Rezervace proběhla úspěšně 💪");
   load();
 }
+<script>
+async function load() {
+  console.log("LOAD START");
 
+  const { data, error } = await supabaseClient
+    .from("treninky")
+    .select("*");
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+
+  const container = document.getElementById("list");
+  container.innerHTML = "";
+
+  if (error) {
+    container.innerHTML = "<p>CHYBA: " + error.message + "</p>";
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    container.innerHTML = "<p>Žádné tréninky</p>";
+    return;
+  }
+
+  data.forEach(t => {
+    container.innerHTML += `
+      <div class="card">
+        <h2>${t.nazev || "Trénink"}</h2>
+        <p>${t.datum || ""} ${t.cas_od || ""} - ${t.cas_do || ""}</p>
+      </div>
+    `;
+  });
+}
+
+load();
+</script>
 load();
 </script>
 
