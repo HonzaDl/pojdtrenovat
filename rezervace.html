@@ -74,12 +74,15 @@ const supabaseClient = supabase.createClient(
 );
 
 async function load() {
+  console.log("LOAD START");
+
   const { data, error } = await supabaseClient
     .from("treninky")
     .select("*");
 
   console.log("DATA:", data);
   console.log("ERROR:", error);
+}
 
   const container = document.getElementById("list");
 
