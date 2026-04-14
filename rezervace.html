@@ -41,33 +41,6 @@ const supabaseClient = supabase.createClient(
 );
 
 async function load() 
-async function reserve(id) {
-  const name = document.getElementById("name-" + id).value;
-  const email = document.getElementById("email-" + id).value;
-
-  if (!name || !email) {
-    alert("Vyplň jméno a email");
-    return;
-  }
-
-  const { error } = await supabaseClient
-    .from("rezervace")
-    .insert([
-      {
-        trening_id: id,
-        jmeno: name,
-        email: email
-      }
-    ]);
-
-  if (error) {
-    alert("Chyba rezervace");
-    console.log(error);
-    return;
-  }
-
-  alert("Rezervace hotová 💪");
-}
 {
   const container = document.getElementById("list");
   container.innerHTML = "Načítám...";
@@ -103,7 +76,33 @@ async function reserve(id) {
   container.appendChild(div);
 });
 }
+async function reserve(id) {
+  const name = document.getElementById("name-" + id).value;
+  const email = document.getElementById("email-" + id).value;
 
+  if (!name || !email) {
+    alert("Vyplň jméno a email");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("rezervace")
+    .insert([
+      {
+        trening_id: id,
+        jmeno: name,
+        email: email
+      }
+    ]);
+
+  if (error) {
+    alert("Chyba rezervace");
+    console.log(error);
+    return;
+  }
+
+  alert("Rezervace hotová 💪");
+}
 load();
 </script>
 </body>
