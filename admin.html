@@ -297,27 +297,56 @@ function buildForm(data){
 /* ---------------- SAVE ---------------- */
 async function save(){
 
-  let obj={};
+  let obj = {};
 
   document.querySelectorAll("#form input").forEach(i=>{
-    obj[i.id.replace("f-","")] = i.value;
+    obj[i.id.replace("f-","")] = i.value.trim();
   });
 
-  if(current){
+  console.log("DATA:", obj);
 
-    await supabaseClient
-      .from("treninky")
-      .update(obj)
-      .eq("id", current.id);
+  // 🔴 VALIDACE
 
-  } else {
-
-    await supabaseClient
-      .from("treninky")
-      .insert([obj]);
+  if(!obj.nazev){
+    return alert("❌ Chybí název tréninku");
   }
 
-  alert("Uloženo");
+  if(!obj.datum){
+    return alert("❌ Chybí datum");
+  }
+
+  if(!obj.cas_od || !obj.cas_do){
+    return alert("❌ Chybí čas");
+  }
+
+  if(!obj.kapacita || isNaN(obj.kapacita)){
+    return alert("❌ Kapacita musí být číslo");
+  }
+
+  if(!obj.misto){
+    return alert("❌ Chybí místo");
+  }
+
+  if(!obj.cena){
+    obj.cena = 0; // fallback
+  }
+
+  // 🔢 převod čísel
+  obj.kapacita = Number(obj.kapacita);
+  obj.cena = Number(obj.cena);
+
+  // 💾 INSERT / UPDATE
+  let { error } = await supabaseClient
+    .from("treninky")
+    .insert([obj]);
+
+  if(error){
+    console.log(error);
+    return alert("❌ Chyba ukládání: " + error.message);
+  }
+
+  alert("✔ Trénink uložen");
+
   load();
 }
 
