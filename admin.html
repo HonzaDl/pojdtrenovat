@@ -84,6 +84,10 @@ button{
   margin-top:15px;
   border-radius:10px;
 }
+
+.delete-btn{
+  background:#e00000;
+}
 </style>
 </head>
 
@@ -152,7 +156,7 @@ async function checkUser(){
   }
 }
 
-// ---------------- START APP ----------------
+// ---------------- START ----------------
 function startApp(){
   document.getElementById("login").style.display="none";
   document.getElementById("app").style.display="block";
@@ -196,7 +200,7 @@ async function loadCalendar(){
   }
 }
 
-// ---------------- SHOW ----------------
+// ---------------- SHOW TRAININGS ----------------
 function showTrainings(list){
 
   const cont=document.getElementById("trainings");
@@ -220,8 +224,41 @@ function showTrainings(list){
 
 // ---------------- EDIT ----------------
 function edit(data){
+
   currentId = data.id;
   generateForm(data);
+
+  const form = document.getElementById("form");
+
+  // DELETE BUTTON
+  const delBtn = document.createElement("button");
+  delBtn.innerText = "🗑️ Smazat trénink";
+  delBtn.className = "delete-btn";
+
+  delBtn.onclick = async () => {
+
+    if(!confirm("Opravdu chceš smazat trénink?")) return;
+
+    const { error } = await supabaseClient
+      .from("treninky")
+      .delete()
+      .eq("id", currentId);
+
+    if(error){
+      console.log(error);
+      alert("Chyba mazání");
+      return;
+    }
+
+    alert("Smazáno");
+
+    currentId = null;
+    generateForm({});
+    loadCalendar();
+    document.getElementById("trainings").innerHTML="";
+  };
+
+  form.appendChild(delBtn);
 }
 
 // ---------------- AUTO FORM ----------------
