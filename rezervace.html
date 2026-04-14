@@ -23,28 +23,69 @@ const supabaseClient = supabase.createClient(
 );
 
 async function load() {
-  const { data, error } = await supabaseClient
+  const { data: treninky } = await supabaseClient
     .from("treninky")
     .select("*");
 
-  console.log(data, error);
+  const container = document.getElementById("list");
+  container.innerHTML = "";
 
-  const list = document.getElementById("list");
-  list.innerHTML = "";
+  for (let t of treninky) {
 
-  data.forEach(t => {
-    list.innerHTML += `
+    const { count } = await supabaseClient
+      .from("rezervace")
+      .select("*", { count: "exact", head: true })
+      .eq("trening_id", t.id);
+
+    const volno = t.kapacita - (count || 0);
+
+    container.innerHTML += `
       <div class="card">
         <h2>${t.nazev}</h2>
         <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
-        <p>Kapacita: ${t.kapacita}</p>
+
+        <p><b>Volno:</b> ${volno}/${t.kapacita}</p>
+
+        ${volno > 0 ? `
+          <input id="name-${t.id}" placeholder="Jméno">
+          <input id="email-${t.id}" placeholder="Email">
+          <button onclick="reserve('${t.id}')">Rezervovat</button>
+        ` : `<p style="color:red;font-weight:bold;">PLNO</p>`}
       </div>
     `;
-  });
+  }
+}
+
+async function reserve(id) {
+  const name = document.getElementById("name-" + id).value;
+  const email = document.getElementById("email-" + id).value;
+
+  if (!name || !email) {
+    alert("Vyplň jméno a email");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("rezervace")
+    .insert([
+      {
+        trening_id: id,
+        jmeno: name,
+        email: email
+      }
+    ]);
+
+  if (error) {
+    alert("Chyba při rezervaci");
+    console.log(error);
+    return;
+  }
+
+  alert("Rezervace hotová 💪");
+  load();
 }
 
 load();
 </script>
-
 </body>
 </html>
