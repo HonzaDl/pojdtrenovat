@@ -40,7 +40,36 @@ const supabaseClient = supabase.createClient(
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
-async function load() {
+async function load() 
+async function reserve(id) {
+  const name = document.getElementById("name-" + id).value;
+  const email = document.getElementById("email-" + id).value;
+
+  if (!name || !email) {
+    alert("Vyplň jméno a email");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("rezervace")
+    .insert([
+      {
+        trening_id: id,
+        jmeno: name,
+        email: email
+      }
+    ]);
+
+  if (error) {
+    alert("Chyba rezervace");
+    console.log(error);
+    return;
+  }
+
+  alert("Rezervace hotová 💪");
+  load();
+}
+{
   const container = document.getElementById("list");
   container.innerHTML = "Načítám...";
 
