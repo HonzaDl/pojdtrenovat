@@ -74,13 +74,17 @@ const supabaseClient = supabase.createClient(
 );
 
 async function load() {
-  const { data: treninky } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from("treninky")
-    .select("*")
-    .order("datum");
+    .select("*");
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
 
   const container = document.getElementById("list");
-  container.innerHTML = "";
+
+  container.innerHTML = JSON.stringify(data, null, 2);
+}
 
   for (let t of treninky) {
 
