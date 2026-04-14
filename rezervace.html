@@ -58,17 +58,22 @@ async function load() {
   container.innerHTML = "";
 
   data.forEach(t => {
-    const div = document.createElement("div");
-    div.className = "card";
 
-    div.innerHTML = `
-      <h2>${t.nazev}</h2>
-      <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
-      <p>Kapacita: ${t.kapacita}</p>
-    `;
+  const div = document.createElement("div");
+  div.className = "card";
 
-    container.appendChild(div);
-  });
+  div.innerHTML = `
+    <h2>${t.nazev}</h2>
+    <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
+    <p>Kapacita: ${t.kapacita}</p>
+
+    <input id="name-${t.id}" placeholder="Jméno">
+    <input id="email-${t.id}" placeholder="Email">
+    <button onclick="reserve('${t.id}')">Rezervovat</button>
+  `;
+
+  container.appendChild(div);
+});
 }
 
 load();
