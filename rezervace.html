@@ -4,32 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rezervace | Pojdtrenovat.cz</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styl.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-<body>
-  <header class="header">
-<div class="header-left">
-  <h1 class="site-title">pojdtrenovat.cz</h1>
-</div>  
-  <nav class="nav">
-    <a href="index.html">Úvod</a>
-    <a href="treneri.html">Trenéři</a>
-    <a href="rezervace.html">Rezervace</a>
-  </nav>
-<div class="logos-right">
-<img src="images/logoo.jpg" alt="POJĎ TRÉNOVAT" class="new-logo">
-<img src="images/ssgihockey.jpg" alt="SSGI logo" class="nav-logo"></div>
-</header>
-
-<a href="javascript:history.back()" class="back-btn">← Zpět</a>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
   <style>
     body { font-family: Arial; background:#f4f6f8; padding:20px; }
     .card { background:white; padding:15px; margin:10px 0; border-radius:8px; }
   </style>
 </head>
+
+<body>
+
+<header class="header">
+  <h1>pojdtrenovat.cz</h1>
+  <nav class="nav">
+    <a href="index.html">Úvod</a>
+    <a href="treneri.html">Trenéři</a>
+    <a href="rezervace.html">Rezervace</a>
+  </nav>
+</header>
+
+<a href="javascript:history.back()">← Zpět</a>
 
 <h1>Tréninky</h1>
 <div id="list">Načítám...</div>
@@ -40,16 +38,13 @@ const supabaseClient = supabase.createClient(
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
-async function load() 
-{
+async function load() {
   const container = document.getElementById("list");
   container.innerHTML = "Načítám...";
 
   const { data, error } = await supabaseClient
     .from("treninky")
     .select("*");
-
-  console.log(data, error);
 
   if (error) {
     container.innerHTML = "Chyba načítání";
@@ -59,23 +54,20 @@ async function load()
   container.innerHTML = "";
 
   data.forEach(t => {
+    container.innerHTML += `
+      <div class="card">
+        <h2>${t.nazev}</h2>
+        <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
+        <p>Kapacita: ${t.kapacita}</p>
 
-  const div = document.createElement("div");
-  div.className = "card";
-
-  div.innerHTML = `
-    <h2>${t.nazev}</h2>
-    <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
-    <p>Kapacita: ${t.kapacita}</p>
-
-    <input id="name-${t.id}" placeholder="Jméno">
-    <input id="email-${t.id}" placeholder="Email">
-    <button onclick="reserve('${t.id}')">Rezervovat</button>
-  `;
-
-  container.appendChild(div);
-});
+        <input id="name-${t.id}" placeholder="Jméno">
+        <input id="email-${t.id}" placeholder="Email">
+        <button onclick="reserve('${t.id}')">Rezervovat</button>
+      </div>
+    `;
+  });
 }
+
 async function reserve(id) {
   const name = document.getElementById("name-" + id).value;
   const email = document.getElementById("email-" + id).value;
@@ -87,13 +79,7 @@ async function reserve(id) {
 
   const { error } = await supabaseClient
     .from("rezervace")
-    .insert([
-      {
-        trening_id: id,
-        jmeno: name,
-        email: email
-      }
-    ]);
+    .insert([{ trening_id: id, jmeno: name, email }]);
 
   if (error) {
     alert("Chyba rezervace");
@@ -102,8 +88,11 @@ async function reserve(id) {
   }
 
   alert("Rezervace hotová 💪");
+  load();
 }
+
 load();
 </script>
+
 </body>
 </html>
