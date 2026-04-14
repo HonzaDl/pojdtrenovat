@@ -54,6 +54,34 @@
     .full {
       color:red;
       font-weight:bold;
+  
+  #calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.calendar-day {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.calendar-title {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.calendar-item {
+  padding: 8px;
+  border-left: 4px solid black;
+  margin: 5px 0;
+  background: #f8f8f8;
+  border-radius: 5px;
+}
     }
   </style>
 </head>
@@ -91,16 +119,25 @@
   });
 
   for (const date in grouped) {
-    cal.innerHTML += `<h3 style="margin-top:20px">${date}</h3>`;
+
+    const dayDiv = document.createElement("div");
+    dayDiv.className = "calendar-day";
+
+    let html = `<div class="calendar-title">${date}</div>`;
 
     grouped[date].forEach(t => {
-      cal.innerHTML += `
-        <div class="card">
+      html += `
+        <div class="calendar-item">
           <b>${t.nazev}</b><br>
           ${t.cas_od} - ${t.cas_do}
         </div>
       `;
     });
+
+    dayDiv.innerHTML = html;
+    cal.appendChild(dayDiv);
+  }
+}
   }
 } 
 const supabaseClient = supabase.createClient(
