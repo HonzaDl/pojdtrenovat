@@ -53,7 +53,7 @@ button{
   border-left:4px solid #e00000;
 }
 
-/* LIST */
+/* TRAININGS */
 .training{
   background:#fff;
   padding:12px;
@@ -100,7 +100,9 @@ button{
 <div id="app">
 
   <h1>Admin panel</h1>
+
   <button onclick="logout()">Odhlásit</button>
+  <button onclick="newTraining()">➕ Nový trénink</button>
 
   <h2>Kalendář</h2>
   <div id="calendar"></div>
@@ -111,7 +113,7 @@ button{
   <h2>Editace</h2>
   <div id="form"></div>
 
-  <button onclick="save()">💾 Uložit změny</button>
+  <button onclick="save()">💾 Uložit</button>
 
   <h2>Hráči</h2>
   <div id="players"></div>
@@ -232,6 +234,24 @@ function open(t){
   loadPlayers(t.id);
 }
 
+/* ---------------- NEW ---------------- */
+function newTraining(){
+
+  current = null;
+
+  buildForm({
+    nazev:"",
+    datum:"",
+    cas_od:"",
+    cas_do:"",
+    kapacita:"",
+    misto:"",
+    cena:""
+  });
+
+  document.getElementById("players").innerHTML="";
+}
+
 /* ---------------- FORM ---------------- */
 function buildForm(data){
 
@@ -255,6 +275,8 @@ function buildForm(data){
   del.innerText="🗑 Smazat trénink";
 
   del.onclick=async()=>{
+
+    if(!current) return;
 
     if(!confirm("Smazat trénink?")) return;
 
@@ -281,10 +303,19 @@ async function save(){
     obj[i.id.replace("f-","")] = i.value;
   });
 
-  await supabaseClient
-    .from("treninky")
-    .update(obj)
-    .eq("id", current.id);
+  if(current){
+
+    await supabaseClient
+      .from("treninky")
+      .update(obj)
+      .eq("id", current.id);
+
+  } else {
+
+    await supabaseClient
+      .from("treninky")
+      .insert([obj]);
+  }
 
   alert("Uloženo");
   load();
@@ -312,7 +343,7 @@ async function loadPlayers(id){
     div.className="player";
 
     div.innerHTML=`
-      <b>${r.hrac}</b> (${r.vek} let)<br>
+      <b>${r.hrac}</b> (${r.vek})<br>
       ${r.email}<br>
       <button onclick="deletePlayer('${r.id}')">❌ Smazat</button>
     `;
