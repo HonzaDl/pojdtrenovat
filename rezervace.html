@@ -11,25 +11,59 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
   <style>
-    body { font-family: Arial; background:#f4f6f8; padding:20px; }
-    .card { background:white; padding:15px; margin:10px 0; border-radius:8px; }
+    body {
+      font-family: Roboto, sans-serif;
+      background:#f4f6f8;
+      margin:0;
+      padding:20px;
+    }
+
+    .header {
+      background:black;
+      color:white;
+      padding:15px;
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    .card {
+      background:white;
+      padding:15px;
+      margin:10px 0;
+      border-radius:8px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width:100%;
+      padding:8px;
+      margin-top:5px;
+    }
+
+    button {
+      width:100%;
+      margin-top:10px;
+      padding:10px;
+      background:black;
+      color:white;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+    }
+
+    .full {
+      color:red;
+      font-weight:bold;
+    }
   </style>
 </head>
 
 <body>
 
-<header class="header">
-  <h1>pojdtrenovat.cz</h1>
-  <nav class="nav">
-    <a href="index.html">Úvod</a>
-    <a href="treneri.html">Trenéři</a>
-    <a href="rezervace.html">Rezervace</a>
-  </nav>
-</header>
+<div class="header">
+  <h1>Rezervace tréninků</h1>
+</div>
 
-<a href="javascript:history.back()">← Zpět</a>
-
-<h1>Tréninky</h1>
 <div id="list">Načítám...</div>
 
 <script>
@@ -42,7 +76,7 @@ async function load() {
   const container = document.getElementById("list");
   container.innerHTML = "Načítám...";
 
-  const { data, error } = await supabaseClient
+  const { data: treninky, error } = await supabaseClient
     .from("treninky")
     .select("*");
 
@@ -53,19 +87,34 @@ async function load() {
 
   container.innerHTML = "";
 
-  data.forEach(t => {
-    container.innerHTML += `
-      <div class="card">
-        <h2>${t.nazev}</h2>
-        <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
-        <p>Kapacita: ${t.kapacita}</p>
+  for (let t of treninky) {
 
+    const { count } = await supabaseClient
+      .from("rezervace")
+      .select("*", { count: "exact", head: true })
+      .eq("trening_id", t.id);
+
+    const obsazeno = count || 0;
+    const volno = t.kapacita - obsazeno;
+
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <h2>${t.nazev}</h2>
+      <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
+
+      <p><b>Obsazeno:</b> ${obsazeno}/${t.kapacita}</p>
+
+      ${volno > 0 ? `
         <input id="name-${t.id}" placeholder="Jméno">
         <input id="email-${t.id}" placeholder="Email">
         <button onclick="reserve('${t.id}')">Rezervovat</button>
-      </div>
+      ` : `<p class="full">PLNO</p>`}
     `;
-  });
+
+    container.appendChild(div);
+  }
 }
 
 async function reserve(id) {
@@ -74,6 +123,24 @@ async function reserve(id) {
 
   if (!name || !email) {
     alert("Vyplň jméno a email");
+    return;
+  }
+
+  // kontrola kapacity ještě před zápisem
+  const { count } = await supabaseClient
+    .from("rezervace")
+    .select("*", { count: "exact", head: true })
+    .eq("trening_id", id);
+
+  const { data: trening } = await supabaseClient
+    .from("treninky")
+    .select("kapacita")
+    .eq("id", id)
+    .single();
+
+  if (count >= trening.kapacita) {
+    alert("Trénink je plný");
+    load();
     return;
   }
 
