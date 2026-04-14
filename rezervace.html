@@ -1,32 +1,9 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rezervace | Pojdtrenovat.cz</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styl.css">
-
-<body>
-  <header class="header">
-<div class="header-left">
-  <h1 class="site-title">pojdtrenovat.cz</h1>
-</div>  
-  <nav class="nav">
-    <a href="index.html">Úvod</a>
-    <a href="treneri.html">Trenéři</a>
-    <a href="rezervace.html">Rezervace</a>
-  </nav>
-<div class="logos-right">
-<img src="images/logoo.jpg" alt="POJĎ TRÉNOVAT" class="new-logo">
-<img src="images/ssgihockey.jpg" alt="SSGI logo" class="nav-logo"></div>
-</header>
-
-<a href="javascript:history.back()" class="back-btn">← Zpět</a>
-
-
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kalendář trenéniků</title>
+<title>Kalendář tréninků</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -105,8 +82,9 @@ const supabaseClient = supabase.createClient(
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
-// LOAD CALENDAR
+// LOAD
 async function loadCalendar(){
+
   const {data,error}=await supabaseClient
     .from("treninky")
     .select("*")
@@ -143,7 +121,7 @@ async function loadCalendar(){
   }
 }
 
-// SHOW DAY (FIXED)
+// SHOW DAY
 async function showDay(treninky,date){
 
   const detail=document.getElementById("detail");
@@ -166,6 +144,10 @@ async function showDay(treninky,date){
       <b>${t.nazev}</b><br>
       🕒 ${t.cas_od} - ${t.cas_do}<br>
       👥 ${obsazeno}/${t.kapacita}
+
+      ${t.misto ? `<br>📍 ${t.misto}` : ""}
+      ${t.typ ? `<br>🏷️ ${t.typ}` : ""}
+      ${t.poznamka ? `<br>📝 ${t.poznamka}` : ""}
 
       ${volno>0 ? `
         <input id="n-${t.id}" placeholder="Jméno">
