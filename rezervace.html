@@ -11,41 +11,54 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
   <style>
-    .rez-container {
+    body {
+      font-family: Roboto, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background: black;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+
+    .container {
       max-width: 900px;
       margin: 40px auto;
       padding: 20px;
     }
 
     .card {
-      background: #fff;
+      background: white;
       padding: 20px;
       margin-bottom: 15px;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     input {
-      padding: 8px;
-      margin-top: 5px;
       width: 100%;
+      padding: 8px;
+      margin: 5px 0;
     }
 
     button {
-      margin-top: 10px;
       padding: 10px;
       background: black;
       color: white;
       border: none;
       cursor: pointer;
       border-radius: 5px;
+      margin-top: 5px;
     }
 
     .full {
@@ -58,14 +71,14 @@
 <body>
 
 <header class="header">
-  <h1 class="site-title">Rezervace tréninků</h1>
+  <h1>Rezervace tréninků</h1>
   <nav class="nav">
     <a href="index.html">Úvod</a>
     <a href="rezervace.html">Rezervace</a>
   </nav>
 </header>
 
-<div class="rez-container" id="list"></div>
+<div class="container" id="list"></div>
 
 <script>
 const supabaseClient = supabase.createClient(
@@ -74,20 +87,23 @@ const supabaseClient = supabase.createClient(
 );
 
 async function load() {
-  console.log("LOAD START");
+  console.log("Načítám tréninky...");
 
-  const { data, error } = await supabaseClient
+  const { data: treninky, error } = await supabaseClient
     .from("treninky")
-    .select("*");
+    .select("*")
+    .order("datum");
 
-  console.log("DATA:", data);
+  console.log("DATA:", treninky);
   console.log("ERROR:", error);
-}
 
   const container = document.getElementById("list");
+  container.innerHTML = "";
 
-  container.innerHTML = JSON.stringify(data, null, 2);
-}
+  if (!treninky || treninky.length === 0) {
+    container.innerHTML = "<p>Žádné tréninky nejsou k dispozici.</p>";
+    return;
+  }
 
   for (let t of treninky) {
 
@@ -96,19 +112,19 @@ async function load() {
       .select("*", { count: "exact", head: true })
       .eq("trening_id", t.id);
 
-    const volno = t.kapacita - count;
+    const volno = t.kapacita - (count || 0);
 
     const div = document.createElement("div");
     div.className = "card";
 
     div.innerHTML = `
-      <h2>${t.nazev || "Trénink"}</h2>
+      <h2>${t.nazev}</h2>
       <p>${t.datum} | ${t.cas_od} - ${t.cas_do}</p>
 
-      <div class="row">
-        <div><b>Kapacita:</b> ${volno}/${t.kapacita}</div>
-        ${volno <= 0 ? '<div class="full">PLNO</div>' : ''}
-      </div>
+      <p>
+        Kapacita: ${volno}/${t.kapacita}
+        ${volno <= 0 ? '<span class="full"> - PLNO</span>' : ''}
+      </p>
 
       ${volno > 0 ? `
         <input id="jmeno-${t.id}" placeholder="Jméno">
@@ -130,28 +146,22 @@ async function rezervuj(id) {
     return;
   }
 
-  await supabaseClient.from("rezervace").insert([
-    { trening_id: id, jmeno, email }
-  ]);
+  const { error } = await supabaseClient
+    .from("rezervace")
+    .insert([{ trening_id: id, jmeno, email }]);
 
-  alert("Rezervace hotová 💪");
+  if (error) {
+    alert("Chyba při rezervaci");
+    console.log(error);
+    return;
+  }
+
+  alert("Rezervace proběhla úspěšně 💪");
   load();
 }
 
 load();
 </script>
-<script>
-console.log("SUPABASE CLIENT:", supabaseClient);
-
-const { data, error } = await supabaseClient
-  .from("treninky")
-  .select("*");
-
-console.log("DATA:", data);
-console.log("ERROR:", error);
-</script>
-</body>
-</html>
 
 </body>
 </html>
