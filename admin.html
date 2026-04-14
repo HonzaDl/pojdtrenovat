@@ -17,18 +17,18 @@ body{
 
 /* LOGIN */
 #login{
-  max-width:300px;
+  max-width:320px;
   margin:100px auto;
   background:#fff;
   padding:20px;
-  border-radius:10px;
-  text-align:center;
+  border-radius:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
 input,button{
   width:100%;
   padding:10px;
-  margin-top:8px;
+  margin-top:10px;
   border-radius:8px;
 }
 
@@ -36,10 +36,22 @@ button{
   background:black;
   color:white;
   border:none;
+  cursor:pointer;
 }
 
 /* APP */
-#app{display:none;padding:15px}
+#app{
+  display:none;
+  padding:15px;
+}
+
+/* TOP */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
 
 /* CALENDAR */
 #calendar{
@@ -56,7 +68,7 @@ button{
   border-left:4px solid #e00000;
 }
 
-/* TRAINING */
+/* TRAININGS */
 .training{
   background:white;
   margin-top:10px;
@@ -79,15 +91,19 @@ button{
 
 <!-- LOGIN -->
 <div id="login">
-  <h2>Admin</h2>
-  <input id="user" placeholder="Uživatel">
-  <input id="pass" placeholder="Heslo" type="password">
+  <h2>Přihlášení admin</h2>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Heslo">
   <button onclick="login()">Přihlásit</button>
 </div>
 
 <!-- APP -->
 <div id="app">
-  <h1>Admin kalendář</h1>
+
+  <div class="topbar">
+    <h1>Admin kalendář</h1>
+    <button onclick="logout()">Odhlásit</button>
+  </div>
 
   <div id="calendar"></div>
   <div id="trainings"></div>
@@ -95,6 +111,7 @@ button{
   <h2>Formulář</h2>
   <div id="form"></div>
   <button onclick="save()">Uložit</button>
+
 </div>
 
 <script>
@@ -106,24 +123,52 @@ const supabaseClient = supabase.createClient(
 
 let currentId = null;
 
-// LOGIN (jednoduchý)
-function login(){
-  const u = document.getElementById("user").value;
-  const p = document.getElementById("pass").value;
+// ---------------- LOGIN ----------------
+async function login(){
 
-  if(u==="admin" && p==="1234"){ // 🔥 změň si!
-    document.getElementById("login").style.display="none";
-    document.getElementById("app").style.display="block";
-    loadCalendar();
-  } else {
-    alert("Špatné údaje");
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if(error){
+    alert("Špatné přihlášení");
+    return;
+  }
+
+  startApp();
+}
+
+// ---------------- AUTO LOGIN ----------------
+async function checkUser(){
+
+  const { data } = await supabaseClient.auth.getUser();
+
+  if(data.user){
+    startApp();
   }
 }
 
-// LOAD CALENDAR
+// ---------------- START APP ----------------
+function startApp(){
+  document.getElementById("login").style.display="none";
+  document.getElementById("app").style.display="block";
+  loadCalendar();
+}
+
+// ---------------- LOGOUT ----------------
+async function logout(){
+  await supabaseClient.auth.signOut();
+  location.reload();
+}
+
+// ---------------- CALENDAR ----------------
 async function loadCalendar(){
 
-  const {data} = await supabaseClient
+  const { data } = await supabaseClient
     .from("treninky")
     .select("*")
     .order("datum");
@@ -142,6 +187,7 @@ async function loadCalendar(){
 
     const div=document.createElement("div");
     div.className="day";
+
     div.innerHTML=`<b>${date}</b><br>${grouped[date].length} tréninků`;
 
     div.onclick=()=>showTrainings(grouped[date]);
@@ -150,7 +196,7 @@ async function loadCalendar(){
   }
 }
 
-// SHOW TRAININGS
+// ---------------- SHOW ----------------
 function showTrainings(list){
 
   const cont=document.getElementById("trainings");
@@ -172,13 +218,13 @@ function showTrainings(list){
   });
 }
 
-// EDIT (AUTO FORM)
+// ---------------- EDIT ----------------
 function edit(data){
   currentId = data.id;
   generateForm(data);
 }
 
-// AUTO FORM
+// ---------------- AUTO FORM ----------------
 function generateForm(data = {}){
 
   const form=document.getElementById("form");
@@ -200,7 +246,7 @@ function generateForm(data = {}){
   }
 }
 
-// SAVE (INSERT / UPDATE)
+// ---------------- SAVE ----------------
 async function save(){
 
   const inputs=document.querySelectorAll("#form input");
@@ -234,7 +280,7 @@ async function save(){
   loadCalendar();
 }
 
-// INIT FORM (prázdný)
+// INIT FORM
 generateForm({
   nazev:"",
   datum:"",
@@ -244,6 +290,8 @@ generateForm({
   misto:"",
   cena:""
 });
+
+checkUser();
 
 </script>
 
