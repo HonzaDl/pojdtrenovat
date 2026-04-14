@@ -232,7 +232,15 @@ async function reserve(id){
     alert("Vyplň všechny údaje");
     return;
   }
+//............... POTVRZENI MAILU ...........
+  async function sendEmailConfirmation(name, email, trainingId){
 
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer re_Qv45cPPY_97Ki2FUe9BotTkJLVVG9nqfM",
+      "Content-Type": "application/json"
+    }
   // DUPLICITA
   const { data: existing } = await supabaseClient
     .from("rezervace")
