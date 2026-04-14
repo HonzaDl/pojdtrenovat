@@ -41,42 +41,37 @@ const supabaseClient = supabase.createClient(
 );
 
 async function load() {
-  console.log("LOAD START");
+  const container = document.getElementById("list");
+  container.innerHTML = "Načítám...";
 
   const { data, error } = await supabaseClient
     .from("treninky")
     .select("*");
 
-  console.log("DATA:", data);
-  console.log("ERROR:", error);
-
-  const container = document.getElementById("list");
+  console.log(data, error);
 
   if (error) {
-    container.innerHTML = "CHYBA: " + error.message;
-    return;
-  }
-
-  if (!data) {
-    container.innerHTML = "Žádná data";
+    container.innerHTML = "Chyba načítání";
     return;
   }
 
   container.innerHTML = "";
 
   data.forEach(t => {
-    container.innerHTML += `
-      <div class="card">
-        <h2>${t.nazev}</h2>
-        <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
-        <p>Kapacita: ${t.kapacita}</p>
-      </div>
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <h2>${t.nazev}</h2>
+      <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
+      <p>Kapacita: ${t.kapacita}</p>
     `;
+
+    container.appendChild(div);
   });
 }
 
 load();
-}
 </script>
 </body>
 </html>
