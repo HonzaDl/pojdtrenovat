@@ -83,18 +83,24 @@ async function reserve(id) {
     return;
   }
 
+  // kontrola duplicity
+  const { data: exist } = await supabaseClient
+    .from("rezervace")
+    .select("*")
+    .eq("trening_id", id)
+    .eq("email", email);
+
+  if (exist.length > 0) {
+    alert("Tento email už je na tréninku registrovaný");
+    return;
+  }
+
   const { error } = await supabaseClient
     .from("rezervace")
-    .insert([
-      {
-        trening_id: id,
-        jmeno: name,
-        email: email
-      }
-    ]);
+    .insert([{ trening_id: id, jmeno: name, email }]);
 
   if (error) {
-    alert("Chyba při rezervaci");
+    alert("Chyba rezervace");
     console.log(error);
     return;
   }
@@ -102,8 +108,6 @@ async function reserve(id) {
   alert("Rezervace hotová 💪");
   load();
 }
-
-load();
 </script>
 </body>
 </html>
