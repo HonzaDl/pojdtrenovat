@@ -3,14 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin panel</title>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
   <style>
     body {
       font-family: Arial;
-      padding:20px;
       background:#f4f6f8;
+      padding:20px;
+    }
+
+    .box {
+      background:white;
+      padding:15px;
+      border-radius:10px;
+      max-width:400px;
     }
 
     input, button {
@@ -23,11 +29,15 @@
       background:black;
       color:white;
       border:none;
+      cursor:pointer;
     }
 
-    .box {
+    .hidden { display:none; }
+
+    .card {
       background:white;
-      padding:15px;
+      padding:10px;
+      margin:10px 0;
       border-radius:10px;
     }
   </style>
@@ -35,16 +45,33 @@
 
 <body>
 
-<h1>Admin – přidání tréninku</h1>
+<h1>Admin panel</h1>
 
-<div class="box">
-  <input id="nazev" placeholder="Název">
-  <input id="datum" type="date">
-  <input id="od" type="time">
-  <input id="do" type="time">
-  <input id="kapacita" type="number" placeholder="Kapacita">
+<!-- LOGIN -->
+<div id="loginBox" class="box">
+  <h3>Přihlášení</h3>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Heslo">
+  <button onclick="login()">Přihlásit</button>
+</div>
 
-  <button onclick="add()">Přidat trénink</button>
+<!-- APP -->
+<div id="app" class="hidden">
+
+  <h3>Přidat trénink</h3>
+
+  <div class="box">
+    <input id="nazev" placeholder="Název">
+    <input id="datum" type="date">
+    <input id="od" type="time">
+    <input id="do" type="time">
+    <input id="kapacita" type="number">
+    <button onclick="add()">Přidat</button>
+  </div>
+
+  <h3>Odhlášení</h3>
+  <button onclick="logout()">Logout</button>
+
 </div>
 
 <script>
@@ -53,6 +80,32 @@ const supabaseClient = supabase.createClient(
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
+// LOGIN
+async function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    alert("Chyba loginu");
+    return;
+  }
+
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+}
+
+// LOGOUT
+async function logout() {
+  await supabaseClient.auth.signOut();
+  location.reload();
+}
+
+// ADD TRAINING
 async function add() {
   const nazev = document.getElementById("nazev").value;
   const datum = document.getElementById("datum").value;
@@ -71,14 +124,13 @@ async function add() {
     }]);
 
   if (error) {
+    alert("Chyba");
     console.log(error);
-    return alert("Chyba");
+  } else {
+    alert("Přidáno 💪");
   }
-
-  alert("Přidáno 💪");
 }
 </script>
 
 </body>
-</html>
 </html>
