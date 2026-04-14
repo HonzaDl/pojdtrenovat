@@ -2,73 +2,19 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rezervace tréninků | pojdtrenovat.cz</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
+  <title>Rezervace</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
   <style>
-    body {
-      font-family: Roboto, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background: #000;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-
-    .card {
-      background: white;
-      padding: 20px;
-      margin-bottom: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-    }
-
-    button {
-      margin-top: 10px;
-      padding: 10px;
-      width: 100%;
-      background: black;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .full {
-      color: red;
-      font-weight: bold;
-    }
+    body { font-family: Arial; background:#f4f6f8; padding:20px; }
+    .card { background:white; padding:15px; margin:10px 0; border-radius:8px; }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>Rezervace tréninků</h1>
-</header>
-
-<div class="container" id="list"></div>
+<h1>Tréninky</h1>
+<div id="list">Načítám...</div>
 
 <script>
 const supabaseClient = supabase.createClient(
@@ -77,69 +23,24 @@ const supabaseClient = supabase.createClient(
 );
 
 async function load() {
-  const { data: treninky, error } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from("treninky")
-    .select("*")
-    .order("datum");
+    .select("*");
 
-  const container = document.getElementById("list");
-  container.innerHTML = "";
+  console.log(data, error);
 
-  if (error) {
-    container.innerHTML = "<p>Chyba načítání dat</p>";
-    console.log(error);
-    return;
-  }
+  const list = document.getElementById("list");
+  list.innerHTML = "";
 
-  for (let t of treninky) {
-
-    const { count } = await supabaseClient
-      .from("rezervace")
-      .select("*", { count: "exact", head: true })
-      .eq("trening_id", t.id);
-
-    const volno = t.kapacita - (count || 0);
-
-    const div = document.createElement("div");
-    div.className = "card";
-
-    div.innerHTML = `
-      <h2>${t.nazev}</h2>
-      <p>${t.datum} | ${t.cas_od} - ${t.cas_do}</p>
-      <p><b>Volno:</b> ${volno}/${t.kapacita}</p>
-
-      ${volno > 0 ? `
-        <input id="name-${t.id}" placeholder="Jméno">
-        <input id="email-${t.id}" placeholder="Email">
-        <button onclick="reserve('${t.id}')">Rezervovat</button>
-      ` : `<p class="full">PLNO</p>`}
+  data.forEach(t => {
+    list.innerHTML += `
+      <div class="card">
+        <h2>${t.nazev}</h2>
+        <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
+        <p>Kapacita: ${t.kapacita}</p>
+      </div>
     `;
-
-    container.appendChild(div);
-  }
-}
-
-async function reserve(id) {
-  const name = document.getElementById("name-" + id).value;
-  const email = document.getElementById("email-" + id).value;
-
-  if (!name || !email) {
-    alert("Vyplň jméno a email");
-    return;
-  }
-
-  const { error } = await supabaseClient
-    .from("rezervace")
-    .insert([{ trening_id: id, jmeno: name, email }]);
-
-  if (error) {
-    alert("Chyba rezervace");
-    console.log(error);
-    return;
-  }
-
-  alert("Rezervace úspěšná 💪");
-  load();
+  });
 }
 
 load();
