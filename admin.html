@@ -1,135 +1,250 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin panel</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | pojdtrenovat.cz</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      background:#f4f6f8;
-      padding:20px;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-    .box {
-      background:white;
-      padding:15px;
-      border-radius:10px;
-      max-width:400px;
-    }
+<style>
+body{
+  font-family:Roboto;
+  margin:0;
+  background:#f4f6f8;
+}
 
-    input, button {
-      width:100%;
-      padding:10px;
-      margin:5px 0;
-    }
+/* LOGIN */
+#login{
+  max-width:300px;
+  margin:100px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:10px;
+  text-align:center;
+}
 
-    button {
-      background:black;
-      color:white;
-      border:none;
-      cursor:pointer;
-    }
+input,button{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+}
 
-    .hidden { display:none; }
+button{
+  background:black;
+  color:white;
+  border:none;
+}
 
-    .card {
-      background:white;
-      padding:10px;
-      margin:10px 0;
-      border-radius:10px;
-    }
-  </style>
+/* APP */
+#app{display:none;padding:15px}
+
+/* CALENDAR */
+#calendar{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;
+}
+
+.day{
+  background:white;
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
+  border-left:4px solid #e00000;
+}
+
+/* TRAINING */
+.training{
+  background:white;
+  margin-top:10px;
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* FORM */
+#form{
+  background:white;
+  padding:15px;
+  margin-top:15px;
+  border-radius:10px;
+}
+</style>
 </head>
 
 <body>
 
-<h1>Admin panel</h1>
-
 <!-- LOGIN -->
-<div id="loginBox" class="box">
-  <h3>Přihlášení</h3>
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Heslo">
+<div id="login">
+  <h2>Admin</h2>
+  <input id="user" placeholder="Uživatel">
+  <input id="pass" placeholder="Heslo" type="password">
   <button onclick="login()">Přihlásit</button>
 </div>
 
 <!-- APP -->
-<div id="app" class="hidden">
+<div id="app">
+  <h1>Admin kalendář</h1>
 
-  <h3>Přidat trénink</h3>
+  <div id="calendar"></div>
+  <div id="trainings"></div>
 
-  <div class="box">
-    <input id="nazev" placeholder="Název">
-    <input id="datum" type="date">
-    <input id="od" type="time">
-    <input id="do" type="time">
-    <input id="kapacita" type="number">
-    <button onclick="add()">Přidat</button>
-  </div>
-
-  <h3>Odhlášení</h3>
-  <button onclick="logout()">Logout</button>
-
+  <h2>Formulář</h2>
+  <div id="form"></div>
+  <button onclick="save()">Uložit</button>
 </div>
 
 <script>
+
 const supabaseClient = supabase.createClient(
   "https://kgmdyhiwkkviswluuwkg.supabase.co",
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
-// LOGIN
-async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+let currentId = null;
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
+// LOGIN (jednoduchý)
+function login(){
+  const u = document.getElementById("user").value;
+  const p = document.getElementById("pass").value;
+
+  if(u==="admin" && p==="1234"){ // 🔥 změň si!
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="block";
+    loadCalendar();
+  } else {
+    alert("Špatné údaje");
+  }
+}
+
+// LOAD CALENDAR
+async function loadCalendar(){
+
+  const {data} = await supabaseClient
+    .from("treninky")
+    .select("*")
+    .order("datum");
+
+  let grouped = {};
+
+  data.forEach(t=>{
+    if(!grouped[t.datum]) grouped[t.datum]=[];
+    grouped[t.datum].push(t);
   });
 
-  if (error) {
-    alert("Chyba loginu");
+  const cal = document.getElementById("calendar");
+  cal.innerHTML="";
+
+  for(const date in grouped){
+
+    const div=document.createElement("div");
+    div.className="day";
+    div.innerHTML=`<b>${date}</b><br>${grouped[date].length} tréninků`;
+
+    div.onclick=()=>showTrainings(grouped[date]);
+
+    cal.appendChild(div);
+  }
+}
+
+// SHOW TRAININGS
+function showTrainings(list){
+
+  const cont=document.getElementById("trainings");
+  cont.innerHTML="";
+
+  list.forEach(t=>{
+
+    const div=document.createElement("div");
+    div.className="training";
+
+    div.innerHTML=`
+      <b>${t.nazev}</b><br>
+      ${t.cas_od} - ${t.cas_do}
+    `;
+
+    div.onclick=()=>edit(t);
+
+    cont.appendChild(div);
+  });
+}
+
+// EDIT (AUTO FORM)
+function edit(data){
+  currentId = data.id;
+  generateForm(data);
+}
+
+// AUTO FORM
+function generateForm(data = {}){
+
+  const form=document.getElementById("form");
+  form.innerHTML="";
+
+  for(const key in data){
+
+    if(key==="id" || key==="created_at") continue;
+
+    const label=document.createElement("label");
+    label.innerText=key;
+
+    const input=document.createElement("input");
+    input.id="f-"+key;
+    input.value=data[key] || "";
+
+    form.appendChild(label);
+    form.appendChild(input);
+  }
+}
+
+// SAVE (INSERT / UPDATE)
+async function save(){
+
+  const inputs=document.querySelectorAll("#form input");
+  let obj={};
+
+  inputs.forEach(i=>{
+    const key=i.id.replace("f-","");
+    obj[key]=i.value;
+  });
+
+  let result;
+
+  if(currentId){
+    result = await supabaseClient
+      .from("treninky")
+      .update(obj)
+      .eq("id", currentId);
+  } else {
+    result = await supabaseClient
+      .from("treninky")
+      .insert([obj]);
+  }
+
+  if(result.error){
+    console.log(result.error);
+    alert("Chyba");
     return;
   }
 
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
+  alert("Uloženo 💪");
+  loadCalendar();
 }
 
-// LOGOUT
-async function logout() {
-  await supabaseClient.auth.signOut();
-  location.reload();
-}
+// INIT FORM (prázdný)
+generateForm({
+  nazev:"",
+  datum:"",
+  cas_od:"",
+  cas_do:"",
+  kapacita:"",
+  misto:"",
+  cena:""
+});
 
-// ADD TRAINING
-async function add() {
-  const nazev = document.getElementById("nazev").value;
-  const datum = document.getElementById("datum").value;
-  const od = document.getElementById("od").value;
-  const doo = document.getElementById("do").value;
-  const kapacita = document.getElementById("kapacita").value;
-
-  const { error } = await supabaseClient
-    .from("treninky")
-    .insert([{
-      nazev,
-      datum,
-      cas_od: od,
-      cas_do: doo,
-      kapacita
-    }]);
-
-  if (error) {
-    alert("Chyba");
-    console.log(error);
-  } else {
-    alert("Přidáno 💪");
-  }
-}
 </script>
 
 </body>
