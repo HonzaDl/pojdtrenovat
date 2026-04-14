@@ -235,12 +235,29 @@ async function reserve(id){
 //............... POTVRZENI MAILU ...........
   async function sendEmailConfirmation(name, email, trainingId){
 
-  await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer re_Qv45cPPY_97Ki2FUe9BotTkJLVVG9nqfM",
-      "Content-Type": "application/json"
-    }
+  try {
+
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer re_Qv45cPPY_97Ki2FUe9BotTkJLVVG9nqfM",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: "onboarding@resend.dev",
+        to: email,
+        subject: "Potvrzení rezervace",
+        html: `<h2>Ahoj ${name}</h2><p>Rezervace OK</p>`
+      })
+    });
+
+    const data = await res.json();
+    console.log("EMAIL RESPONSE:", data);
+
+  } catch(err){
+    console.log("EMAIL ERROR:", err);
+  }
+}
   // DUPLICITA
   const { data: existing } = await supabaseClient
     .from("rezervace")
