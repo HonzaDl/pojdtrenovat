@@ -64,9 +64,45 @@
   <h1>Rezervace tréninků</h1>
 </div>
 
+<h2>Kalendář tréninků</h2>
+<div id="calendar"></div>
 <div id="list">Načítám...</div>
 
 <script>
+ async function loadCalendar() {
+  const { data, error } = await supabaseClient
+    .from("treninky")
+    .select("*")
+    .order("datum");
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  const cal = document.getElementById("calendar");
+  cal.innerHTML = "";
+
+  let grouped = {};
+
+  data.forEach(t => {
+    if (!grouped[t.datum]) grouped[t.datum] = [];
+    grouped[t.datum].push(t);
+  });
+
+  for (const date in grouped) {
+    cal.innerHTML += `<h3 style="margin-top:20px">${date}</h3>`;
+
+    grouped[date].forEach(t => {
+      cal.innerHTML += `
+        <div class="card">
+          <b>${t.nazev}</b><br>
+          ${t.cas_od} - ${t.cas_do}
+        </div>
+      `;
+    });
+  }
+} 
 const supabaseClient = supabase.createClient(
   "https://kgmdyhiwkkviswluuwkg.supabase.co",
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
@@ -159,6 +195,7 @@ async function reserve(id) {
 }
 
 load();
+loadCalendar();
 </script>
 
 </body>
