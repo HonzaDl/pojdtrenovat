@@ -74,15 +74,15 @@ const supabaseClient = supabase.createClient(
 );
 
 async function load() {
-  const { data: treningy } = await supabaseClient
-    .from("treningy")
+  const { data: treninky } = await supabaseClient
+    .from("treninky")
     .select("*")
     .order("datum");
 
   const container = document.getElementById("list");
   container.innerHTML = "";
 
-  for (let t of treningy) {
+  for (let t of treninky) {
 
     const { count } = await supabaseClient
       .from("rezervace")
