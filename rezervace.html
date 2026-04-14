@@ -41,72 +41,41 @@ const supabaseClient = supabase.createClient(
 );
 
 async function load() {
-  const { data: treninky } = await supabaseClient
+  console.log("LOAD START");
+
+  const { data, error } = await supabaseClient
     .from("treninky")
     .select("*");
 
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+
   const container = document.getElementById("list");
+
+  if (error) {
+    container.innerHTML = "CHYBA: " + error.message;
+    return;
+  }
+
+  if (!data) {
+    container.innerHTML = "Žádná data";
+    return;
+  }
+
   container.innerHTML = "";
 
-  for (let t of treninky) {
-
-    const { count } = await supabaseClient
-      .from("rezervace")
-      .select("*", { count: "exact", head: true })
-      .eq("trening_id", t.id);
-
-    const volno = t.kapacita - (count || 0);
-
+  data.forEach(t => {
     container.innerHTML += `
       <div class="card">
         <h2>${t.nazev}</h2>
         <p>${t.datum} ${t.cas_od} - ${t.cas_do}</p>
-
-        <p><b>Volno:</b> ${volno}/${t.kapacita}</p>
-
-        ${volno > 0 ? `
-          <input id="name-${t.id}" placeholder="Jméno">
-          <input id="email-${t.id}" placeholder="Email">
-          <button onclick="reserve('${t.id}')">Rezervovat</button>
-        ` : `<p style="color:red;font-weight:bold;">PLNO</p>`}
+        <p>Kapacita: ${t.kapacita}</p>
       </div>
     `;
-  }
+  });
 }
 
-async function reserve(id) {
-  const name = document.getElementById("name-" + id).value;
-  const email = document.getElementById("email-" + id).value;
-
-  if (!name || !email) {
-    alert("Vyplň jméno a email");
-    return;
-  }
-
-  // kontrola duplicity
-  const { data: exist } = await supabaseClient
-    .from("rezervace")
-    .select("*")
-    .eq("trening_id", id)
-    .eq("email", email);
-
-  if (exist.length > 0) {
-    alert("Tento email už je na tréninku registrovaný");
-    return;
-  }
-
-  const { error } = await supabaseClient
-    .from("rezervace")
-    .insert([{ trening_id: id, jmeno: name, email }]);
-
-  if (error) {
-    alert("Chyba rezervace");
-    console.log(error);
-    return;
-  }
-
-  alert("Rezervace hotová 💪");
-  load();
+load();
 }
 </script>
 </body>
