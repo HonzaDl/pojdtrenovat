@@ -16,7 +16,7 @@ body{
   background:#f4f6f8;
 }
 
-/* KALENDÁŘ */
+/* calendar */
 #calendar{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
@@ -35,10 +35,8 @@ body{
 
 .card small{color:#666;display:block;margin-top:5px}
 
-/* DETAIL */
-#detail{
-  padding:16px;
-}
+/* detail */
+#detail{padding:16px}
 
 .training{
   background:#fff;
@@ -49,12 +47,25 @@ body{
   border-left:4px solid #000;
 }
 
+/* tags */
+.tag{
+  display:inline-block;
+  padding:3px 8px;
+  border-radius:6px;
+  font-size:12px;
+  margin:3px 3px 0 0;
+  color:#fff;
+}
+
+.tag-price{background:#000;}
+.tag-place{background:#666;}
+.tag-type{background:#e00000;}
+
 input,button{
   width:100%;
   padding:10px;
   margin-top:6px;
   border-radius:8px;
-  font-family:Roboto;
 }
 
 button{
@@ -72,7 +83,7 @@ button{
 
 <body>
 
-<!-- 🔥 TVŮJ ORIGINÁLNÍ HEADER -->
+<!-- HEADER (tvůj původní styl) -->
 <header class="header">
   <div class="header-left">
     <h1 class="site-title">pojdtrenovat.cz</h1>
@@ -92,10 +103,10 @@ button{
 
 <a href="javascript:history.back()" class="back-btn">← Zpět</a>
 
-<!-- 📅 KALENDÁŘ -->
+<!-- CALENDAR -->
 <div id="calendar">Načítám...</div>
 
-<!-- 📍 DETAIL -->
+<!-- DETAIL -->
 <div id="detail"></div>
 
 <script>
@@ -105,7 +116,27 @@ const supabaseClient = supabase.createClient(
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
-// -------------------- KALENDÁŘ --------------------
+// ---------------- AUTO TAGS ----------------
+function renderTags(t){
+
+  let html = "";
+
+  if(t.cena){
+    html += `<span class="tag tag-price">💰 ${t.cena} Kč</span>`;
+  }
+
+  if(t.misto){
+    html += `<span class="tag tag-place">📍 ${t.misto}</span>`;
+  }
+
+  if(t.typ){
+    html += `<span class="tag tag-type">${t.typ}</span>`;
+  }
+
+  return html;
+}
+
+// ---------------- CALENDAR ----------------
 async function loadCalendar(){
 
   const {data,error}=await supabaseClient
@@ -144,7 +175,7 @@ async function loadCalendar(){
   }
 }
 
-// -------------------- DETAIL --------------------
+// ---------------- DETAIL ----------------
 async function showDay(treninky,date){
 
   const detail=document.getElementById("detail");
@@ -166,11 +197,10 @@ async function showDay(treninky,date){
     div.innerHTML=`
       <b>${t.nazev}</b><br>
       🕒 ${t.cas_od} - ${t.cas_do}<br>
-      👥 ${obsazeno}/${t.kapacita}
 
-      ${t.misto ? `<br>📍 ${t.misto}` : ""}
-      ${t.typ ? `<br>🏷️ ${t.typ}` : ""}
-      ${t.poznamka ? `<br>📝 ${t.poznamka}` : ""}
+      ${renderTags(t)}
+
+      <br>👥 ${obsazeno}/${t.kapacita}
 
       ${volno>0 ? `
         <input id="n-${t.id}" placeholder="Jméno">
@@ -183,7 +213,7 @@ async function showDay(treninky,date){
   }
 }
 
-// -------------------- RESERVACE --------------------
+// ---------------- RESERVATION ----------------
 async function reserve(id){
 
   const name=document.getElementById("n-"+id).value;
