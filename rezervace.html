@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="cs">
-<h1>HTML FUNGUJE</h1>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -81,27 +80,16 @@
 
 <div class="container" id="list"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script>
+console.log("JS START");
+
 const supabaseClient = supabase.createClient(
   "https://kgmdyhiwkkviswluuwkg.supabase.co",
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
-async function load() {
-  console.log("Načítám tréninky...");
-
-  const { data: treninky, error } = await supabaseClient
-    .from("treninky")
-    .select("*")
-    .order("datum");
-
-  console.log("DATA:", treninky);
-  console.log("ERROR:", error);
-
-  const container = document.getElementById("list");
-  container.innerHTML = "";
-
- <script>
 async function load() {
   console.log("LOAD START");
 
@@ -112,27 +100,8 @@ async function load() {
   console.log("DATA:", data);
   console.log("ERROR:", error);
 
-  const container = document.getElementById("list");
-  container.innerHTML = "";
-
-  if (error) {
-    container.innerHTML = "<p>CHYBA: " + error.message + "</p>";
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    container.innerHTML = "<p>Žádné tréninky</p>";
-    return;
-  }
-
-  data.forEach(t => {
-    container.innerHTML += `
-      <div class="card">
-        <h2>${t.nazev || "Trénink"}</h2>
-        <p>${t.datum || ""} ${t.cas_od || ""} - ${t.cas_do || ""}</p>
-      </div>
-    `;
-  });
+  document.getElementById("list").innerHTML =
+    JSON.stringify(data, null, 2);
 }
 
 load();
