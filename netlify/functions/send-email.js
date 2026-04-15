@@ -11,16 +11,15 @@ export async function handler(event) {
       process.env.SUPABASE_SERVICE_KEY
     );
 
-    // trénink
-    const { data: trening, error } = await supabase
+    const { data: trening } = await supabase
       .from("treninky")
       .select("*")
       .eq("id", treningId)
       .single();
 
-    if(error) throw error;
-
-    // EMAIL RODIČ
+    // =========================
+    // 1. EMAIL RODIČ
+    // =========================
     await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -28,7 +27,7 @@ export async function handler(event) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: "onboarding@resend.dev",
+        from: "pojdtrenovat@onboarding.dev",
         to: [email],
         subject: "Potvrzení rezervace",
         html: `
@@ -40,7 +39,9 @@ export async function handler(event) {
       })
     });
 
-    // EMAIL TRENÉŘI
+    // =========================
+    // 2. EMAIL TRENÉR
+    // =========================
     await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -48,7 +49,7 @@ export async function handler(event) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: "onboarding@resend.dev",
+        from: "pojdtrenovat@onboarding.dev",
         to: ["mara.pavel@seznam.cz", "pojdtrenovat@gmail.com"],
         subject: "Nová rezervace 🔥",
         html: `
@@ -71,7 +72,7 @@ export async function handler(event) {
 
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: e.message })
+      body: JSON.stringify({ ok: false, error: e.message })
     };
   }
 }
