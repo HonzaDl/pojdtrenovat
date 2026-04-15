@@ -10,83 +10,17 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
-body{
-  font-family:Roboto;
-  margin:0;
-  background:#f4f6f8;
-}
-
-/* HEADER */
-.header{
-  background:#000;
-  color:#fff;
-  padding:10px 15px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.nav a{
-  color:white;
-  margin:0 8px;
-  text-decoration:none;
-}
-
-.logos-right img{
-  height:40px;
-  margin-left:10px;
-}
-
-.back-btn{
-  display:inline-block;
-  margin:10px 15px;
-  color:#000;
-  text-decoration:none;
-}
-
-.container{
-  max-width:900px;
-  margin:20px auto;
-  padding:10px;
-}
-
-/* CALENDAR */
-.calendar-day{
-  background:#fff;
-  padding:12px;
-  margin-bottom:10px;
-  border-radius:10px;
-  border-left:4px solid #e00000;
-  cursor:pointer;
-}
-
-/* CARD */
-.card{
-  background:#fff;
-  padding:15px;
-  margin:10px 0;
-  border-radius:10px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1);
-  border-left:4px solid #000;
-}
-
-input,button{
-  width:100%;
-  padding:10px;
-  margin-top:6px;
-  border-radius:8px;
-}
-
-button{
-  background:#000;
-  color:#fff;
-  border:none;
-}
-
-.full{
-  color:#e00000;
-  font-weight:bold;
-}
+body{font-family:Roboto;margin:0;background:#f4f6f8;}
+.header{background:#000;color:#fff;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;}
+.nav a{color:#fff;margin:0 8px;text-decoration:none;}
+.logos-right img{height:40px;margin-left:10px;}
+.back-btn{display:inline-block;margin:10px 15px;color:#000;text-decoration:none;}
+.container{max-width:900px;margin:20px auto;padding:10px;}
+.calendar-day{background:#fff;padding:12px;margin-bottom:10px;border-radius:10px;border-left:4px solid #e00000;cursor:pointer;}
+.card{background:#fff;padding:15px;margin:10px 0;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);border-left:4px solid #000;}
+input,button{width:100%;padding:10px;margin-top:6px;border-radius:8px;}
+button{background:#000;color:#fff;border:none;}
+.full{color:#e00000;font-weight:bold;}
 </style>
 </head>
 
@@ -126,38 +60,63 @@ const supabaseClient = supabase.createClient(
 let allData = [];
 let selectedDay = null;
 
-// EMAIL
-async function sendEmailConfirmation(name, email){
-  try {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer re_4P3dnTes_P5wLsQviAWYAz81c6UbEZRtT",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        from: "onboarding@resend.dev",
-        to: email,
-        subject: "Potvrzení rezervace",
-        html: `<h2>Ahoj ${name}</h2><p>Rezervace proběhla úspěšně 💪</p>`
-      })
-    });
-  } catch(err){
-    console.log(err);
-  }
+// ================= EMAIL PRO RODIČE =================
+async function sendEmailUser(hrac, email, trening){
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer TVUJ_API_KLIC",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from: "onboarding@resend.dev",
+      to: email,
+      subject: "Potvrzení rezervace",
+      html: `
+        <h2>Ahoj 👋</h2>
+        <p>Potvrzujeme rezervaci hráče <b>${hrac}</b>.</p>
+        <p><b>${trening.nazev}</b></p>
+        <p>${trening.datum} | ${trening.cas_od} - ${trening.cas_do}</p>
+        <p>📍 ${trening.misto}</p>
+      `
+    })
+  });
+}
+
+// ================= EMAIL PRO TEBE =================
+async function sendEmailAdmin(hrac, email, trening){
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer TVUJ_API_KLIC",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from: "onboarding@resend.dev",
+      to: ["mara.pavel@seznam.cz","pojdtrenovat@gmail.com"],
+      subject: "Nová rezervace 🔥",
+      html: `
+        <h2>Nový hráč na trénink</h2>
+
+        <p><b>Hráč:</b> ${hrac}</p>
+        <p><b>Email:</b> ${email}</p>
+
+        <hr>
+
+        <p><b>Trénink:</b> ${trening.nazev}</p>
+        <p>${trening.datum} | ${trening.cas_od} - ${trening.cas_do}</p>
+        <p>📍 ${trening.misto}</p>
+      `
+    })
+  });
 }
 
 // LOAD
 async function load(){
-  const { data, error } = await supabaseClient
+  const { data } = await supabaseClient
     .from("treninky")
     .select("*")
     .order("datum");
-
-  if(error){
-    console.log(error);
-    return;
-  }
 
   allData = data;
   renderCalendar();
@@ -178,31 +137,24 @@ function renderCalendar(){
   for(const date in grouped){
     const div = document.createElement("div");
     div.className = "calendar-day";
-
     div.innerHTML = `<b>${date}</b><br>${grouped[date].length} tréninků`;
-
-    div.onclick = ()=>{
-      selectedDay = grouped[date];
-      renderList();
-    };
-
+    div.onclick = ()=>{ selectedDay = grouped[date]; renderList(); };
     cal.appendChild(div);
   }
 }
 
 // LIST
 async function renderList(){
-
   const list = document.getElementById("list");
   list.innerHTML = "";
 
   let data = selectedDay || allData;
 
-  for (let t of data){
+  for(let t of data){
 
     const { count } = await supabaseClient
       .from("rezervace")
-      .select("*", { count:"exact", head:true })
+      .select("*",{count:"exact",head:true})
       .eq("trening_id", t.id);
 
     const volno = t.kapacita - count;
@@ -213,11 +165,11 @@ async function renderList(){
     div.innerHTML = `
       <h3>${t.nazev}</h3>
       <p>${t.datum} | ${t.cas_od} - ${t.cas_do}</p>
-      <p>Místo: ${t.misto || "-"}</p>
+      <p>📍 ${t.misto || "-"}</p>
       <p>Cena: ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
       <p><b>${count}/${t.kapacita}</b></p>
 
-      ${volno > 0 ? `
+      ${volno>0 ? `
         <input id="hrac-${t.id}" placeholder="Jméno hráče">
         <input id="vek-${t.id}" placeholder="Věk">
         <input id="email-${t.id}" placeholder="Email rodiče">
@@ -236,9 +188,7 @@ async function reserve(id){
   const vek = document.getElementById("vek-"+id).value;
   const email = document.getElementById("email-"+id).value;
 
-  if(!hrac || !vek || !email){
-    return alert("Vyplň údaje");
-  }
+  if(!hrac || !vek || !email) return alert("Vyplň údaje");
 
   // DUPLICITA
   const { data: existing } = await supabaseClient
@@ -248,9 +198,14 @@ async function reserve(id){
     .eq("hrac", hrac)
     .maybeSingle();
 
-  if(existing){
-    return alert("Hráč už je přihlášen");
-  }
+  if(existing) return alert("Hráč už je přihlášen");
+
+  // NAČTI TRÉNINK
+  const { data: trening } = await supabaseClient
+    .from("treninky")
+    .select("*")
+    .eq("id", id)
+    .single();
 
   // INSERT
   const { error } = await supabaseClient
@@ -262,7 +217,9 @@ async function reserve(id){
     return alert("Chyba rezervace");
   }
 
-  await sendEmailConfirmation(hrac, email);
+  // EMAILY
+  await sendEmailUser(hrac, email, trening);
+  await sendEmailAdmin(hrac, email, trening);
 
   alert("Rezervace hotová 💪");
   load();
