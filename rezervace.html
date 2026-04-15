@@ -64,23 +64,37 @@ let reservationCounts = {};
 // ================= LOAD =================
 async function load(){
 
-  const { data: treninky } = await supabaseClient
-    .from("treninky")
-    .select("*")
-    .order("datum");
+  try {
 
-  const { data: rezervace } = await supabaseClient
-    .from("rezervace")
-    .select("trening_id");
+    const { data: treninky, error: e1 } = await supabaseClient
+      .from("treninky")
+      .select("*")
+      .order("datum");
 
-  reservationCounts = {};
-  rezervace.forEach(r=>{
-    reservationCounts[r.trening_id] = (reservationCounts[r.trening_id] || 0) + 1;
-  });
+    const { data: rezervace, error: e2 } = await supabaseClient
+      .from("rezervace")
+      .select("trening_id");
 
-  allData = treninky;
-  renderCalendar();
-  renderList();
+    if(e1 || e2){
+      console.log(e1, e2);
+      document.getElementById("calendar").innerHTML = "❌ chyba Supabase";
+      return;
+    }
+
+    reservationCounts = {};
+    rezervace.forEach(r=>{
+      reservationCounts[r.trening_id] = (reservationCounts[r.trening_id] || 0) + 1;
+    });
+
+    allData = treninky || [];
+
+    renderCalendar();
+    renderList();
+
+  } catch(err){
+    console.log(err);
+    document.getElementById("calendar").innerHTML = "❌ chyba načítání";
+  }
 }
 
 // ================= CALENDAR =================
@@ -146,28 +160,28 @@ function renderList(){
 }
 
 // ================= RESERVE =================
-const res = await fetch("/.netlify/functions/send-email", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    hrac,
-    email,
-    treningId: id
-  })
-});
+async function reserve(id){
 
-const result = await res.json();
+  const btn = document.getElementById("btn-"+id);
+  btn.disabled = true;
+  btn.innerText = "Rezervuji...";
 
-if(!res.ok){
-  alert("Rezervace OK, ale email selhal");
-  console.log(result);
-} else {
-  alert("Rezervace hotová 💪");
-}
+  const hrac = document.getElementById("hrac-"+id).value.trim();
+  const vek = document.getElementById("vek-"+id).value;
+  const email = document.getElementById("email-"+id).value;
 
-  // DUPLICITA
+  if(!hrac || !vek || !email){
+    alert("Vyplň všechny údaje");
+    reset(btn);
+    return;
+  }
+
+  if(!email.includes("@")){
+    alert("Špatný email");
+    reset(btn);
+    return;
+  }
+
   const { data: existing } = await supabaseClient
     .from("rezervace")
     .select("id")
@@ -181,7 +195,6 @@ if(!res.ok){
     return;
   }
 
-  // INSERT
   const { error } = await supabaseClient
     .from("rezervace")
     .insert([{ trening_id:id, hrac, vek, email }]);
@@ -193,12 +206,9 @@ if(!res.ok){
     return;
   }
 
-  // 🔥 NETLIFY FUNCTION (EMAIL)
-  await fetch("/.netlify/functions/send-email", {
+  const res = await fetch("/.netlify/functions/send-email", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       hrac,
       email,
@@ -206,7 +216,11 @@ if(!res.ok){
     })
   });
 
-  alert("Rezervace hotová 💪");
+  if(!res.ok){
+    alert("Rezervace OK, ale email selhal");
+  } else {
+    alert("Rezervace hotová 💪");
+  }
 
   load();
 }
