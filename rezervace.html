@@ -130,6 +130,52 @@ button:hover{
   color:red;
   font-weight:bold;
 }
+/* =========================
+   MOBILE FIX
+========================= */
+
+@media (max-width: 900px){
+
+  #calendar{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px){
+
+  #calendar{
+    grid-template-columns: 1fr;
+  }
+
+  .container{
+    padding:8px;
+  }
+
+  .calendar-day{
+    min-height:auto;
+  }
+
+  .training{
+    font-size:14px;
+  }
+
+  .week-nav{
+    flex-direction:column;
+    gap:8px;
+  }
+
+  .week-nav button{
+    width:100%;
+  }
+
+  .card{
+    margin-top:10px;
+  }
+
+  input,button{
+    font-size:16px;
+  }
+}
 </style>
 </head>
 
