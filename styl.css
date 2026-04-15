@@ -1,35 +1,27 @@
-/* Reset a základ */
-body {
+/* =========================
+   RESET + ZÁKLAD
+========================= */
+
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: 'Roboto', Arial, sans-serif;
-  background-color: #bbbbbb;
-  color: #111;
-  line-height: 1.5;
+  padding: 0;
 }
 
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #bbbbbb;
-  position: relative;
+  color: #111;
+  line-height: 1.5;
   min-height: 100vh;
-  overflow-x: hidden;
- 
-}
-
-html, body {
-  height: 100%;       /* celé okno */
-  margin: 0;
-  padding: 0;
-}
-
-body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;  /* hlavní kontejner zabere celé okno */
+  overflow-x: hidden;
+  position: relative;
 }
 
-/* poloprůhledné logo v pozadí */
+/* pozadí logo */
 body::before {
   content: "";
   position: fixed;
@@ -38,13 +30,15 @@ body::before {
   width: 100%;
   height: 100%;
   background: url("images/ssgihockey.jpg") no-repeat center center;
-  background-size: 800px; /* velikost loga */
-  opacity: 0.1; /* tady nastavíš průhlednost (zkus 0.03 – 0.1) */
-  z-index: -1; /* logo jde za obsah */
+  background-size: 800px;
+  opacity: 0.1;
+  z-index: -1;
 }
 
+/* =========================
+   HEADER + NAV
+========================= */
 
-/* === Hlavička a navigace === */
 .header {
   display: flex;
   align-items: center;
@@ -54,372 +48,213 @@ body::before {
   color: #fff;
 }
 
-.site-title {
-  font-size: 1.8em;
-  font-weight: bold;
-  margin: 0; /* zajistí, že není defaultní margin, pokud byl */
-}
-
-/* Navigace uprostřed, mezi nadpisem a logy */
 .nav {
   display: flex;
   align-items: center;
-  gap: 30px; /* mezery mezi odkazy */
-}
-/* Kontejner pro obě loga vpravo */
-.logos-right {
-  display: flex;
-  align-items: center;
-  gap: 100px; /* mezerka mezi novým a starým logem */
+  gap: 30px;
 }
 
-/* Styly log */
-.nav-logo {
-  height: 50px; /* velikost původního loga pro PC, můžeme změnit pokud bude potřeba */
-  /* odstraníme margin-left:700px; protože to přenastavíme rozložením */
-}
-
-/* specifický styl pro nově přidané logo pokud chceš odlišit */
-.new-logo {
-  height: 50px;  /* může být stejné nebo jiné */
-}
-
-/* Responzivita */
-@media (max-width: 600px) {
-  .header {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  /* loga menší na mobilu */
-  .nav-logo {
-    height: 25px;
-  }
-}
 .nav a {
-  text-decoration: none;
   color: #fff;
+  text-decoration: none;
   font-weight: bold;
-  padding: 5px 10px;
-  transition: color 0.3s;
 }
 
 .nav a:hover {
-  color: #e60000; /* červená při hoveru */
+  color: #e60000;
 }
 
-.nav-logo {
-  height: 50px;       /* velikost loga na PC */
- 
-}
-
-/* === Responzivní zobrazení === */
-@media (max-width: 600px) {
-   .header {
-    flex-direction: column;      /* nadpis nahoře, navigace a logo pod ním */
-    align-items: center;
-    gap: 10px;                   /* mezery mezi nadpisem, navigací a logem */
-  }
-
-  .nav {
-    flex-direction: row;  /* stále v řádku */
-    flex-wrap: nowrap;      /* pokud se nevejdou, zalomí se */
-    justify-content: center;
-    gap: 10px;            /* menší mezery */
-  }
-
-  .nav-logo {
-    height: 25px;         /* menší logo na mobilu */
-    margin-left: 0;
-  }
-}
-
-/* Tlačítko na zpět */
- a.back-btn:link,
- a.back-btn:visited {
-  color: #000 !important;        /* výchozí černá */
-  display: inline-flex;           /* aby šipka a text byly hezky vedle sebe */
+.logos-right {
+  display: flex;
   align-items: center;
-  gap: 0.4rem;                    /* mezera mezi šipkou a textem */
-  color: #000 !important;                    /* černý text a šipka */
-  text-decoration: none !important;          /* bez podtržení */
-  font-weight: 700;
-  padding: 0.5rem 1rem;            /* velikost tlačítka */
-  border-radius: 6px;              /* zaoblené rohy */
-  background-color: #111;          /* tmavé pozadí */
-  border: 2px solid #000;          /* černý okraj */
-  transition: all 0.25s ease;      
-  cursor: pointer;
-  font-size: 1rem;
+  gap: 40px;
+}
+
+.nav-logo,
+.new-logo {
+  height: 50px;
+}
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+a.back-btn:link,
+a.back-btn:visited {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 8px 12px;
+  background: #111;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #000;
 }
 
 .back-btn:hover {
-  background-color: #e60000;       /* červené pozadí při hover */
-  border-color: #e60000;           /* červený okraj při hover */
-  color: #fff !important;                     /* text zůstane bílý */
+  background: #e60000;
+  border-color: #e60000;
+  color: #fff;
 }
 
+/* =========================
+   MAIN
+========================= */
 
-
- 
-/* Hlavní obsah */
 main {
-  padding: 20px 30px; /* odsazení textu od okraje */
+  padding: 20px;
   max-width: 1200px;
   margin: auto;
   flex: 1;
 }
 
-main h2 {
-  text-align: center;
-  margin: 40px 0 20px;
-  color: #E10600;
-}
+/* =========================
+   TRENEŘI
+========================= */
 
-/* Odkazy na úvodní stránce (SSGI, Pohybové dovednosti, Tejpování, Akce na ledě) */
-.odkazy {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 30px;
-}
-
-.odkaz a {
-  font-family: 'Arial Black', sans-serif; /* výrazný font */
-  color: #E10600; /* červená */
-  font-size: 1.3em;
-  text-decoration: none;
-  
-}
-
-.odkaz a:hover {
-  color: #b80000;
-}
-
-.odkaz p {
-  font-family: 'Roboto', sans-serif;
-  color: #111;
-  font-size: 1em;
-  margin-top: 5px;
-}
-
-/* Trenéři */
 .treneri {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  margin-top: 30px;
 }
 
 .trener {
   background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  text-align: center;
+  border-radius: 10px;
   padding: 15px;
   width: 220px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  text-align: center;
 }
 
-.trener:hover {
-  transform: translateY(-5px);
+/* =========================
+   GALLERY
+========================= */
+
+.gallery {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  padding: 16px;
 }
 
-.trener img {
+.gallery-item img {
   width: 100%;
-  height: auto;
-  border-radius: 8px;
+  transition: 0.3s;
 }
 
-.trener h3 {
-  color: #E10600;
-  margin: 10px 0 5px;
+.gallery-item:hover img {
+  transform: scale(1.1);
 }
 
-.trener p {
-  font-size: 0.95em;
-  color: #333;
+/* =========================
+   CALENDAR (KLÍČOVÉ)
+========================= */
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  margin-top: 20px;
 }
 
-/* Rezervace */
-.rezervace-form {
-  display: none; /* formulář skrytý */
+.calendar-day {
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px;
+  min-height: 160px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
 
-/* Footer */
+.calendar-day b {
+  display: block;
+  margin-bottom: 8px;
+  opacity: 0.6;
+}
+
+/* trénink */
+.training {
+  padding: 8px;
+  border-radius: 10px;
+  margin-top: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: 0.2s;
+}
+
+.training:hover {
+  transform: scale(1.03);
+}
+
+/* kapacita barvy */
+.green { background: #eafaf1; border-left: 4px solid #2ecc71; }
+.yellow { background: #fff7e0; border-left: 4px solid #f1c40f; }
+.red { background: #ffe8e8; border-left: 4px solid #e74c3c; }
+
+/* detail karta */
+.card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+  margin-top: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+/* =========================
+   INPUTS + BUTTONS
+========================= */
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+button {
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #e60000;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
 footer {
-  background-color: #000;
+  background: #000;
   color: #fff;
   text-align: center;
   padding: 15px;
   margin-top: 40px;
-  font-size: 0.9em;
-  position: relative;
-  z-index: 1;
 }
 
-/* Responsivní design */
+/* =========================
+   MOBILE
+========================= */
+
 @media (max-width: 768px) {
-  nav {
-    flex-direction: row;
+  #calendar {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .treneri {
+  .header {
     flex-direction: column;
-    align-items: center;
+    gap: 10px;
   }
 
-  header h1 {
-    font-size: 1.5em;
+  .nav {
+    flex-wrap: wrap;
+    justify-content: center;
   }
-}
-/* === Kontakt na Filipa Marka - Akce na ledě === */
-.contact-filipa {
-  margin-top: 150px;    /* odsazení od předchozího textu */
-  font-weight: bold;
-  color: #e60000;      /* červená barva, aby vynikl */
-}
-
-@media (max-width: 600px) {
-  body::before {
-    background-size: 300px; /* menší logo pro mobil */
-    opacity: 0.05;          /* můžeš upravit průhlednost */
-  }
-}
-/* Základní reset / box sizing */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* kontejner pro galerii */
-.gallery {
-  display: grid;
-  gap: 16px; /* vzdálenost mezi obrázky */
-  padding: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  /* vysvětlivka: min šířka obrázku 200px, pokud prostor, roztáhne se na 1fr */
-}
-
-/* každý prvek galerie */
-.gallery-item {
-  overflow: hidden; /* důležité, aby při zvětšení obrázek nepřesahoval hranice */
-  position: relative;
-}
-
-/* obrázek uvnitř každého prvku galerie */
-.gallery-item img {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.3s ease; /* plynulý efekt při hover */
-}
-
-/* efekt při najetí */
-.gallery-item:hover img {
-  transform: scale(1.1); /* zvětšení na 150% */
-}
-.back-btn {
-  color: #000 !important;       /* černý text */
-  text-decoration: none !important;
-  font-weight: bold;
-}
-
-.back-btn:hover {
-  color: #fff !important;       /* bílé písmo */
-  background-color: #e60000 !important;
-  border-color: #e60000 !important;
-}
-/* Obecně všechny odkazy černé */
-a {
-  color: black;
-  text-decoration: none; /* bez podtržení */
-}
-
-/* Při najetí myší červené */
-a:hover {
-  color: red;
-}
-
-/* Pokud chceš konkrétní odkaz červený pořád */
-a.red-link {
-  color: red;
-}
-
-/* Pokud chceš konkrétní odkaz černý pořád */
-a.black-link {
-  color: black;
-}
-/* Pokud chceš konkrétní odkaz bílý pořád */
-a.white-link {
-  color: white;
-}
-  .calendar-day.active{
-  background:#000;
-  color:#fff;
-}
-}
-/* ===== FIX + CLEAN UI PATCH ===== */
-
-/* kalendář bude vždy fungovat */
-#calendar{
-  display:grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap:12px;
-}
-
-/* den */
-.calendar-day{
-  background:#fff;
-  border-radius:14px;
-  padding:12px;
-  min-height:160px;
-  box-shadow:0 4px 14px rgba(0,0,0,0.06);
-}
-
-/* trénink */
-.training{
-  padding:8px;
-  border-radius:10px;
-  margin-top:6px;
-  cursor:pointer;
-  font-size:12px;
-  transition:0.2s;
-  border:1px solid rgba(0,0,0,0.05);
-}
-
-.training:hover{
-  transform:scale(1.03);
-}
-
-/* barvy (jemné, moderní) */
-.green{ background:#eafaf1; border-left:4px solid #2ecc71; }
-.yellow{ background:#fff7e0; border-left:4px solid #f1c40f; }
-.red{ background:#ffe8e8; border-left:4px solid #e74c3c; }
-
-/* detail */
-.card{
-  background:#fff;
-  padding:16px;
-  border-radius:14px;
-  margin-top:16px;
-  box-shadow:0 4px 14px rgba(0,0,0,0.06);
-}
-
-/* fix calendar active (pokud chceš později) */
-.calendar-day.active{
-  background:#111;
-  color:#fff;
 }
 
