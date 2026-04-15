@@ -87,7 +87,7 @@ button{background:#000;color:#fff;border:none;cursor:pointer;}
   <h2>Kalendář tréninků</h2>
   <div id="calendar">Načítám...</div>
 
-  <h2>Detail</h2>
+  <h2>Detail tréninku</h2>
   <div id="list"></div>
 
 </div>
@@ -173,7 +173,6 @@ function renderCalendar(){
 function openTraining(id){
 
   selectedTraining = allData.find(t => t.id === id);
-
   const t = selectedTraining;
 
   document.getElementById("list").innerHTML = `
@@ -181,6 +180,7 @@ function openTraining(id){
       <h3>${t.nazev}</h3>
       <p>${t.datum} | ${t.cas_od} - ${t.cas_do}</p>
       <p>📍 ${t.misto || "-"}</p>
+      <p>Cena: ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
 
       <input id="hrac" placeholder="Jméno hráče">
       <input id="vek" placeholder="Věk">
