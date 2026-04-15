@@ -142,7 +142,7 @@ body::before {
   }
 }
 
-*/Tlačítko na zpět
+/* Tlačítko na zpět */
  a.back-btn:link,
  a.back-btn:visited {
   color: #000 !important;        /* výchozí černá */
@@ -364,10 +364,62 @@ a.black-link {
 /* Pokud chceš konkrétní odkaz bílý pořád */
 a.white-link {
   color: white;
-
+}
   .calendar-day.active{
   background:#000;
   color:#fff;
 }
+}
+/* ===== FIX + CLEAN UI PATCH ===== */
+
+/* kalendář bude vždy fungovat */
+#calendar{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:12px;
+}
+
+/* den */
+.calendar-day{
+  background:#fff;
+  border-radius:14px;
+  padding:12px;
+  min-height:160px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.06);
+}
+
+/* trénink */
+.training{
+  padding:8px;
+  border-radius:10px;
+  margin-top:6px;
+  cursor:pointer;
+  font-size:12px;
+  transition:0.2s;
+  border:1px solid rgba(0,0,0,0.05);
+}
+
+.training:hover{
+  transform:scale(1.03);
+}
+
+/* barvy (jemné, moderní) */
+.green{ background:#eafaf1; border-left:4px solid #2ecc71; }
+.yellow{ background:#fff7e0; border-left:4px solid #f1c40f; }
+.red{ background:#ffe8e8; border-left:4px solid #e74c3c; }
+
+/* detail */
+.card{
+  background:#fff;
+  padding:16px;
+  border-radius:14px;
+  margin-top:16px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.06);
+}
+
+/* fix calendar active (pokud chceš později) */
+.calendar-day.active{
+  background:#111;
+  color:#fff;
 }
 
