@@ -26,12 +26,6 @@ body{
   justify-content:space-between;
 }
 
-.header-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
 .nav a{
   color:white;
   margin:0 8px;
@@ -50,7 +44,6 @@ body{
   text-decoration:none;
 }
 
-/* LAYOUT */
 .container{
   max-width:900px;
   margin:20px auto;
@@ -67,7 +60,7 @@ body{
   cursor:pointer;
 }
 
-/* TRAINING CARD */
+/* CARD */
 .card{
   background:#fff;
   padding:15px;
@@ -77,7 +70,6 @@ body{
   border-left:4px solid #000;
 }
 
-/* INPUTS */
 input,button{
   width:100%;
   padding:10px;
@@ -89,7 +81,6 @@ button{
   background:#000;
   color:#fff;
   border:none;
-  cursor:pointer;
 }
 
 .full{
@@ -101,39 +92,32 @@ button{
 
 <body>
 
-<!-- HEADER -->
 <header class="header">
-  <div class="header-left">
-    <h1 class="site-title">pojdtrenovat.cz</h1>
-  </div>
-
+  <h1>pojdtrenovat.cz</h1>
   <nav class="nav">
     <a href="index.html">Úvod</a>
     <a href="treneri.html">Trenéři</a>
     <a href="rezervace.html">Rezervace</a>
   </nav>
-
   <div class="logos-right">
-    <img src="images/logoo.jpg" alt="logo">
-    <img src="images/ssgihockey.jpg" alt="logo">
+    <img src="images/logoo.jpg">
+    <img src="images/ssgihockey.jpg">
   </div>
 </header>
 
 <a href="javascript:history.back()" class="back-btn">← Zpět</a>
 
-<!-- CONTENT -->
 <div class="container">
 
 <h2>Kalendář tréninků</h2>
 <div id="calendar">Načítám...</div>
 
-<h2>Rezervuj</h2>
+<h2>Rezervace</h2>
 <div id="list"></div>
 
 </div>
 
 <script>
-
 const supabaseClient = supabase.createClient(
   "https://kgmdyhiwkkviswluuwkg.supabase.co",
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
@@ -142,9 +126,29 @@ const supabaseClient = supabase.createClient(
 let allData = [];
 let selectedDay = null;
 
-// ---------------- LOAD ----------------
-async function load(){
+// EMAIL
+async function sendEmailConfirmation(name, email){
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer TVUJ_API_KLIC",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: "onboarding@resend.dev",
+        to: email,
+        subject: "Potvrzení rezervace",
+        html: `<h2>Ahoj ${name}</h2><p>Rezervace proběhla úspěšně 💪</p>`
+      })
+    });
+  } catch(err){
+    console.log(err);
+  }
+}
 
+// LOAD
+async function load(){
   const { data, error } = await supabaseClient
     .from("treninky")
     .select("*")
@@ -159,9 +163,8 @@ async function load(){
   renderCalendar();
 }
 
-// ---------------- CALENDAR ----------------
+// CALENDAR
 function renderCalendar(){
-
   const cal = document.getElementById("calendar");
   cal.innerHTML = "";
 
@@ -173,16 +176,12 @@ function renderCalendar(){
   });
 
   for(const date in grouped){
-
     const div = document.createElement("div");
     div.className = "calendar-day";
 
-    div.innerHTML = `
-      <b>${date}</b><br>
-      ${grouped[date].length} tréninků
-    `;
+    div.innerHTML = `<b>${date}</b><br>${grouped[date].length} tréninků`;
 
-    div.onclick = () => {
+    div.onclick = ()=>{
       selectedDay = grouped[date];
       renderList();
     };
@@ -191,15 +190,22 @@ function renderCalendar(){
   }
 }
 
-// ---------------- LIST ----------------
-function renderList(){
+// LIST
+async function renderList(){
 
   const list = document.getElementById("list");
   list.innerHTML = "";
 
   let data = selectedDay || allData;
 
-  data.forEach(t => {
+  for (let t of data){
+
+    const { count } = await supabaseClient
+      .from("rezervace")
+      .select("*", { count:"exact", head:true })
+      .eq("trening_id", t.id);
+
+    const volno = t.kapacita - count;
 
     const div = document.createElement("div");
     div.className = "card";
@@ -208,56 +214,32 @@ function renderList(){
       <h3>${t.nazev}</h3>
       <p>${t.datum} | ${t.cas_od} - ${t.cas_do}</p>
       <p>Místo: ${t.misto || "-"}</p>
-      <p>Cena: ${t.cena || "-"} Kč</p>
+      <p>Cena: ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
+      <p><b>${count}/${t.kapacita}</b></p>
 
-      <input id="hrac-${t.id}" placeholder="Jméno hráče">
-      <input id="vek-${t.id}" placeholder="Věk">
-      <input id="email-${t.id}" placeholder="Email rodiče">
-
-      <button onclick="reserve('${t.id}')">Rezervovat</button>
+      ${volno > 0 ? `
+        <input id="hrac-${t.id}" placeholder="Jméno hráče">
+        <input id="vek-${t.id}" placeholder="Věk">
+        <input id="email-${t.id}" placeholder="Email rodiče">
+        <button onclick="reserve('${t.id}')">Rezervovat</button>
+      ` : `<div class="full">PLNO</div>`}
     `;
 
     list.appendChild(div);
-  });
+  }
 }
 
-// ---------------- RESERVE ----------------
+// RESERVE
 async function reserve(id){
 
-  const hrac = document.getElementById("hrac-" + id).value;
-  const vek = document.getElementById("vek-" + id).value;
-  const email = document.getElementById("email-" + id).value;
+  const hrac = document.getElementById("hrac-"+id).value;
+  const vek = document.getElementById("vek-"+id).value;
+  const email = document.getElementById("email-"+id).value;
 
   if(!hrac || !vek || !email){
-    alert("Vyplň všechny údaje");
-    return;
+    return alert("Vyplň údaje");
   }
-//............... POTVRZENI MAILU ...........
-  async function sendEmailConfirmation(name, email, trainingId){
 
-  try {
-
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer re_Qv45cPPY_97Ki2FUe9BotTkJLVVG9nqfM",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        from: "onboarding@resend.dev",
-        to: email,
-        subject: "Potvrzení rezervace",
-        html: `<h2>Ahoj ${name}</h2><p>Rezervace OK</p>`
-      })
-    });
-
-    const data = await res.json();
-    console.log("EMAIL RESPONSE:", data);
-
-  } catch(err){
-    console.log("EMAIL ERROR:", err);
-  }
-}
   // DUPLICITA
   const { data: existing } = await supabaseClient
     .from("rezervace")
@@ -267,49 +249,26 @@ async function reserve(id){
     .maybeSingle();
 
   if(existing){
-    alert("⚠️ Hráč už je přihlášený");
-    return;
-  }
-
-  // KAPACITA
-  const { count } = await supabaseClient
-    .from("rezervace")
-    .select("*", { count:"exact", head:true })
-    .eq("trening_id", id);
-
-  const { data: trening } = await supabaseClient
-    .from("treninky")
-    .select("kapacita")
-    .eq("id", id)
-    .single();
-
-  if(count >= trening.kapacita){
-    alert("Trénink je plný");
-    return;
+    return alert("Hráč už je přihlášen");
   }
 
   // INSERT
   const { error } = await supabaseClient
     .from("rezervace")
-    .insert([{
-      trening_id: id,
-      hrac,
-      vek,
-      email
-    }]);
+    .insert([{ trening_id:id, hrac, vek, email }]);
 
   if(error){
     console.log(error);
-    alert("Chyba rezervace");
-    return;
+    return alert("Chyba rezervace");
   }
+
+  await sendEmailConfirmation(hrac, email);
 
   alert("Rezervace hotová 💪");
   load();
 }
 
 load();
-
 </script>
 
 </body>
