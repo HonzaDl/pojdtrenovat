@@ -26,6 +26,24 @@ body{font-family:Roboto;margin:0;background:#f4f6f8;}
 
 .container{max-width:1000px;margin:20px auto;padding:10px;}
 
+/* WEEK NAV */
+.week-nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.week-nav button{
+  background:#000;
+  color:#fff;
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* CALENDAR */
 .calendar-day{
   background:#fff;
   padding:12px;
@@ -46,6 +64,7 @@ body{font-family:Roboto;margin:0;background:#f4f6f8;}
 .yellow{background:#ffeaa7;}
 .red{background:#ffb3b3;}
 
+/* CARD */
 .card{
   background:#fff;
   padding:15px;
@@ -62,6 +81,7 @@ input,button{
 }
 
 button{background:#000;color:#fff;border:none;cursor:pointer;}
+
 .full{color:red;font-weight:bold;}
 </style>
 </head>
@@ -84,7 +104,14 @@ button{background:#000;color:#fff;border:none;cursor:pointer;}
 
 <div class="container">
 
-  <h2>Kalendář tréninků</h2>
+  <h2>Týdenní kalendář</h2>
+
+  <div class="week-nav">
+    <button onclick="changeWeek(-1)">← Předchozí</button>
+    <div id="weekLabel"></div>
+    <button onclick="changeWeek(1)">Další →</button>
+  </div>
+
   <div id="calendar">Načítám...</div>
 
   <h2>Detail tréninku</h2>
@@ -102,6 +129,7 @@ const supabaseClient = supabase.createClient(
 let allData = [];
 let reservationCounts = {};
 let selectedTraining = null;
+let weekOffset = 0;
 
 // ================= LOAD =================
 async function load(){
@@ -121,14 +149,31 @@ async function load(){
   });
 
   allData = treninky || [];
-  renderCalendar();
+  renderWeek();
 }
 
-// ================= CALENDAR =================
-function renderCalendar(){
+// ================= WEEK NAV =================
+function changeWeek(dir){
+  weekOffset += dir;
+  renderWeek();
+}
+
+// ================= WEEK RENDER =================
+function renderWeek(){
 
   const cal = document.getElementById("calendar");
   cal.innerHTML = "";
+
+  const today = new Date();
+
+  const start = new Date(today);
+  start.setDate(today.getDate() - today.getDay() + 1 + weekOffset * 7);
+
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+
+  document.getElementById("weekLabel").innerText =
+    `${start.toLocaleDateString("cs-CZ")} - ${end.toLocaleDateString("cs-CZ")}`;
 
   const grouped = {};
 
@@ -137,16 +182,24 @@ function renderCalendar(){
     grouped[t.datum].push(t);
   });
 
-  const sorted = Object.keys(grouped).sort();
+  const days = [];
 
-  sorted.forEach(date=>{
+  for(let i=0;i<7;i++){
+    const d = new Date(start);
+    d.setDate(start.getDate()+i);
+    days.push(d.toISOString().split("T")[0]);
+  }
+
+  days.forEach(date=>{
 
     const div = document.createElement("div");
     div.className = "calendar-day";
 
     let html = `<b>${formatDate(date)}</b>`;
 
-    grouped[date].forEach(t=>{
+    const trainings = grouped[date] || [];
+
+    trainings.forEach(t=>{
 
       const count = reservationCounts[t.id] || 0;
       const free = t.kapacita - count;
@@ -169,10 +222,11 @@ function renderCalendar(){
   });
 }
 
-// ================= OPEN TRAINING =================
+// ================= OPEN =================
 function openTraining(id){
 
   selectedTraining = allData.find(t => t.id === id);
+
   const t = selectedTraining;
 
   document.getElementById("list").innerHTML = `
