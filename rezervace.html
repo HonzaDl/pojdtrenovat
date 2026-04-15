@@ -60,12 +60,12 @@ const supabaseClient = supabase.createClient(
 let allData = [];
 let selectedDay = null;
 
-// ================= EMAIL PRO RODIČE =================
+// ================= EMAIL RODIČ =================
 async function sendEmailUser(hrac, email, trening){
   await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
-      "Authorization": "Bearer re_fAJqJVev_GZ5Viggd79VmD6MNmdmMbB9R",
+      "Authorization": "Bearer re_DKJr74ek_7fn2eWCmjYPospXvDVZUiuN4",
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -73,22 +73,29 @@ async function sendEmailUser(hrac, email, trening){
       to: email,
       subject: "Potvrzení rezervace",
       html: `
-        <h2>Ahoj 👋</h2>
-        <p>Potvrzujeme rezervaci hráče <b>${hrac}</b>.</p>
-        <p><b>${trening.nazev}</b></p>
-        <p>${trening.datum} | ${trening.cas_od} - ${trening.cas_do}</p>
-        <p>📍 ${trening.misto}</p>
+        <h2>Potvrzení rezervace ✅</h2>
+
+        <p>Hráč <b>${hrac}</b> je přihlášen na trénink.</p>
+
+        <p>
+          <b>${trening.nazev}</b><br>
+          📅 ${trening.datum}<br>
+          🕒 ${trening.cas_od} - ${trening.cas_do}<br>
+          📍 ${trening.misto}
+        </p>
+
+        <p>Těšíme se 💪</p>
       `
     })
   });
 }
 
-// ================= EMAIL PRO TEBE =================
+// ================= EMAIL ADMIN =================
 async function sendEmailAdmin(hrac, email, trening){
   await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
-      "Authorization": "Bearer re_fAJqJVev_GZ5Viggd79VmD6MNmdmMbB9R",
+      "Authorization": "Bearer re_DKJr74ek_7fn2eWCmjYPospXvDVZUiuN4",
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
@@ -96,16 +103,19 @@ async function sendEmailAdmin(hrac, email, trening){
       to: ["mara.pavel@seznam.cz","pojdtrenovat@gmail.com"],
       subject: "Nová rezervace 🔥",
       html: `
-        <h2>Nový hráč na trénink</h2>
+        <h2>Nová rezervace</h2>
 
         <p><b>Hráč:</b> ${hrac}</p>
         <p><b>Email:</b> ${email}</p>
 
         <hr>
 
-        <p><b>Trénink:</b> ${trening.nazev}</p>
-        <p>${trening.datum} | ${trening.cas_od} - ${trening.cas_do}</p>
-        <p>📍 ${trening.misto}</p>
+        <p>
+          <b>${trening.nazev}</b><br>
+          📅 ${trening.datum}<br>
+          🕒 ${trening.cas_od} - ${trening.cas_do}<br>
+          📍 ${trening.misto}
+        </p>
       `
     })
   });
@@ -184,21 +194,25 @@ async function renderList(){
 // RESERVE
 async function reserve(id){
 
-  const hrac = document.getElementById("hrac-"+id).value;
+  const hrac = document.getElementById("hrac-"+id).value.trim();
   const vek = document.getElementById("vek-"+id).value;
   const email = document.getElementById("email-"+id).value;
 
-  if(!hrac || !vek || !email) return alert("Vyplň údaje");
+  if(!hrac || !vek || !email){
+    return alert("Vyplň údaje");
+  }
 
-  // DUPLICITA
+  // DUPLICITA (opravená)
   const { data: existing } = await supabaseClient
     .from("rezervace")
     .select("*")
     .eq("trening_id", id)
-    .eq("hrac", hrac)
+    .ilike("hrac", hrac)
     .maybeSingle();
 
-  if(existing) return alert("Hráč už je přihlášen");
+  if(existing){
+    return alert("⚠️ Hráč už je přihlášen na tento trénink");
+  }
 
   // NAČTI TRÉNINK
   const { data: trening } = await supabaseClient
