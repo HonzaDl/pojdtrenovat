@@ -146,27 +146,26 @@ function renderList(){
 }
 
 // ================= RESERVE =================
-async function reserve(id){
+const res = await fetch("/.netlify/functions/send-email", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    hrac,
+    email,
+    treningId: id
+  })
+});
 
-  const btn = document.getElementById("btn-"+id);
-  btn.disabled = true;
-  btn.innerText = "Rezervuji...";
+const result = await res.json();
 
-  const hrac = document.getElementById("hrac-"+id).value.trim();
-  const vek = document.getElementById("vek-"+id).value;
-  const email = document.getElementById("email-"+id).value;
-
-  if(!hrac || !vek || !email){
-    alert("Vyplň všechny údaje");
-    reset(btn);
-    return;
-  }
-
-  if(!email.includes("@")){
-    alert("Špatný email");
-    reset(btn);
-    return;
-  }
+if(!res.ok){
+  alert("Rezervace OK, ale email selhal");
+  console.log(result);
+} else {
+  alert("Rezervace hotová 💪");
+}
 
   // DUPLICITA
   const { data: existing } = await supabaseClient
