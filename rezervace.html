@@ -9,8 +9,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
-body{font-family:Roboto;margin:0;background:#f4f6f8;}
+body{
+  font-family: Roboto;
+  margin:0;
+  background:#f4f6f8;
+  color:#111;
+}
 
+/* HEADER */
 .header{
   background:#000;
   color:#fff;
@@ -20,11 +26,17 @@ body{font-family:Roboto;margin:0;background:#f4f6f8;}
   align-items:center;
 }
 
-.nav a{color:#fff;margin:0 8px;text-decoration:none;}
+.nav a{
+  color:#fff;
+  margin:0 8px;
+  text-decoration:none;
+}
 
-.logos-right img{height:40px;margin-left:10px;}
-
-.container{max-width:1000px;margin:20px auto;padding:10px;}
+.container{
+  max-width:1000px;
+  margin:20px auto;
+  padding:10px;
+}
 
 /* WEEK NAV */
 .week-nav{
@@ -44,45 +56,80 @@ body{font-family:Roboto;margin:0;background:#f4f6f8;}
 }
 
 /* CALENDAR */
+#calendar{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:12px;
+}
+
 .calendar-day{
   background:#fff;
+  border-radius:14px;
   padding:12px;
-  margin-bottom:10px;
-  border-radius:10px;
-  border-left:4px solid #000;
+  min-height:150px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.08);
 }
 
+.calendar-day b{
+  display:block;
+  margin-bottom:8px;
+  font-size:13px;
+  opacity:0.6;
+}
+
+/* TRAINING */
 .training{
   padding:8px;
+  border-radius:10px;
   margin-top:6px;
-  border-radius:6px;
+  font-size:12px;
   cursor:pointer;
-  font-size:13px;
+  border:1px solid rgba(0,0,0,0.06);
+  transition:0.2s;
 }
 
-.green{background:#c8f7c5;}
-.yellow{background:#ffeaa7;}
-.red{background:#ffb3b3;}
+.training:hover{
+  transform:scale(1.03);
+}
 
-/* CARD */
+.green{ background:#eafaf1; border-left:4px solid #2ecc71; }
+.yellow{ background:#fff7e0; border-left:4px solid #f1c40f; }
+.red{ background:#ffe8e8; border-left:4px solid #e74c3c; }
+
+/* DETAIL */
 .card{
   background:#fff;
-  padding:15px;
-  border-radius:10px;
-  margin-top:15px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  padding:16px;
+  border-radius:14px;
+  margin-top:16px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.08);
 }
 
+/* FORM */
 input,button{
   width:100%;
   padding:10px;
-  margin-top:6px;
-  border-radius:8px;
+  margin-top:8px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:14px;
 }
 
-button{background:#000;color:#fff;border:none;cursor:pointer;}
+button{
+  background:#111;
+  color:#fff;
+  cursor:pointer;
+  transition:0.2s;
+}
 
-.full{color:red;font-weight:bold;}
+button:hover{
+  background:#e60000;
+}
+
+.full{
+  color:red;
+  font-weight:bold;
+}
 </style>
 </head>
 
@@ -95,11 +142,6 @@ button{background:#000;color:#fff;border:none;cursor:pointer;}
     <a href="treneri.html">Trenéři</a>
     <a href="rezervace.html">Rezervace</a>
   </nav>
-
-  <div class="logos-right">
-    <img src="images/logoo.jpg">
-    <img src="images/ssgihockey.jpg">
-  </div>
 </header>
 
 <div class="container">
@@ -152,13 +194,13 @@ async function load(){
   renderWeek();
 }
 
-// ================= WEEK NAV =================
+// ================= WEEK =================
 function changeWeek(dir){
   weekOffset += dir;
   renderWeek();
 }
 
-// ================= WEEK RENDER =================
+// ================= RENDER WEEK =================
 function renderWeek(){
 
   const cal = document.getElementById("calendar");
@@ -168,12 +210,6 @@ function renderWeek(){
 
   const start = new Date(today);
   start.setDate(today.getDate() - today.getDay() + 1 + weekOffset * 7);
-
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-
-  document.getElementById("weekLabel").innerText =
-    `${start.toLocaleDateString("cs-CZ")} - ${end.toLocaleDateString("cs-CZ")}`;
 
   const grouped = {};
 
@@ -190,16 +226,17 @@ function renderWeek(){
     days.push(d.toISOString().split("T")[0]);
   }
 
+  document.getElementById("weekLabel").innerText =
+    `${days[0]} - ${days[6]}`;
+
   days.forEach(date=>{
 
     const div = document.createElement("div");
     div.className = "calendar-day";
 
-    let html = `<b>${formatDate(date)}</b>`;
+    let html = `<b>${date}</b>`;
 
-    const trainings = grouped[date] || [];
-
-    trainings.forEach(t=>{
+    (grouped[date] || []).forEach(t=>{
 
       const count = reservationCounts[t.id] || 0;
       const free = t.kapacita - count;
@@ -209,8 +246,7 @@ function renderWeek(){
       else if(free <= 2) color = "yellow";
 
       html += `
-        <div class="training ${color}"
-          onclick="openTraining('${t.id}')">
+        <div class="training ${color}" onclick="openTraining('${t.id}')">
           ${t.nazev}<br>
           ${count}/${t.kapacita}
         </div>
@@ -225,7 +261,7 @@ function renderWeek(){
 // ================= OPEN =================
 function openTraining(id){
 
-  selectedTraining = allData.find(t => t.id === id);
+  selectedTraining = allData.find(t=>t.id===id);
 
   const t = selectedTraining;
 
@@ -273,6 +309,7 @@ async function reserve(){
     return;
   }
 
+  // EMAILY (Netlify function)
   await fetch("/.netlify/functions/send-email", {
     method:"POST",
     headers:{ "Content-Type":"application/json" },
@@ -284,19 +321,9 @@ async function reserve(){
   });
 
   alert("Rezervace hotová 💪");
+
   load();
   document.getElementById("list").innerHTML = "";
-}
-
-// ================= FORMAT =================
-function formatDate(dateStr){
-  const d = new Date(dateStr);
-
-  return d.toLocaleDateString("cs-CZ", {
-    weekday:"long",
-    day:"numeric",
-    month:"numeric"
-  });
 }
 
 load();
