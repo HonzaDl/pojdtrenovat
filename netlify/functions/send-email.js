@@ -6,69 +6,117 @@ export async function handler(event) {
 
     const { hrac, email, treningId } = JSON.parse(event.body);
 
+    if (!hrac || !email || !treningId) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ ok: false, error: "Missing data" })
+      };
+    }
+
     const supabase = createClient(
       "https://kgmdyhiwkkviswluuwkg.supabase.co",
       process.env.SUPABASE_SERVICE_KEY
     );
 
-    const { data: trening } = await supabase
+    const { data: trening, error } = await supabase
       .from("treninky")
       .select("*")
       .eq("id", treningId)
       .single();
 
+    if (error || !trening) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ ok: false, error: "Training not found" })
+      };
+    }
+
     // =========================
-    // 1. EMAIL RODIČ
+    // RODIČ - POTVRZENÍ
     // =========================
-    await fetch("https://api.resend.com/emails", {
+    const userRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.RESEND_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: "pojdtrenovat@onboarding.dev",
+        from: "info@pojdtrenovat.cz",
         to: [email],
-        subject: "Potvrzení rezervace",
+        subject: "✅ Rezervace potvrzena",
         html: `
-          <h2>Rezervace potvrzena ✅</h2>
-          <p><b>${hrac}</b></p>
-          <p>${trening.nazev}</p>
-          <p>${trening.datum} ${trening.cas_od}</p>
+          <div style="font-family:Arial;background:#f6f6f6;padding:20px;border-radius:10px">
+            <h2 style="color:#e60000">Rezervace potvrzena ✅</h2>
+
+            <p>Dobrý den,</p>
+            <p>vaše rezervace byla úspěšně vytvořena.</p>
+
+            <div style="background:#fff;padding:15px;border-radius:10px">
+              <p><b>Hráč:</b> ${hrac}</p>
+              <p><b>Trénink:</b> ${trening.nazev}</p>
+              <p><b>Datum:</b> ${trening.datum}</p>
+              <p><b>Čas:</b> ${trening.cas_od} - ${trening.cas_do}</p>
+            </div>
+
+            <p style="margin-top:15px">Těšíme se na vás 🏒</p>
+          </div>
         `
       })
     });
 
+    const userJson = await userRes.json();
+
     // =========================
-    // 2. EMAIL TRENÉR
+    // TRENÉR - NOTIFIKACE
     // =========================
-    await fetch("https://api.resend.com/emails", {
+    const coachRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.RESEND_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: "pojdtrenovat@onboarding.dev",
+        from: "info@pojdtrenovat.cz",
         to: ["mara.pavel@seznam.cz", "pojdtrenovat@gmail.com"],
-        subject: "Nová rezervace 🔥",
+        subject: "🔥 Nová rezervace na trénink",
         html: `
-          <h2>Nová rezervace</h2>
-          <p><b>Hráč:</b> ${hrac}</p>
-          <p><b>Email:</b> ${email}</p>
-          <p><b>Trénink:</b> ${trening.nazev}</p>
-          <p>${trening.datum} ${trening.cas_od}</p>
+          <div style="font-family:Arial;background:#111;color:#fff;padding:20px;border-radius:10px">
+
+            <h2 style="color:#ff3b3b">Nový hráč přihlášen 🔥</h2>
+
+            <div style="background:#222;padding:15px;border-radius:10px">
+              <p><b>Hráč:</b> ${hrac}</p>
+              <p><b>Email rodiče:</b> ${email}</p>
+            </div>
+
+            <div style="margin-top:15px;background:#222;padding:15px;border-radius:10px">
+              <p><b>Trénink:</b> ${trening.nazev}</p>
+              <p><b>Datum:</b> ${trening.datum}</p>
+              <p><b>Čas:</b> ${trening.cas_od} - ${trening.cas_do}</p>
+            </div>
+
+          </div>
         `
       })
     });
+
+    const coachJson = await coachRes.json();
+
+    console.log("USER EMAIL:", userJson);
+    console.log("COACH EMAIL:", coachJson);
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ ok: true })
+      body: JSON.stringify({
+        ok: true,
+        userEmail: userJson,
+        coachEmail: coachJson
+      })
     };
 
   } catch (e) {
-    console.log(e);
+
+    console.log("ERROR:", e);
 
     return {
       statusCode: 500,
