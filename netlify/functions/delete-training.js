@@ -1,6 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
+const { createClient } = require("@supabase/supabase-js");
 
-export async function handler(event) {
+exports.handler = async (event) => {
   try {
     const { id } = JSON.parse(event.body);
 
@@ -16,13 +16,13 @@ export async function handler(event) {
       process.env.SUPABASE_SERVICE_KEY
     );
 
-    // 1) smazat rezervace
+    // smaž rezervace
     await supabase
       .from("rezervace")
       .delete()
       .eq("trening_id", id);
 
-    // 2) smazat trénink
+    // smaž trénink
     const { error } = await supabase
       .from("treninky")
       .delete()
@@ -49,6 +49,4 @@ export async function handler(event) {
       body: JSON.stringify({ error: e.message })
     };
   }
-}
-  }
-}
+};
