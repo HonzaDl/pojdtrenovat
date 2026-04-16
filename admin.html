@@ -74,7 +74,6 @@ button{
   padding:10px;
   margin-top:10px;
   border-radius:10px;
-  border-left:4px solid #e00000;
 }
 </style>
 </head>
@@ -121,6 +120,7 @@ let all = [];
 
 /* LOGIN */
 async function login(){
+
   const email=document.getElementById("email").value;
   const password=document.getElementById("password").value;
 
@@ -134,18 +134,20 @@ async function login(){
   start();
 }
 
-function start(){
+/* START */
+async function start(){
   document.getElementById("login").style.display="none";
   document.getElementById("app").style.display="block";
-  load();
+  await load();
 }
 
+/* LOGOUT (FIX) */
 async function logout(){
   await supabaseClient.auth.signOut();
-  location.reload();
+  location.reload(); // 🔥 jediný správný a stabilní způsob
 }
 
-/* ================= LOAD (FIX) ================= */
+/* LOAD */
 async function load(){
 
   const { data, error } = await supabaseClient
@@ -158,11 +160,11 @@ async function load(){
     return;
   }
 
-  all = [...data]; // 💣 IMPORTANT: force new reference
+  all = data || [];
   renderCalendar();
 }
 
-/* ================= CALENDAR ================= */
+/* CALENDAR */
 function renderCalendar(){
 
   const cal=document.getElementById("calendar");
@@ -188,7 +190,7 @@ function renderCalendar(){
   }
 }
 
-/* ================= TRAININGS ================= */
+/* TRAININGS */
 function renderTrainings(list){
 
   const box=document.getElementById("trainings");
@@ -210,16 +212,16 @@ function renderTrainings(list){
   });
 }
 
-/* ================= OPEN ================= */
+/* OPEN */
 function open(t){
   current = t;
   buildForm(t);
   loadPlayers(t.id);
 }
 
-/* ================= NEW ================= */
+/* NEW */
 function newTraining(){
-  current = null;
+  current=null;
 
   buildForm({
     nazev:"",
@@ -235,7 +237,7 @@ function newTraining(){
   document.getElementById("players").innerHTML="";
 }
 
-/* ================= FORM ================= */
+/* FORM */
 function buildForm(data){
 
   const form=document.getElementById("form");
@@ -261,7 +263,7 @@ function buildForm(data){
   }
 }
 
-/* ================= SAVE (FIXED FLOW) ================= */
+/* SAVE */
 async function save(){
 
   let obj = {};
@@ -275,12 +277,10 @@ async function save(){
 
   if(current && current.id){
 
-    obj.id = current.id;
-
     const res = await fetch("/.netlify/functions/update-training", {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(obj)
+      body: JSON.stringify({...obj, id: current.id})
     });
 
     const data = await res.json();
@@ -300,9 +300,7 @@ async function save(){
     }
   }
 
-  // 💣 HARD REFRESH STATE
   current = null;
-  all = [];
 
   await load();
 
@@ -311,7 +309,7 @@ async function save(){
   document.getElementById("players").innerHTML="";
 }
 
-/* ================= DELETE ================= */
+/* DELETE */
 async function deleteTraining(){
 
   if(!current) return;
@@ -330,7 +328,6 @@ async function deleteTraining(){
   }
 
   current=null;
-  all=[];
 
   await load();
 
@@ -338,7 +335,7 @@ async function deleteTraining(){
   document.getElementById("players").innerHTML="";
 }
 
-/* ================= PLAYERS ================= */
+/* PLAYERS */
 async function loadPlayers(id){
 
   const { data } = await supabaseClient
