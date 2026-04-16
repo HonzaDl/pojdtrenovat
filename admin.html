@@ -160,7 +160,6 @@ async function logout(){
 
 /* ---------------- LOAD ---------------- */
 async function load(){
-
   const { data } = await supabaseClient
     .from("treninky")
     .select("*")
@@ -260,39 +259,49 @@ function buildForm(data){
     form.appendChild(input);
   }
 
-  // DELETE přes Netlify
+  // DELETE (SAFE)
   const del=document.createElement("button");
   del.className="delete-btn";
   del.innerText="🗑 Smazat trénink";
 
-  del.onclick=async()=>{
+  del.onclick = async () => {
 
-    if(!current) return;
-    if(!confirm("Opravdu smazat trénink?")) return;
+    const id = current?.id;
+
+    console.log("DELETE ID:", id);
+
+    if (!id) {
+      alert("❌ Chybí ID tréninku");
+      return;
+    }
+
+    if (!confirm("Opravdu smazat trénink?")) return;
 
     const res = await fetch("/.netlify/functions/delete-training", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ id: current.id })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id })
     });
 
-    if(!res.ok){
-      alert("❌ Smazání selhalo");
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert("❌ Mazání selhalo: " + data.error);
       return;
     }
 
     alert("✔ Smazáno");
 
-    current=null;
+    current = null;
     load();
-    document.getElementById("players").innerHTML="";
-    document.getElementById("form").innerHTML="";
+    document.getElementById("players").innerHTML = "";
+    document.getElementById("form").innerHTML = "";
   };
 
   form.appendChild(del);
 }
 
-/* ---------------- SAVE (FIXED) ---------------- */
+/* ---------------- SAVE ---------------- */
 async function save(){
 
   let obj = {};
@@ -325,7 +334,7 @@ async function save(){
   }
 
   if(res.error){
-    return alert("❌ Chyba: " + res.error.message);
+    return alert(res.error.message);
   }
 
   alert("✔ Uloženo");
