@@ -13,6 +13,7 @@ body{
   font-family:Roboto;
   margin:0;
   background:#f4f6f8;
+  color:#111;
 }
 
 /* HEADER */
@@ -31,125 +32,96 @@ body{
   text-decoration:none;
 }
 
-.logos-right img{
-  height:40px;
-  margin-left:10px;
-}
-
-/* CONTAINER */
 .container{
-  max-width:1000px;
+  max-width:900px;
   margin:20px auto;
   padding:10px;
 }
 
-/* WEEK NAV */
-.week-nav{
+/* =========================
+   APP HEADER (WEEK BAR)
+========================= */
+.app-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:15px;
-}
-
-.week-nav button{
+  padding:12px;
   background:#000;
   color:#fff;
+  border-radius:12px;
+  margin-bottom:10px;
+  gap:10px;
+  flex-wrap:nowrap;
+}
+
+.app-header button{
+  background:#fff;
+  color:#000;
   border:none;
-  padding:8px 12px;
+  padding:6px 10px;
   border-radius:8px;
   cursor:pointer;
+  flex:0 0 auto;
+  width:44px;
+  height:44px;
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-/* CALENDAR (APP STYLE FIX) */
-#calendar{
-  display:grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap:12px;
+.app-header div{
+  text-align:center;
+  font-size:16px;
+  font-weight:600;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:60%;
 }
 
-@media(max-width:900px){
-  #calendar{
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* =========================
+   LIST
+========================= */
+
+.app-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
 }
 
-@media(max-width:500px){
-  #calendar{
-    grid-template-columns: 1fr;
-  }
-}
-
-.calendar-day{
+.app-card{
   background:#fff;
+  padding:14px;
   border-radius:14px;
-  padding:12px;
   box-shadow:0 4px 14px rgba(0,0,0,0.08);
-}
-
-.calendar-day b{
-  display:block;
-  margin-bottom:8px;
-  font-size:13px;
-  opacity:0.6;
-}
-
-/* TRAINING CARD */
-.training{
-  padding:10px;
-  border-radius:10px;
-  margin-top:6px;
-  font-size:13px;
   cursor:pointer;
-  border:1px solid rgba(0,0,0,0.06);
   transition:0.2s;
 }
 
-.training:hover{
+.app-card:hover{
   transform:scale(1.02);
 }
 
-.green{background:#eafaf1; border-left:4px solid #2ecc71;}
-.yellow{background:#fff7e0; border-left:4px solid #f1c40f;}
-.red{background:#ffe8e8; border-left:4px solid #e74c3c;}
+/* kapacity */
+.green{border-left:4px solid #2ecc71;}
+.yellow{border-left:4px solid #f1c40f;}
+.red{border-left:4px solid #e74c3c;}
 
-/* ===== MODAL (APP FEELING) ===== */
-.modal{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.6);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-
-.modal-content{
-  width:95%;
-  max-width:500px;
+/* =========================
+   BOTTOM SHEET
+========================= */
+.bottom-sheet{
   background:#fff;
+  padding:16px;
   border-radius:16px;
-  padding:18px;
-  position:relative;
-  animation:pop .2s ease;
+  box-shadow:0 -10px 30px rgba(0,0,0,0.2);
 }
 
-@keyframes pop{
-  from{transform:scale(0.95);opacity:0;}
-  to{transform:scale(1);opacity:1;}
-}
+/* =========================
+   INPUTS
+========================= */
 
-.close{
-  position:absolute;
-  top:10px;
-  right:12px;
-  font-size:22px;
-  cursor:pointer;
-}
-
-/* FORM */
 input,button{
   width:100%;
   padding:10px;
@@ -163,18 +135,38 @@ button{
   background:#111;
   color:#fff;
   cursor:pointer;
+  transition:0.2s;
 }
 
 button:hover{
   background:#e60000;
 }
 
-.detail-box{
-  background:#f7f7f7;
-  padding:10px;
-  border-radius:10px;
-  margin:10px 0;
-  white-space:pre-line;
+/* =========================
+   WINDOWS FIX EXTRA
+========================= */
+
+@media (min-width: 900px){
+
+  .app-header{
+    gap:12px;
+  }
+
+  .app-header div{
+    max-width:70%;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 600px){
+
+  .app-header div{
+    font-size:14px;
+  }
+
+  .app-card{
+    font-size:14px;
+  }
 }
 </style>
 </head>
@@ -183,42 +175,18 @@ button:hover{
 
 <header class="header">
   <h1>pojdtrenovat.cz</h1>
-
   <nav class="nav">
     <a href="index.html">Úvod</a>
     <a href="treneri.html">Trenéři</a>
     <a href="rezervace.html">Rezervace</a>
   </nav>
-
-  <div class="logos-right">
-    <img src="images/logoo.jpg">
-    <img src="images/ssgihockey.jpg">
-  </div>
 </header>
 
 <div class="container">
 
-  <h2>Týdenní kalendář</h2>
+  <h2>Tréninky</h2>
+  <div id="app"></div>
 
-  <div class="week-nav">
-    <button onclick="changeWeek(-1)">← Předchozí</button>
-    <div id="weekLabel"></div>
-    <button onclick="changeWeek(1)">Další →</button>
-  </div>
-
-  <div id="calendar">Načítám...</div>
-
-</div>
-
-<!-- MODAL -->
-<div class="modal" id="modal">
-  <div class="modal-content">
-
-    <span class="close" onclick="closeModal()">×</span>
-
-    <div id="modalBody"></div>
-
-  </div>
 </div>
 
 <script>
@@ -230,16 +198,16 @@ const supabaseClient = supabase.createClient(
 
 let allData = [];
 let reservationCounts = {};
+let days = [];
+let selectedDay = 0;
 let selectedTraining = null;
-let weekOffset = 0;
 
-// LOAD
+// ================= LOAD =================
 async function load(){
 
   const { data: treninky } = await supabaseClient
     .from("treninky")
-    .select("*")
-    .order("datum");
+    .select("*");
 
   const { data: rezervace } = await supabaseClient
     .from("rezervace")
@@ -247,108 +215,94 @@ async function load(){
 
   reservationCounts = {};
   (rezervace || []).forEach(r=>{
-    reservationCounts[r.trening_id] = (reservationCounts[r.trening_id] || 0) + 1;
+    reservationCounts[r.trening_id] =
+      (reservationCounts[r.trening_id] || 0) + 1;
   });
 
   allData = treninky || [];
-  renderWeek();
+
+  const unique = [...new Set(allData.map(t=>t.datum))];
+  days = unique.sort();
+
+  renderDay();
 }
 
-// WEEK
-function changeWeek(dir){
-  weekOffset += dir;
-  renderWeek();
-}
+// ================= RENDER DAY =================
+function renderDay(){
 
-function renderWeek(){
+  const date = days[selectedDay];
 
-  const cal = document.getElementById("calendar");
-  cal.innerHTML = "";
+  const trainings = allData.filter(t => t.datum === date);
 
-  const today = new Date();
+  let html = `
+    <div class="app-header">
+      <button onclick="changeDay(-1)">←</button>
+      <div>${formatDate(date)}</div>
+      <button onclick="changeDay(1)">→</button>
+    </div>
 
-  const start = new Date(today);
-  start.setDate(today.getDate() - today.getDay() + 1 + weekOffset * 7);
+    <div class="app-list">
+  `;
 
-  document.getElementById("weekLabel").innerText =
-    `${start.toLocaleDateString("cs-CZ")}`;
+  trainings.forEach(t=>{
 
-  const grouped = {};
+    const count = reservationCounts[t.id] || 0;
+    const free = t.kapacita - count;
 
-  allData.forEach(t=>{
-    if(!grouped[t.datum]) grouped[t.datum] = [];
-    grouped[t.datum].push(t);
+    let color = "green";
+    if(free === 0) color = "red";
+    else if(free <= 2) color = "yellow";
+
+    html += `
+      <div class="app-card ${color}" onclick="openTraining('${t.id}')">
+        <h3>${t.nazev}</h3>
+        <p>${t.cas_od} - ${t.cas_do}</p>
+        <p>${count}/${t.kapacita}</p>
+      </div>
+    `;
   });
 
-  for(let i=0;i<7;i++){
+  html += `</div>`;
 
-    const d = new Date(start);
-    d.setDate(start.getDate()+i);
-
-    const date = d.toISOString().split("T")[0];
-
-    const div = document.createElement("div");
-    div.className = "calendar-day";
-
-    let html = `<b>${d.toLocaleDateString("cs-CZ")}</b>`;
-
-    (grouped[date] || []).forEach(t=>{
-
-      const count = reservationCounts[t.id] || 0;
-      const free = t.kapacita - count;
-
-      let color = "green";
-      if(free === 0) color = "red";
-      else if(free <= 2) color = "yellow";
-
-      html += `
-        <div class="training ${color}" onclick="openModal('${t.id}')">
-          ${t.nazev}<br>
-          ${count}/${t.kapacita}
-        </div>
-      `;
-    });
-
-    div.innerHTML = html;
-    cal.appendChild(div);
-  }
+  document.getElementById("app").innerHTML = html;
 }
 
-// OPEN MODAL
-function openModal(id){
+// ================= DAY SWITCH =================
+function changeDay(dir){
 
-  selectedTraining = allData.find(t => t.id === id);
+  selectedDay += dir;
+
+  if(selectedDay < 0) selectedDay = 0;
+  if(selectedDay >= days.length) selectedDay = days.length - 1;
+
+  renderDay();
+}
+
+// ================= OPEN TRAINING =================
+function openTraining(id){
+
+  selectedTraining = allData.find(t=>t.id===id);
 
   const t = selectedTraining;
 
-  document.getElementById("modalBody").innerHTML = `
-    <h2>${t.nazev}</h2>
+  document.getElementById("app").innerHTML = `
+    <div class="bottom-sheet">
+      <h2>${t.nazev}</h2>
+      <p>${t.datum} | ${t.cas_od} - ${t.cas_do}</p>
+      <p>📍 ${t.misto || "-"}</p>
+      <p>Cena: ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
 
-    <div class="detail-box">
-📅 ${t.datum}
-⏰ ${t.cas_od} - ${t.cas_do}
-📍 ${t.misto || "-"}
-💰 ${t.cena ? t.cena + " Kč" : "Zdarma"}
+      <input id="hrac" placeholder="Jméno hráče">
+      <input id="vek" placeholder="Věk">
+      <input id="email" placeholder="Email rodiče">
+
+      <button onclick="reserve()">Rezervovat</button>
+      <button onclick="renderDay()">Zpět</button>
     </div>
-
-    ${t.popis ? `<div class="detail-box">${t.popis}</div>` : ""}
-
-    <input id="hrac" placeholder="Jméno hráče">
-    <input id="vek" placeholder="Věk">
-    <input id="email" placeholder="Email rodiče">
-
-    <button onclick="reserve()">Rezervovat</button>
   `;
-
-  document.getElementById("modal").style.display = "flex";
 }
 
-// CLOSE
-function closeModal(){
-  document.getElementById("modal").style.display = "none";
-}
-
-// RESERVE
+// ================= RESERVE =================
 async function reserve(){
 
   const hrac = document.getElementById("hrac").value;
@@ -364,7 +318,12 @@ async function reserve(){
 
   const { error } = await supabaseClient
     .from("rezervace")
-    .insert([{ trening_id: t.id, hrac, vek, email }]);
+    .insert([{
+      trening_id: t.id,
+      hrac,
+      vek,
+      email
+    }]);
 
   if(error){
     alert("Chyba rezervace");
@@ -374,12 +333,24 @@ async function reserve(){
   await fetch("/.netlify/functions/send-email", {
     method:"POST",
     headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ hrac, email, treningId: t.id })
+    body: JSON.stringify({
+      hrac,
+      email,
+      treningId: t.id
+    })
   });
 
   alert("Rezervace hotová 💪");
-  closeModal();
   load();
+}
+
+// ================= FORMAT =================
+function formatDate(date){
+  return new Date(date).toLocaleDateString("cs-CZ", {
+    weekday:"long",
+    day:"numeric",
+    month:"numeric"
+  });
 }
 
 load();
