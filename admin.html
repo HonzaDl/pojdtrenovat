@@ -21,7 +21,7 @@ body{font-family:Roboto;margin:0;background:#f4f6f8}
   box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
-input,button{
+input,textarea,button{
   width:100%;
   padding:10px;
   margin-top:8px;
@@ -215,6 +215,7 @@ function renderTrainings(list){
 /* OPEN */
 function open(t){
   current = t;
+  console.log("OPEN ID:", t.id);
   buildForm(t);
   loadPlayers(t.id);
 }
@@ -246,6 +247,15 @@ function buildForm(data){
   for(const k in data){
 
     if(k==="id"||k==="created_at") continue;
+
+    if(k==="popis"){
+      const textarea=document.createElement("textarea");
+      textarea.id="f-popis";
+      textarea.value=data[k] || "";
+      textarea.placeholder="Popis tréninku";
+      form.appendChild(textarea);
+      continue;
+    }
 
     const input=document.createElement("input");
     input.id="f-"+k;
@@ -293,7 +303,7 @@ async function save(){
 
   let obj = {};
 
-  document.querySelectorAll("#form input").forEach(i=>{
+  document.querySelectorAll("#form input, #form textarea").forEach(i=>{
     obj[i.id.replace("f-","")] = i.value.trim();
   });
 
@@ -302,12 +312,23 @@ async function save(){
 
   let res;
 
-  if(current && current.id){
+  const id = current?.id;
+
+  if(id){
+
     res = await supabaseClient
       .from("treninky")
       .update(obj)
-      .eq("id", current.id);
+      .eq("id", id)
+      .select();
+
+    if(!res.data || res.data.length === 0){
+      alert("❌ Update neproběhl (špatné ID nebo práva)");
+      return;
+    }
+
   } else {
+
     res = await supabaseClient
       .from("treninky")
       .insert([obj]);
