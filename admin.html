@@ -11,7 +11,6 @@
 <style>
 body{font-family:Roboto;margin:0;background:#f4f6f8}
 
-/* LOGIN */
 #login{
   max-width:320px;
   margin:100px auto;
@@ -35,10 +34,8 @@ button{
   cursor:pointer;
 }
 
-/* APP */
 #app{display:none;padding:15px}
 
-/* CALENDAR */
 #calendar{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
@@ -53,7 +50,6 @@ button{
   border-left:4px solid #e00000;
 }
 
-/* TRAININGS */
 .training{
   background:#fff;
   padding:12px;
@@ -63,7 +59,6 @@ button{
   cursor:pointer;
 }
 
-/* FORM */
 #form{
   background:#fff;
   padding:15px;
@@ -75,7 +70,6 @@ button{
   background:#e00000;
 }
 
-/* PLAYERS */
 .player{
   background:#fff;
   padding:10px;
@@ -88,13 +82,15 @@ button{
 
 <body>
 
+<!-- LOGIN -->
 <div id="login">
-  <h2>Administrace treninků</h2>
+  <h2>Administrace tréninků</h2>
   <input id="email" placeholder="Email">
   <input id="password" type="password" placeholder="Heslo">
   <button onclick="login()">Přihlásit</button>
 </div>
 
+<!-- APP -->
 <div id="app">
 
   <h1>Admin panel</h1>
@@ -170,7 +166,7 @@ async function load(){
     .select("*")
     .order("datum");
 
-  all = data;
+  all = data || [];
   renderCalendar();
 }
 
@@ -264,7 +260,7 @@ function buildForm(data){
     form.appendChild(input);
   }
 
-  // DELETE přes backend
+  // DELETE přes Netlify
   const del=document.createElement("button");
   del.className="delete-btn";
   del.innerText="🗑 Smazat trénink";
@@ -272,12 +268,20 @@ function buildForm(data){
   del.onclick=async()=>{
 
     if(!current) return;
-    if(!confirm("Smazat trénink?")) return;
+    if(!confirm("Opravdu smazat trénink?")) return;
 
-    await fetch("/.netlify/functions/delete-training", {
+    const res = await fetch("/.netlify/functions/delete-training", {
       method:"POST",
+      headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({ id: current.id })
     });
+
+    if(!res.ok){
+      alert("❌ Smazání selhalo");
+      return;
+    }
+
+    alert("✔ Smazáno");
 
     current=null;
     load();
@@ -297,9 +301,9 @@ async function save(){
     obj[i.id.replace("f-","")] = i.value.trim();
   });
 
-  if(!obj.nazev) return alert("❌ Chybí název");
-  if(!obj.datum) return alert("❌ Chybí datum");
-  if(!obj.cas_od || !obj.cas_do) return alert("❌ Chybí čas");
+  if(!obj.nazev) return alert("Chybí název");
+  if(!obj.datum) return alert("Chybí datum");
+  if(!obj.cas_od || !obj.cas_do) return alert("Chybí čas");
 
   obj.kapacita = Number(obj.kapacita || 0);
   obj.cena = Number(obj.cena || 0);
@@ -308,7 +312,6 @@ async function save(){
 
   if(current){
 
-    // UPDATE
     res = await supabaseClient
       .from("treninky")
       .update(obj)
@@ -316,14 +319,12 @@ async function save(){
 
   } else {
 
-    // INSERT
     res = await supabaseClient
       .from("treninky")
       .insert([obj]);
   }
 
   if(res.error){
-    console.log(res.error);
     return alert("❌ Chyba: " + res.error.message);
   }
 
@@ -344,7 +345,7 @@ async function loadPlayers(id){
   const box=document.getElementById("players");
   box.innerHTML="";
 
-  if(!data.length){
+  if(!data?.length){
     box.innerHTML="<p>Žádní hráči</p>";
     return;
   }
