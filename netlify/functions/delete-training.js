@@ -1,46 +1,27 @@
-const { createClient } = require("@supabase/supabase-js");
+import { createClient } from "@supabase/supabase-js";
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
-
-    // 🛡️ SAFE PARSE
-    let body = {};
-    if (event.body) {
-      body = JSON.parse(event.body);
-    }
-
-    const { id } = body;
+    const { id } = JSON.parse(event.body || "{}");
 
     if (!id) {
       return {
-        statusCode: 200,
-        body: JSON.stringify({ message: "Function works 👍 (missing id)" })
+        statusCode: 400,
+        body: JSON.stringify({ error: "chybí ID" })
       };
     }
 
     const supabase = createClient(
-      "https://kgmdyhiwkkviswluuwkg.supabase.co",
+      process.env.SUPABASE_URL,
       process.env.SUPABASE_SERVICE_KEY
     );
 
-    // smaž rezervace
-    await supabase
-      .from("rezervace")
-      .delete()
-      .eq("trening_id", id);
-
-    // smaž trénink
     const { error } = await supabase
       .from("treninky")
       .delete()
       .eq("id", id);
 
-    if (error) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: error.message })
-      };
-    }
+    if (error) throw error;
 
     return {
       statusCode: 200,
