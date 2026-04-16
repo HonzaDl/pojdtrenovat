@@ -38,9 +38,7 @@ body{
   padding:10px;
 }
 
-/* =========================
-   APP HEADER (WEEK BAR)
-========================= */
+/* WEEK BAR */
 .app-header{
   display:flex;
   justify-content:space-between;
@@ -50,8 +48,6 @@ body{
   color:#fff;
   border-radius:12px;
   margin-bottom:10px;
-  gap:10px;
-  flex-wrap:nowrap;
 }
 
 .app-header button{
@@ -61,29 +57,11 @@ body{
   padding:6px 10px;
   border-radius:8px;
   cursor:pointer;
-  flex:0 0 auto;
   width:44px;
   height:44px;
-  font-size:18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
 }
 
-.app-header div{
-  text-align:center;
-  font-size:16px;
-  font-weight:600;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  max-width:60%;
-}
-
-/* =========================
-   LIST
-========================= */
-
+/* LIST */
 .app-list{
   display:flex;
   flex-direction:column;
@@ -96,32 +74,22 @@ body{
   border-radius:14px;
   box-shadow:0 4px 14px rgba(0,0,0,0.08);
   cursor:pointer;
-  transition:0.2s;
 }
 
-.app-card:hover{
-  transform:scale(1.02);
-}
-
-/* kapacity */
+/* CAPACITY */
 .green{border-left:4px solid #2ecc71;}
 .yellow{border-left:4px solid #f1c40f;}
 .red{border-left:4px solid #e74c3c;}
 
-/* =========================
-   BOTTOM SHEET
-========================= */
+/* DETAIL */
 .bottom-sheet{
   background:#fff;
   padding:16px;
   border-radius:16px;
-  box-shadow:0 -10px 30px rgba(0,0,0,0.2);
+  box-shadow:0 4px 20px rgba(0,0,0,0.15);
 }
 
-/* =========================
-   INPUTS
-========================= */
-
+/* INPUTS */
 input,button{
   width:100%;
   padding:10px;
@@ -135,38 +103,10 @@ button{
   background:#111;
   color:#fff;
   cursor:pointer;
-  transition:0.2s;
 }
 
 button:hover{
   background:#e60000;
-}
-
-/* =========================
-   WINDOWS FIX EXTRA
-========================= */
-
-@media (min-width: 900px){
-
-  .app-header{
-    gap:12px;
-  }
-
-  .app-header div{
-    max-width:70%;
-  }
-}
-
-/* MOBILE */
-@media (max-width: 600px){
-
-  .app-header div{
-    font-size:14px;
-  }
-
-  .app-card{
-    font-size:14px;
-  }
 }
 </style>
 </head>
@@ -183,10 +123,8 @@ button:hover{
 </header>
 
 <div class="container">
-
   <h2>Tréninky</h2>
-  <div id="app"></div>
-
+  <div id="app">Načítám...</div>
 </div>
 
 <script>
@@ -222,7 +160,9 @@ async function load(){
   allData = treninky || [];
 
   const unique = [...new Set(allData.map(t=>t.datum))];
-  days = unique.sort();
+
+  // FIX správné řazení datumů
+  days = unique.sort((a,b)=> new Date(a) - new Date(b));
 
   renderDay();
 }
@@ -267,7 +207,7 @@ function renderDay(){
   document.getElementById("app").innerHTML = html;
 }
 
-// ================= DAY SWITCH =================
+// ================= DAY =================
 function changeDay(dir){
 
   selectedDay += dir;
@@ -278,7 +218,7 @@ function changeDay(dir){
   renderDay();
 }
 
-// ================= OPEN TRAINING =================
+// ================= DETAIL =================
 function openTraining(id){
 
   selectedTraining = allData.find(t=>t.id===id);
@@ -287,10 +227,17 @@ function openTraining(id){
 
   document.getElementById("app").innerHTML = `
     <div class="bottom-sheet">
+
       <h2>${t.nazev}</h2>
-      <p>${t.datum} | ${t.cas_od} - ${t.cas_do}</p>
+
+      <p>📅 ${t.datum}</p>
+      <p>⏰ ${t.cas_od} - ${t.cas_do}</p>
       <p>📍 ${t.misto || "-"}</p>
-      <p>Cena: ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
+      <p>💰 ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
+
+      ${t.popis ? `<p style="margin-top:10px;background:#f4f4f4;padding:10px;border-radius:10px;">
+        ${t.popis}
+      </p>` : ""}
 
       <input id="hrac" placeholder="Jméno hráče">
       <input id="vek" placeholder="Věk">
@@ -298,12 +245,18 @@ function openTraining(id){
 
       <button onclick="reserve()">Rezervovat</button>
       <button onclick="renderDay()">Zpět</button>
+
     </div>
   `;
 }
 
 // ================= RESERVE =================
 async function reserve(){
+
+  if(!selectedTraining){
+    alert("Chyba: není vybraný trénink");
+    return;
+  }
 
   const hrac = document.getElementById("hrac").value;
   const vek = document.getElementById("vek").value;
@@ -341,7 +294,9 @@ async function reserve(){
   });
 
   alert("Rezervace hotová 💪");
-  load();
+
+  await load();
+  renderDay();
 }
 
 // ================= FORMAT =================
