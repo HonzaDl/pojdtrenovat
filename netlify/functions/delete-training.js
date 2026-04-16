@@ -16,17 +16,23 @@ export async function handler(event) {
       process.env.SUPABASE_SERVICE_KEY
     );
 
+    // 1) smazat rezervace
+    await supabase
+      .from("rezervace")
+      .delete()
+      .eq("trening_id", id);
+
+    // 2) smazat trénink
     const { error } = await supabase
       .from("treninky")
       .delete()
       .eq("id", id);
 
     if (error) {
-      console.log("DELETE ERROR:", error);
-
+      console.log(error);
       return {
         statusCode: 500,
-        body: JSON.stringify(error)
+        body: JSON.stringify({ error: error.message })
       };
     }
 
@@ -36,11 +42,13 @@ export async function handler(event) {
     };
 
   } catch (e) {
-    console.log("FUNCTION ERROR:", e);
+    console.log(e);
 
     return {
       statusCode: 500,
       body: JSON.stringify({ error: e.message })
     };
+  }
+}
   }
 }
