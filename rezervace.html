@@ -9,14 +9,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
-body{
-  font-family:Roboto;
-  margin:0;
-  background:#f4f6f8;
-  color:#111;
-}
+body{font-family:Roboto;margin:0;background:#f4f6f8;}
 
-/* HEADER */
 .header{
   background:#000;
   color:#fff;
@@ -26,101 +20,73 @@ body{
   align-items:center;
 }
 
-.nav a{
-  color:#fff;
-  margin:0 8px;
-  text-decoration:none;
-}
+.nav a{color:#fff;margin:0 8px;text-decoration:none;}
 
-.container{
-  max-width:900px;
-  margin:20px auto;
-  padding:10px;
-}
+.logos-right img{height:40px;margin-left:10px;}
 
-/* =========================
-   APP HEADER (WEEK BAR)
-========================= */
-.app-header{
+.container{max-width:1000px;margin:20px auto;padding:10px;}
+
+/* WEEK NAV */
+.week-nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:12px;
+  margin-bottom:10px;
+}
+
+.week-nav button{
   background:#000;
   color:#fff;
-  border-radius:12px;
-  margin-bottom:10px;
-  gap:10px;
-  flex-wrap:nowrap;
-}
-
-.app-header button{
-  background:#fff;
-  color:#000;
   border:none;
-  padding:6px 10px;
+  padding:8px 12px;
   border-radius:8px;
   cursor:pointer;
-  flex:0 0 auto;
-  width:44px;
-  height:44px;
-  font-size:18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
 }
 
-.app-header div{
-  text-align:center;
-  font-size:16px;
-  font-weight:600;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  max-width:60%;
+/* CALENDAR */
+#calendar{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:12px;
+  margin-top:20px;
 }
 
-/* =========================
-   LIST
-========================= */
-
-.app-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.app-card{
+.calendar-day{
   background:#fff;
-  padding:14px;
   border-radius:14px;
+  padding:12px;
+  min-height:150px;
   box-shadow:0 4px 14px rgba(0,0,0,0.08);
+}
+
+.calendar-day b{
+  display:block;
+  margin-bottom:8px;
+  font-size:13px;
+  opacity:0.6;
+}
+
+.training{
+  padding:8px;
+  border-radius:10px;
+  margin-top:6px;
+  font-size:12px;
   cursor:pointer;
-  transition:0.2s;
+  border:1px solid rgba(0,0,0,0.06);
 }
 
-.app-card:hover{
-  transform:scale(1.02);
-}
+.green{background:#eafaf1; border-left:4px solid #2ecc71;}
+.yellow{background:#fff7e0; border-left:4px solid #f1c40f;}
+.red{background:#ffe8e8; border-left:4px solid #e74c3c;}
 
-/* kapacity */
-.green{border-left:4px solid #2ecc71;}
-.yellow{border-left:4px solid #f1c40f;}
-.red{border-left:4px solid #e74c3c;}
-
-/* =========================
-   BOTTOM SHEET
-========================= */
-.bottom-sheet{
+/* DETAIL */
+.card{
   background:#fff;
   padding:16px;
-  border-radius:16px;
-  box-shadow:0 -10px 30px rgba(0,0,0,0.2);
+  border-radius:14px;
+  margin-top:16px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.08);
 }
-
-/* =========================
-   INPUTS
-========================= */
 
 input,button{
   width:100%;
@@ -135,38 +101,22 @@ button{
   background:#111;
   color:#fff;
   cursor:pointer;
-  transition:0.2s;
 }
 
 button:hover{
   background:#e60000;
 }
 
-/* =========================
-   WINDOWS FIX EXTRA
-========================= */
+.full{color:red;font-weight:bold;}
 
-@media (min-width: 900px){
-
-  .app-header{
-    gap:12px;
-  }
-
-  .app-header div{
-    max-width:70%;
-  }
-}
-
-/* MOBILE */
-@media (max-width: 600px){
-
-  .app-header div{
-    font-size:14px;
-  }
-
-  .app-card{
-    font-size:14px;
-  }
+/* DETAIL BOX NAVÍC */
+.detail-box{
+  background:#fafafa;
+  padding:12px;
+  border-radius:10px;
+  margin:10px 0;
+  border-left:4px solid #000;
+  white-space:pre-line;
 }
 </style>
 </head>
@@ -180,12 +130,27 @@ button:hover{
     <a href="treneri.html">Trenéři</a>
     <a href="rezervace.html">Rezervace</a>
   </nav>
+
+  <div class="logos-right">
+    <img src="images/logoo.jpg">
+    <img src="images/ssgihockey.jpg">
+  </div>
 </header>
 
 <div class="container">
 
-  <h2>Tréninky</h2>
-  <div id="app"></div>
+  <h2>Týdenní kalendář</h2>
+
+  <div class="week-nav">
+    <button onclick="changeWeek(-1)">← Předchozí</button>
+    <div id="weekLabel"></div>
+    <button onclick="changeWeek(1)">Další →</button>
+  </div>
+
+  <div id="calendar">Načítám...</div>
+
+  <h2>Detail tréninku</h2>
+  <div id="list"></div>
 
 </div>
 
@@ -198,16 +163,16 @@ const supabaseClient = supabase.createClient(
 
 let allData = [];
 let reservationCounts = {};
-let days = [];
-let selectedDay = 0;
 let selectedTraining = null;
+let weekOffset = 0;
 
 // ================= LOAD =================
 async function load(){
 
   const { data: treninky } = await supabaseClient
     .from("treninky")
-    .select("*");
+    .select("*")
+    .order("datum");
 
   const { data: rezervace } = await supabaseClient
     .from("rezervace")
@@ -215,89 +180,99 @@ async function load(){
 
   reservationCounts = {};
   (rezervace || []).forEach(r=>{
-    reservationCounts[r.trening_id] =
-      (reservationCounts[r.trening_id] || 0) + 1;
+    reservationCounts[r.trening_id] = (reservationCounts[r.trening_id] || 0) + 1;
   });
 
   allData = treninky || [];
-
-  const unique = [...new Set(allData.map(t=>t.datum))];
-  days = unique.sort();
-
-  renderDay();
+  renderWeek();
 }
 
-// ================= RENDER DAY =================
-function renderDay(){
+// ================= WEEK =================
+function changeWeek(dir){
+  weekOffset += dir;
+  renderWeek();
+}
 
-  const date = days[selectedDay];
+function renderWeek(){
 
-  const trainings = allData.filter(t => t.datum === date);
+  const cal = document.getElementById("calendar");
+  cal.innerHTML = "";
 
-  let html = `
-    <div class="app-header">
-      <button onclick="changeDay(-1)">←</button>
-      <div>${formatDate(date)}</div>
-      <button onclick="changeDay(1)">→</button>
-    </div>
+  const today = new Date();
 
-    <div class="app-list">
-  `;
+  const start = new Date(today);
+  start.setDate(today.getDate() - today.getDay() + 1 + weekOffset * 7);
 
-  trainings.forEach(t=>{
+  document.getElementById("weekLabel").innerText =
+    `${start.toLocaleDateString("cs-CZ")}`;
 
-    const count = reservationCounts[t.id] || 0;
-    const free = t.kapacita - count;
+  const grouped = {};
 
-    let color = "green";
-    if(free === 0) color = "red";
-    else if(free <= 2) color = "yellow";
-
-    html += `
-      <div class="app-card ${color}" onclick="openTraining('${t.id}')">
-        <h3>${t.nazev}</h3>
-        <p>${t.cas_od} - ${t.cas_do}</p>
-        <p>${count}/${t.kapacita}</p>
-      </div>
-    `;
+  allData.forEach(t=>{
+    if(!grouped[t.datum]) grouped[t.datum] = [];
+    grouped[t.datum].push(t);
   });
 
-  html += `</div>`;
+  for(let i=0;i<7;i++){
 
-  document.getElementById("app").innerHTML = html;
+    const d = new Date(start);
+    d.setDate(start.getDate()+i);
+
+    const date = d.toISOString().split("T")[0];
+
+    const div = document.createElement("div");
+    div.className = "calendar-day";
+
+    let html = `<b>${d.toLocaleDateString("cs-CZ")}</b>`;
+
+    (grouped[date] || []).forEach(t=>{
+
+      const count = reservationCounts[t.id] || 0;
+      const free = t.kapacita - count;
+
+      let color = "green";
+      if(free === 0) color = "red";
+      else if(free <= 2) color = "yellow";
+
+      html += `
+        <div class="training ${color}" onclick="openTraining('${t.id}')">
+          ${t.nazev}<br>
+          ${count}/${t.kapacita}
+        </div>
+      `;
+    });
+
+    div.innerHTML = html;
+    cal.appendChild(div);
+  }
 }
 
-// ================= DAY SWITCH =================
-function changeDay(dir){
-
-  selectedDay += dir;
-
-  if(selectedDay < 0) selectedDay = 0;
-  if(selectedDay >= days.length) selectedDay = days.length - 1;
-
-  renderDay();
-}
-
-// ================= OPEN TRAINING =================
+// ================= DETAIL =================
 function openTraining(id){
 
-  selectedTraining = allData.find(t=>t.id===id);
+  selectedTraining = allData.find(t => t.id === id);
 
   const t = selectedTraining;
 
-  document.getElementById("app").innerHTML = `
-    <div class="bottom-sheet">
-      <h2>${t.nazev}</h2>
-      <p>${t.datum} | ${t.cas_od} - ${t.cas_do}</p>
-      <p>📍 ${t.misto || "-"}</p>
-      <p>Cena: ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
+  document.getElementById("list").innerHTML = `
+    <div class="card">
+
+      <h3>${t.nazev}</h3>
+
+      <div class="detail-box">
+📅 ${t.datum}
+⏰ ${t.cas_od} - ${t.cas_do}
+📍 ${t.misto || "-"}
+💰 ${t.cena ? t.cena + " Kč" : "Zdarma"}
+      </div>
+
+      ${t.popis ? `<div class="detail-box">${t.popis}</div>` : ""}
 
       <input id="hrac" placeholder="Jméno hráče">
       <input id="vek" placeholder="Věk">
       <input id="email" placeholder="Email rodiče">
 
       <button onclick="reserve()">Rezervovat</button>
-      <button onclick="renderDay()">Zpět</button>
     </div>
   `;
 }
@@ -318,12 +293,7 @@ async function reserve(){
 
   const { error } = await supabaseClient
     .from("rezervace")
-    .insert([{
-      trening_id: t.id,
-      hrac,
-      vek,
-      email
-    }]);
+    .insert([{ trening_id: t.id, hrac, vek, email }]);
 
   if(error){
     alert("Chyba rezervace");
@@ -333,24 +303,12 @@ async function reserve(){
   await fetch("/.netlify/functions/send-email", {
     method:"POST",
     headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({
-      hrac,
-      email,
-      treningId: t.id
-    })
+    body: JSON.stringify({ hrac, email, treningId: t.id })
   });
 
   alert("Rezervace hotová 💪");
   load();
-}
-
-// ================= FORMAT =================
-function formatDate(date){
-  return new Date(date).toLocaleDateString("cs-CZ", {
-    weekday:"long",
-    day:"numeric",
-    month:"numeric"
-  });
+  document.getElementById("list").innerHTML = "";
 }
 
 load();
