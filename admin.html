@@ -5,82 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin | pojdtrenovat.cz</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
-body{font-family:Roboto;margin:0;background:#f4f6f8}
+body{font-family:Arial;margin:0;background:#f4f6f8}
 
-/* LOGIN */
-#login{
-  max-width:320px;
-  margin:100px auto;
-  background:#fff;
-  padding:20px;
-  border-radius:12px;
-}
+#login,#app{padding:20px}
+#app{display:none}
 
 input,button{
   width:100%;
   padding:10px;
   margin-top:8px;
-  border-radius:8px;
 }
 
 button{
+  cursor:pointer;
   background:#000;
   color:#fff;
   border:none;
-  cursor:pointer;
 }
 
-/* APP */
-#app{display:none;padding:15px}
-
-/* CALENDAR */
-#calendar{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:10px;
-}
-
-.day{
-  background:#fff;
-  padding:12px;
-  border-radius:10px;
-  cursor:pointer;
-  border-left:4px solid #e00000;
-}
-
-/* TRAININGS */
-.training{
+.card{
   background:#fff;
   padding:12px;
   margin-top:10px;
   border-radius:10px;
-  border-left:4px solid #000;
-  cursor:pointer;
-}
-
-/* FORM */
-#form{
-  background:#fff;
-  padding:15px;
-  margin-top:15px;
-  border-radius:10px;
-}
-
-.delete-btn{
-  background:#e00000;
-}
-
-/* PLAYERS */
-.player{
-  background:#fff;
-  padding:10px;
-  margin-top:10px;
-  border-radius:10px;
-  border-left:4px solid #e00000;
 }
 </style>
 </head>
@@ -89,7 +39,7 @@ button{
 
 <!-- LOGIN -->
 <div id="login">
-  <h2>Administrace treninků</h2>
+  <h2>Admin login</h2>
   <input id="email" placeholder="Email">
   <input id="password" type="password" placeholder="Heslo">
   <button onclick="login()">Přihlásit</button>
@@ -97,26 +47,15 @@ button{
 
 <!-- APP -->
 <div id="app">
-
-  <h1>Admin panel</h1>
-
   <button onclick="logout()">Odhlásit</button>
-  <button onclick="newTraining()">➕ Nový trénink</button>
 
-  <h2>Kalendář</h2>
-  <div id="calendar"></div>
+  <h3>Tréninky</h3>
+  <div id="list"></div>
 
-  <h2>Tréninky</h2>
-  <div id="trainings"></div>
-
-  <h2>Editace</h2>
+  <h3>Form</h3>
   <div id="form"></div>
 
-  <button onclick="save()">💾 Uložit</button>
-
-  <h2>Hráči</h2>
-  <div id="players"></div>
-
+  <button onclick="save()">Uložit</button>
 </div>
 
 <script>
@@ -126,181 +65,112 @@ const supabaseClient = supabase.createClient(
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
-let current = null;
-let all = [];
+let data = [];
+let editId = null;
 
-/* LOGIN */
+/* ================= LOGIN ================= */
 async function login(){
-  const email=document.getElementById("email").value;
-  const password=document.getElementById("password").value;
 
-  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
 
   if(error){
-    alert("Špatné přihlášení");
-    return;
+    return alert("❌ špatné přihlášení");
   }
 
-  start();
-}
-
-async function check(){
-  const { data } = await supabaseClient.auth.getUser();
-  if(data.user) start();
-}
-
-function start(){
   document.getElementById("login").style.display="none";
   document.getElementById("app").style.display="block";
+
   load();
 }
 
+/* ================= LOGOUT ================= */
 async function logout(){
   await supabaseClient.auth.signOut();
   location.reload();
 }
 
-/* LOAD */
+/* ================= LOAD ================= */
 async function load(){
-  const { data } = await supabaseClient
+
+  const { data: t } = await supabaseClient
     .from("treninky")
     .select("*")
-    .order("datum");
+    .order("datum", { ascending: true });
 
-  all = data || [];
-  renderCalendar();
+  data = t || [];
+  render();
 }
 
-/* CALENDAR */
-function renderCalendar(){
+/* ================= RENDER ================= */
+function render(){
 
-  const cal=document.getElementById("calendar");
-  cal.innerHTML="";
+  const list = document.getElementById("list");
+  list.innerHTML = "";
 
-  let grouped={};
+  data.forEach(t=>{
 
-  all.forEach(t=>{
-    if(!grouped[t.datum]) grouped[t.datum]=[];
-    grouped[t.datum].push(t);
-  });
+    const div = document.createElement("div");
+    div.className = "card";
 
-  for(const d in grouped){
-
-    const div=document.createElement("div");
-    div.className="day";
-
-    div.innerHTML=`<b>${d}</b><br>${grouped[d].length} tréninků`;
-
-    div.onclick=()=>renderTrainings(grouped[d]);
-
-    cal.appendChild(div);
-  }
-}
-
-/* TRAININGS */
-function renderTrainings(list){
-
-  const box=document.getElementById("trainings");
-  box.innerHTML="";
-
-  list.forEach(t=>{
-
-    const div=document.createElement("div");
-    div.className="training";
-
-    div.innerHTML=`
+    div.innerHTML = `
       <b>${t.nazev}</b><br>
-      ${t.cas_od} - ${t.cas_do}
+      ${t.datum} ${t.cas_od} - ${t.cas_do}
+      <br><br>
+
+      <button onclick="edit('${t.id}')">Edit</button>
+      <button onclick="removeTraining('${t.id}')">Smazat</button>
     `;
 
-    div.onclick=()=>open(t);
-
-    box.appendChild(div);
+    list.appendChild(div);
   });
 }
 
-/* OPEN */
-function open(t){
-  current = t;
-  buildForm(t);
-  loadPlayers(t.id);
+/* ================= EDIT ================= */
+function edit(id){
+
+  const t = data.find(x => x.id === id);
+  editId = id;
+
+  document.getElementById("form").innerHTML = `
+    <input id="nazev" value="${t.nazev}">
+    <input id="datum" value="${t.datum}">
+    <input id="cas_od" value="${t.cas_od}">
+    <input id="cas_do" value="${t.cas_do}">
+    <input id="kapacita" value="${t.kapacita}">
+    <input id="misto" value="${t.misto || ""}">
+    <input id="cena" value="${t.cena || 0}">
+  `;
 }
 
-/* NEW */
-function newTraining(){
-  current = null;
-
-  buildForm({
-    nazev:"",
-    datum:"",
-    cas_od:"",
-    cas_do:"",
-    kapacita:"",
-    misto:"",
-    cena:"",
-    popis:""
-  });
-
-  document.getElementById("players").innerHTML="";
-}
-
-/* FORM */
-function buildForm(data){
-
-  const form=document.getElementById("form");
-  form.innerHTML="";
-
-  for(const k in data){
-
-    if(k==="id"||k==="created_at") continue;
-
-    const input=document.createElement("input");
-    input.id="f-"+k;
-    input.value=data[k] || "";
-    input.placeholder=k;
-
-    form.appendChild(input);
-  }
-
-  if(current){
-    const del=document.createElement("button");
-    del.className="delete-btn";
-    del.innerText="🗑 Smazat trénink";
-    del.onclick=deleteTraining;
-    form.appendChild(del);
-  }
-}
-
-/* SAVE */
+/* ================= SAVE ================= */
 async function save(){
 
-  let obj = {};
+  const obj = {
+    nazev: document.getElementById("nazev").value,
+    datum: document.getElementById("datum").value,
+    cas_od: document.getElementById("cas_od").value,
+    cas_do: document.getElementById("cas_do").value,
+    kapacita: Number(document.getElementById("kapacita").value),
+    misto: document.getElementById("misto").value,
+    cena: Number(document.getElementById("cena").value)
+  };
 
-  document.querySelectorAll("#form input").forEach(i=>{
-    obj[i.id.replace("f-","")] = i.value.trim();
-  });
+  if(editId){
 
-  obj.kapacita = Number(obj.kapacita || 0);
-  obj.cena = Number(obj.cena || 0);
+    const { error } = await supabaseClient
+      .from("treninky")
+      .update(obj)
+      .eq("id", editId);
 
-  // UPDATE
-  if(current && current.id){
-
-    obj.id = current.id;
-
-    const res = await fetch("/.netlify/functions/update-training", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(obj)
-    });
-
-    const data = await res.json();
-
-    if(data.error){
-      return alert("❌ Update selhal: " + data.error);
+    if(error){
+      return alert("❌ update selhal");
     }
-
-    alert("✔ Upraveno");
 
   } else {
 
@@ -309,89 +179,34 @@ async function save(){
       .insert([obj]);
 
     if(error){
-      return alert("❌ Chyba: " + error.message);
+      return alert("❌ insert selhal");
     }
-
-    alert("✔ Vytvořeno");
   }
 
-  current = null;
+  editId = null;
+  document.getElementById("form").innerHTML = "";
+
   load();
-  document.getElementById("form").innerHTML="";
 }
 
-/* DELETE */
-async function deleteTraining(){
-
-  if(!current) return;
+/* ================= DELETE (FIXED) ================= */
+async function removeTraining(id){
 
   if(!confirm("Smazat trénink?")) return;
 
-  const res = await fetch("/.netlify/functions/delete-training", {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ id: current.id })
-  });
-
-  const data = await res.json();
-
-  if(data.error){
-    return alert("❌ Mazání selhalo: " + data.error);
-  }
-
-  alert("✔ Smazáno");
-
-  current=null;
-  load();
-  document.getElementById("form").innerHTML="";
-  document.getElementById("players").innerHTML="";
-}
-
-/* PLAYERS */
-async function loadPlayers(id){
-
-  const { data } = await supabaseClient
-    .from("rezervace")
-    .select("*")
-    .eq("trening_id", id);
-
-  const box=document.getElementById("players");
-  box.innerHTML="";
-
-  if(!data || !data.length){
-    box.innerHTML="<p>Žádní hráči</p>";
-    return;
-  }
-
-  data.forEach(r=>{
-
-    const div=document.createElement("div");
-    div.className="player";
-
-    div.innerHTML=`
-      <b>${r.hrac}</b> (${r.vek})<br>
-      ${r.email}<br>
-      <button onclick="deletePlayer('${r.id}')">❌ Smazat</button>
-    `;
-
-    box.appendChild(div);
-  });
-}
-
-/* DELETE PLAYER */
-async function deletePlayer(id){
-
-  if(!confirm("Smazat hráče?")) return;
-
-  await supabaseClient
-    .from("rezervace")
+  const { error } = await supabaseClient
+    .from("treninky")
     .delete()
     .eq("id", id);
 
-  loadPlayers(current.id);
+  if(error){
+    return alert("❌ mazání selhalo");
+  }
+
+  load();
 }
 
-check();
+load();
 
 </script>
 
