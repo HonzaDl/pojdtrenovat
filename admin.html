@@ -88,7 +88,6 @@ button{
 
 <body>
 
-<!-- LOGIN -->
 <div id="login">
   <h2>Administrace treninků</h2>
   <input id="email" placeholder="Email">
@@ -96,7 +95,6 @@ button{
   <button onclick="login()">Přihlásit</button>
 </div>
 
-<!-- APP -->
 <div id="app">
 
   <h1>Admin panel</h1>
@@ -132,7 +130,6 @@ let all = [];
 
 /* ---------------- LOGIN ---------------- */
 async function login(){
-
   const email=document.getElementById("email").value;
   const password=document.getElementById("password").value;
 
@@ -227,16 +224,13 @@ function renderTrainings(list){
 
 /* ---------------- OPEN ---------------- */
 function open(t){
-
   current = t;
-
   buildForm(t);
   loadPlayers(t.id);
 }
 
 /* ---------------- NEW ---------------- */
 function newTraining(){
-
   current = null;
 
   buildForm({
@@ -270,6 +264,7 @@ function buildForm(data){
     form.appendChild(input);
   }
 
+  // DELETE přes backend
   const del=document.createElement("button");
   del.className="delete-btn";
   del.innerText="🗑 Smazat trénink";
@@ -277,13 +272,12 @@ function buildForm(data){
   del.onclick=async()=>{
 
     if(!current) return;
-
     if(!confirm("Smazat trénink?")) return;
 
-    await supabaseClient
-      .from("treninky")
-      .delete()
-      .eq("id", current.id);
+    await fetch("/.netlify/functions/delete-training", {
+      method:"POST",
+      body: JSON.stringify({ id: current.id })
+    });
 
     current=null;
     load();
@@ -294,7 +288,7 @@ function buildForm(data){
   form.appendChild(del);
 }
 
-/* ---------------- SAVE ---------------- */
+/* ---------------- SAVE (FIXED) ---------------- */
 async function save(){
 
   let obj = {};
@@ -303,50 +297,39 @@ async function save(){
     obj[i.id.replace("f-","")] = i.value.trim();
   });
 
-  console.log("DATA:", obj);
+  if(!obj.nazev) return alert("❌ Chybí název");
+  if(!obj.datum) return alert("❌ Chybí datum");
+  if(!obj.cas_od || !obj.cas_do) return alert("❌ Chybí čas");
 
-  // 🔴 VALIDACE
+  obj.kapacita = Number(obj.kapacita || 0);
+  obj.cena = Number(obj.cena || 0);
 
-  if(!obj.nazev){
-    return alert("❌ Chybí název tréninku");
+  let res;
+
+  if(current){
+
+    // UPDATE
+    res = await supabaseClient
+      .from("treninky")
+      .update(obj)
+      .eq("id", current.id);
+
+  } else {
+
+    // INSERT
+    res = await supabaseClient
+      .from("treninky")
+      .insert([obj]);
   }
 
-  if(!obj.datum){
-    return alert("❌ Chybí datum");
+  if(res.error){
+    console.log(res.error);
+    return alert("❌ Chyba: " + res.error.message);
   }
 
-  if(!obj.cas_od || !obj.cas_do){
-    return alert("❌ Chybí čas");
-  }
+  alert("✔ Uloženo");
 
-  if(!obj.kapacita || isNaN(obj.kapacita)){
-    return alert("❌ Kapacita musí být číslo");
-  }
-
-  if(!obj.misto){
-    return alert("❌ Chybí místo");
-  }
-
-  if(!obj.cena){
-    obj.cena = 0; // fallback
-  }
-
-  // 🔢 převod čísel
-  obj.kapacita = Number(obj.kapacita);
-  obj.cena = Number(obj.cena);
-
-  // 💾 INSERT / UPDATE
-  let { error } = await supabaseClient
-    .from("treninky")
-    .insert([obj]);
-
-  if(error){
-    console.log(error);
-    return alert("❌ Chyba ukládání: " + error.message);
-  }
-
-  alert("✔ Trénink uložen");
-
+  current = null;
   load();
 }
 
