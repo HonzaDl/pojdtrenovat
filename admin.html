@@ -17,13 +17,14 @@ input,button{
   width:100%;
   padding:10px;
   margin-top:8px;
+  box-sizing:border-box;
 }
 
 button{
-  cursor:pointer;
   background:#000;
   color:#fff;
   border:none;
+  cursor:pointer;
 }
 
 .card{
@@ -52,7 +53,7 @@ button{
   <h3>Tréninky</h3>
   <div id="list"></div>
 
-  <h3>Form</h3>
+  <h3>Edit / nový trénink</h3>
   <div id="form"></div>
 
   <button onclick="save()">Uložit</button>
@@ -80,7 +81,8 @@ async function login(){
   });
 
   if(error){
-    return alert("❌ špatné přihlášení");
+    alert("❌ špatné přihlášení");
+    return;
   }
 
   document.getElementById("login").style.display="none";
@@ -98,16 +100,22 @@ async function logout(){
 /* ================= LOAD ================= */
 async function load(){
 
-  const { data: t } = await supabaseClient
+  const { data: t, error } = await supabaseClient
     .from("treninky")
     .select("*")
     .order("datum", { ascending: true });
+
+  if(error){
+    alert("❌ chyba načtení");
+    console.log(error);
+    return;
+  }
 
   data = t || [];
   render();
 }
 
-/* ================= RENDER ================= */
+/* ================= RENDER LIST ================= */
 function render(){
 
   const list = document.getElementById("list");
@@ -134,15 +142,21 @@ function render(){
 /* ================= EDIT ================= */
 function edit(id){
 
-  const t = data.find(x => x.id === id);
+  const t = data.find(x => String(x.id) === String(id));
+
+  if(!t){
+    alert("❌ Trénink nenalezen");
+    return;
+  }
+
   editId = id;
 
   document.getElementById("form").innerHTML = `
-    <input id="nazev" value="${t.nazev}">
-    <input id="datum" value="${t.datum}">
-    <input id="cas_od" value="${t.cas_od}">
-    <input id="cas_do" value="${t.cas_do}">
-    <input id="kapacita" value="${t.kapacita}">
+    <input id="nazev" value="${t.nazev || ""}">
+    <input id="datum" value="${t.datum || ""}">
+    <input id="cas_od" value="${t.cas_od || ""}">
+    <input id="cas_do" value="${t.cas_do || ""}">
+    <input id="kapacita" value="${t.kapacita || 0}">
     <input id="misto" value="${t.misto || ""}">
     <input id="cena" value="${t.cena || 0}">
   `;
@@ -156,9 +170,9 @@ async function save(){
     datum: document.getElementById("datum").value,
     cas_od: document.getElementById("cas_od").value,
     cas_do: document.getElementById("cas_do").value,
-    kapacita: Number(document.getElementById("kapacita").value),
+    kapacita: Number(document.getElementById("kapacita").value || 0),
     misto: document.getElementById("misto").value,
-    cena: Number(document.getElementById("cena").value)
+    cena: Number(document.getElementById("cena").value || 0)
   };
 
   if(editId){
@@ -169,6 +183,7 @@ async function save(){
       .eq("id", editId);
 
     if(error){
+      console.log(error);
       return alert("❌ update selhal");
     }
 
@@ -179,6 +194,7 @@ async function save(){
       .insert([obj]);
 
     if(error){
+      console.log(error);
       return alert("❌ insert selhal");
     }
   }
@@ -189,7 +205,7 @@ async function save(){
   load();
 }
 
-/* ================= DELETE (FIXED) ================= */
+/* ================= DELETE ================= */
 async function removeTraining(id){
 
   if(!confirm("Smazat trénink?")) return;
@@ -200,13 +216,23 @@ async function removeTraining(id){
     .eq("id", id);
 
   if(error){
+    console.log(error);
     return alert("❌ mazání selhalo");
   }
 
   load();
 }
 
-load();
+/* ================= AUTO CHECK ================= */
+window.onload = async () => {
+  const { data } = await supabaseClient.auth.getSession();
+
+  if(data.session){
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="block";
+    load();
+  }
+};
 
 </script>
 
