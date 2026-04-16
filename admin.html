@@ -11,6 +11,7 @@
 <style>
 body{font-family:Roboto;margin:0;background:#f4f6f8}
 
+/* LOGIN */
 #login{
   max-width:320px;
   margin:100px auto;
@@ -34,8 +35,10 @@ button{
   cursor:pointer;
 }
 
+/* APP */
 #app{display:none;padding:15px}
 
+/* CALENDAR */
 #calendar{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
@@ -50,6 +53,7 @@ button{
   border-left:4px solid #e00000;
 }
 
+/* TRAININGS */
 .training{
   background:#fff;
   padding:12px;
@@ -59,6 +63,7 @@ button{
   cursor:pointer;
 }
 
+/* FORM */
 #form{
   background:#fff;
   padding:15px;
@@ -70,6 +75,7 @@ button{
   background:#e00000;
 }
 
+/* PLAYERS */
 .player{
   background:#fff;
   padding:10px;
@@ -82,7 +88,6 @@ button{
 
 <body>
 
-<!-- LOGIN -->
 <div id="login">
   <h2>Administrace tréninků</h2>
   <input id="email" placeholder="Email">
@@ -90,7 +95,6 @@ button{
   <button onclick="login()">Přihlásit</button>
 </div>
 
-<!-- APP -->
 <div id="app">
 
   <h1>Admin panel</h1>
@@ -124,20 +128,14 @@ const supabaseClient = supabase.createClient(
 let current = null;
 let all = [];
 
-/* ---------------- LOGIN ---------------- */
+/* LOGIN */
 async function login(){
   const email=document.getElementById("email").value;
   const password=document.getElementById("password").value;
 
-  const { error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-  if(error){
-    alert("Špatné přihlášení");
-    return;
-  }
+  if(error){ alert("Špatné přihlášení"); return; }
 
   start();
 }
@@ -158,7 +156,7 @@ async function logout(){
   location.reload();
 }
 
-/* ---------------- LOAD ---------------- */
+/* LOAD */
 async function load(){
   const { data } = await supabaseClient
     .from("treninky")
@@ -169,7 +167,7 @@ async function load(){
   renderCalendar();
 }
 
-/* ---------------- CALENDAR ---------------- */
+/* CALENDAR */
 function renderCalendar(){
 
   const cal=document.getElementById("calendar");
@@ -186,16 +184,14 @@ function renderCalendar(){
 
     const div=document.createElement("div");
     div.className="day";
-
     div.innerHTML=`<b>${d}</b><br>${grouped[d].length} tréninků`;
-
     div.onclick=()=>renderTrainings(grouped[d]);
 
     cal.appendChild(div);
   }
 }
 
-/* ---------------- TRAININGS ---------------- */
+/* TRAININGS */
 function renderTrainings(list){
 
   const box=document.getElementById("trainings");
@@ -212,19 +208,18 @@ function renderTrainings(list){
     `;
 
     div.onclick=()=>open(t);
-
     box.appendChild(div);
   });
 }
 
-/* ---------------- OPEN ---------------- */
+/* OPEN */
 function open(t){
   current = t;
   buildForm(t);
   loadPlayers(t.id);
 }
 
-/* ---------------- NEW ---------------- */
+/* NEW */
 function newTraining(){
   current = null;
 
@@ -235,13 +230,14 @@ function newTraining(){
     cas_do:"",
     kapacita:"",
     misto:"",
-    cena:""
+    cena:"",
+    popis:""
   });
 
   document.getElementById("players").innerHTML="";
 }
 
-/* ---------------- FORM ---------------- */
+/* FORM */
 function buildForm(data){
 
   const form=document.getElementById("form");
@@ -259,49 +255,40 @@ function buildForm(data){
     form.appendChild(input);
   }
 
-  // DELETE (SAFE)
   const del=document.createElement("button");
   del.className="delete-btn";
   del.innerText="🗑 Smazat trénink";
 
-  del.onclick = async () => {
+  del.onclick=async()=>{
 
-    const id = current?.id;
-
-    console.log("DELETE ID:", id);
-
-    if (!id) {
-      alert("❌ Chybí ID tréninku");
-      return;
-    }
-
-    if (!confirm("Opravdu smazat trénink?")) return;
+    if(!current) return;
+    if(!confirm("Smazat trénink?")) return;
 
     const res = await fetch("/.netlify/functions/delete-training", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id })
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ id: current.id })
     });
 
     const data = await res.json();
 
-    if (!res.ok) {
+    if(data.error){
       alert("❌ Mazání selhalo: " + data.error);
       return;
     }
 
     alert("✔ Smazáno");
 
-    current = null;
+    current=null;
     load();
-    document.getElementById("players").innerHTML = "";
-    document.getElementById("form").innerHTML = "";
+    document.getElementById("players").innerHTML="";
+    document.getElementById("form").innerHTML="";
   };
 
   form.appendChild(del);
 }
 
-/* ---------------- SAVE ---------------- */
+/* SAVE */
 async function save(){
 
   let obj = {};
@@ -310,40 +297,32 @@ async function save(){
     obj[i.id.replace("f-","")] = i.value.trim();
   });
 
-  if(!obj.nazev) return alert("Chybí název");
-  if(!obj.datum) return alert("Chybí datum");
-  if(!obj.cas_od || !obj.cas_do) return alert("Chybí čas");
-
-  obj.kapacita = Number(obj.kapacita || 0);
+  obj.kapacita = Number(obj.kapacita);
   obj.cena = Number(obj.cena || 0);
 
   let res;
 
-  if(current){
-
+  if(current && current.id){
     res = await supabaseClient
       .from("treninky")
       .update(obj)
       .eq("id", current.id);
-
   } else {
-
     res = await supabaseClient
       .from("treninky")
       .insert([obj]);
   }
 
   if(res.error){
-    return alert(res.error.message);
+    alert("❌ Chyba: " + res.error.message);
+    return;
   }
 
   alert("✔ Uloženo");
-
-  current = null;
   load();
 }
 
-/* ---------------- PLAYERS ---------------- */
+/* PLAYERS */
 async function loadPlayers(id){
 
   const { data } = await supabaseClient
@@ -354,13 +333,12 @@ async function loadPlayers(id){
   const box=document.getElementById("players");
   box.innerHTML="";
 
-  if(!data?.length){
+  if(!data.length){
     box.innerHTML="<p>Žádní hráči</p>";
     return;
   }
 
   data.forEach(r=>{
-
     const div=document.createElement("div");
     div.className="player";
 
@@ -374,7 +352,7 @@ async function loadPlayers(id){
   });
 }
 
-/* ---------------- DELETE PLAYER ---------------- */
+/* DELETE PLAYER */
 async function deletePlayer(id){
 
   if(!confirm("Smazat hráče?")) return;
