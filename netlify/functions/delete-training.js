@@ -1,18 +1,16 @@
 import { createClient } from "@supabase/supabase-js";
 
-export const handler = async (event) => {
+export async function handler(event) {
   try {
+
     const { id } = JSON.parse(event.body || "{}");
 
-    if (!id) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "chybí ID" })
-      };
+    if(!id){
+      return { statusCode: 400, body: JSON.stringify({ error: "missing id" }) };
     }
 
     const supabase = createClient(
-      process.env.SUPABASE_URL,
+      "https://kgmdyhiwkkviswluuwkg.supabase.co",
       process.env.SUPABASE_SERVICE_KEY
     );
 
@@ -21,7 +19,12 @@ export const handler = async (event) => {
       .delete()
       .eq("id", id);
 
-    if (error) throw error;
+    if(error){
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: error.message })
+      };
+    }
 
     return {
       statusCode: 200,
@@ -34,4 +37,4 @@ export const handler = async (event) => {
       body: JSON.stringify({ error: e.message })
     };
   }
-};
+}
