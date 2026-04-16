@@ -87,6 +87,7 @@ button{
 
 <body>
 
+<!-- LOGIN -->
 <div id="login">
   <h2>Administrace treninků</h2>
   <input id="email" placeholder="Email">
@@ -94,6 +95,7 @@ button{
   <button onclick="login()">Přihlásit</button>
 </div>
 
+<!-- APP -->
 <div id="app">
 
   <h1>Admin panel</h1>
@@ -140,6 +142,11 @@ async function login(){
   }
 
   start();
+}
+
+async function check(){
+  const { data } = await supabaseClient.auth.getUser();
+  if(data.user) start();
 }
 
 function start(){
@@ -244,6 +251,7 @@ function buildForm(data){
   form.innerHTML="";
 
   for(const k in data){
+
     if(k==="id"||k==="created_at") continue;
 
     const input=document.createElement("input");
@@ -307,20 +315,16 @@ async function save(){
     alert("✔ Vytvořeno");
   }
 
-  // 🔥 TADY JE OPRAVA (refresh UI)
   current = null;
-
-  await load();
-
+  load();
   document.getElementById("form").innerHTML="";
-  document.getElementById("trainings").innerHTML="";
-  document.getElementById("players").innerHTML="";
 }
 
 /* DELETE */
 async function deleteTraining(){
 
   if(!current) return;
+
   if(!confirm("Smazat trénink?")) return;
 
   const res = await fetch("/.netlify/functions/delete-training", {
@@ -339,7 +343,6 @@ async function deleteTraining(){
 
   current=null;
   load();
-
   document.getElementById("form").innerHTML="";
   document.getElementById("players").innerHTML="";
 }
@@ -388,7 +391,7 @@ async function deletePlayer(id){
   loadPlayers(current.id);
 }
 
-start();
+check();
 
 </script>
 
