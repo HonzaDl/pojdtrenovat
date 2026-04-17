@@ -211,7 +211,7 @@ img {
   .trener img[alt="Pavel Pelán"],
   .trener img[alt="Petr Šudoma"] {
     object-position: center top;
-    height: 300px;
+    height: 500px;
   }
 }
 
