@@ -1,5 +1,5 @@
 /* =========================
-   GLOBAL RESET
+   RESET
 ========================= */
 * {
   box-sizing: border-box;
@@ -17,7 +17,7 @@ body {
 }
 
 /* =========================
-   HEADER (STEJNÝ NA VŠECH STRÁNKÁCH)
+   HEADER (VŠECHNY STRÁNKY)
 ========================= */
 .header {
   display: flex;
@@ -35,7 +35,6 @@ body {
   font-weight: 700;
 }
 
-/* NAVIGACE - CENTRUM */
 .nav {
   display: flex;
   gap: 18px;
@@ -49,15 +48,12 @@ body {
   font-weight: 600;
   padding: 6px 10px;
   border-radius: 6px;
-  transition: 0.2s;
 }
 
 .nav a:hover {
   background: #e60000;
-  color: #fff;
 }
 
-/* LOGA */
 .logos-right {
   display: flex;
   align-items: center;
@@ -71,7 +67,7 @@ body {
 }
 
 /* =========================
-   MAIN CONTAINER
+   MAIN
 ========================= */
 main,
 .container {
@@ -81,9 +77,6 @@ main,
   flex: 1;
 }
 
-/* =========================
-   NADPISY
-========================= */
 h2 {
   text-align: center;
   margin: 20px 0;
@@ -91,7 +84,7 @@ h2 {
 }
 
 /* =========================
-   BACK BUTTON (JEN KDE HO DÁŠ)
+   BACK BUTTON
 ========================= */
 .back-btn {
   display: inline-block;
@@ -101,7 +94,6 @@ h2 {
   color: #fff;
   border-radius: 8px;
   text-decoration: none;
-  font-weight: 600;
 }
 
 .back-btn:hover {
@@ -138,7 +130,7 @@ h2 {
 }
 
 /* =========================
-   TRENEŘI
+   TRENEŘI (FIX HLAVNÍ PROBLÉM)
 ========================= */
 .treneri {
   display: grid;
@@ -146,33 +138,41 @@ h2 {
   gap: 16px;
 }
 
+/* karta */
 .trener {
   background: #fff;
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 4px 14px rgba(0,0,0,0.08);
   border-left: 4px solid #e60000;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
+/* FOTO - FIX (stejná velikost všude) */
 .trener img {
   width: 100%;
-  height: 240px;
+  height: 220px;
   object-fit: cover;
   display: block;
 }
 
+/* JMÉNO */
 .trener h3 {
-  margin: 10px 0 5px;
+  margin: 10px 10px 6px;
 }
 
+/* POPIS - FIX aby se neztrácel */
 .trener p {
-  padding: 0 10px 14px;
+  margin: 0 10px 12px;
   color: #555;
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* =========================
-   REZERVACE APP STYLE
+   REZERVACE APP
 ========================= */
 .app-header {
   display: flex;
@@ -203,7 +203,6 @@ h2 {
 .yellow { border-left: 4px solid #f1c40f; }
 .red { border-left: 4px solid #e74c3c; }
 
-/* DETAIL */
 .bottom-sheet {
   background: #fff;
   padding: 16px;
@@ -242,7 +241,7 @@ footer {
 }
 
 /* =========================
-   MOBILE FIX
+   MOBILE
 ========================= */
 @media (max-width: 768px) {
   .header {
