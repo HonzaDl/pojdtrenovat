@@ -300,8 +300,8 @@ button:hover {
   font-size: 14px;
   color: #444;
 }
-   /* =========================
-   LAYOUT FIX (FOOTER DOLŮ)
+/* =========================
+   LAYOUT (APP STYLE)
 ========================= */
 
 html, body {
@@ -311,6 +311,7 @@ html, body {
 body {
   display: flex;
   flex-direction: column;
+  background: #f4f6f8;
 }
 
 main {
@@ -318,27 +319,32 @@ main {
 }
 
 /* =========================
-   FOOTER
+   FOOTER (APP STYLE)
 ========================= */
 
-footer {
-  background: #111;
-  color: #fff;
+.footer {
+  margin-top: 30px;
+  padding: 20px 0;
+  background: #fff;
+  border-top: 1px solid #eee;
   text-align: center;
-  padding: 14px;
+}
+
+.footer p {
+  margin: 0;
   font-size: 14px;
+  color: #555;
 }
 
-footer a {
-  color: #e60000;
+.footer a {
+  color: #e00000;
   text-decoration: none;
+  font-weight: 500;
 }
 
-footer a:hover {
+.footer a:hover {
   text-decoration: underline;
 }
-footer {
-  border-top: 1px solid #222;
 }
 }
 
