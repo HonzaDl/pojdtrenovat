@@ -177,7 +177,7 @@ img {
   width: 100%;
   height: 240px;
   object-fit: cover;
-  object-position: center 20%; /* 👈 klíč: hlava vždy vidět */
+  object-position: center 10%; /* 👈 klíč: hlava vždy vidět */
 }
 
 /* text */
@@ -199,8 +199,8 @@ img {
 
 @media (max-width: 768px) {
   .trener img {
-    height: 260px;
-    object-position: center 15%;
+    height: 280px;
+    object-position: center 5%;
   }
 
   .trener {
