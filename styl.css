@@ -241,5 +241,45 @@ img {
   .trener img {
     height: 200px;
   }
+   /* FIX – rezervace layout */
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.app-header button {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: #111;
+  color: #fff;
+}
+
+.app-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-card {
+  background: #fff;
+  padding: 14px;
+  border-radius: 12px;
+  border-left: 4px solid #111;
+  cursor: pointer;
+}
+
+.bottom-sheet {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+}
 }
 
