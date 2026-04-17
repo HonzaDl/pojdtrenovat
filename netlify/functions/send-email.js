@@ -1,40 +1,51 @@
-exports.handler = async function (event) {
-
+export async function handler(event) {
   try {
+    if (event.httpMethod !== "POST") {
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: "Method not allowed" })
+      };
+    }
 
     const { hrac, email, treningId } = JSON.parse(event.body || "{}");
 
-    // TEST EMAIL
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
         from: "info@pojdtrenovat.cz",
         to: ["pojdtrenovat@gmail.com"],
-        subject: "TEST EMAIL",
-        html: `<p>Funguje to ✅</p>`
+        subject: "Nová rezervace",
+        html: `
+          <h2>Nová rezervace</h2>
+          <p><b>Hráč:</b> ${hrac || "-"}</p>
+          <p><b>Email:</b> ${email || "-"}</p>
+          <p><b>Trénink ID:</b> ${treningId || "-"}</p>
+        `
       })
     });
 
     const data = await res.json();
 
-    console.log("RESEND:", res.status, data);
+    if (!res.ok) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "Resend failed", detail: data })
+      };
+    }
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ ok: true, resend: data })
+      body: JSON.stringify({ ok: true })
     };
 
   } catch (e) {
-
-    console.log("ERROR:", e);
-
     return {
       statusCode: 500,
       body: JSON.stringify({ error: e.message })
     };
   }
-};
+}
