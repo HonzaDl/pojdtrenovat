@@ -1,58 +1,73 @@
+/* =========================
+   RESET
+========================= */
+
 *{
   box-sizing:border-box;
   margin:0;
   padding:0;
 }
 
+html,body{
+  height:100%;
+}
+
 body{
-  font-family:Roboto, Arial, sans-serif;
-  background:#bbb;
+  font-family:'Roboto', Arial, sans-serif;
+  background:#bbbbbb;
   color:#111;
-  min-height:100vh;
+  line-height:1.5;
   display:flex;
   flex-direction:column;
 }
 
-/* pozadí logo */
+/* =========================
+   POZADÍ
+========================= */
+
 body::before{
   content:"";
   position:fixed;
   inset:0;
   background:url("images/ssgihockey.jpg") no-repeat center;
   background-size:600px;
-  opacity:0.08;
+  opacity:0.06;
   z-index:-1;
 }
 
-/* ================= HEADER ================= */
+/* =========================
+   HEADER
+========================= */
+
 .header{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
   flex-wrap:wrap;
-  gap:10px;
-  padding:12px 18px;
+  gap:12px;
+  padding:12px 16px;
   background:#111;
   color:#fff;
 }
 
 .site-title{
-  font-size:1.6rem;
+  font-size:1.3rem;
   font-weight:700;
 }
 
 .nav{
   display:flex;
-  gap:14px;
+  gap:12px;
   flex-wrap:wrap;
 }
 
 .nav a{
   color:#fff;
   text-decoration:none;
+  font-weight:600;
   padding:6px 10px;
   border-radius:8px;
-  font-weight:600;
+  transition:0.2s;
 }
 
 .nav a:hover{
@@ -61,16 +76,40 @@ body::before{
 
 .logos-right{
   display:flex;
-  gap:12px;
+  gap:10px;
   align-items:center;
 }
 
 .nav-logo,
 .new-logo{
-  height:42px;
+  height:38px;
+  object-fit:contain;
 }
 
-/* ================= MAIN ================= */
+/* =========================
+   BACK BUTTON
+========================= */
+
+.back-btn{
+  display:inline-block;
+  margin:12px 14px;
+  padding:8px 12px;
+  background:#111;
+  color:#fff;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:600;
+  transition:0.2s;
+}
+
+.back-btn:hover{
+  background:#e60000;
+}
+
+/* =========================
+   MAIN
+========================= */
+
 main{
   flex:1;
   max-width:1100px;
@@ -81,225 +120,153 @@ main{
 h2{
   text-align:center;
   color:#e60000;
-  margin:20px 0;
+  margin-bottom:18px;
 }
 
-/* ================= BACK BUTTON ================= */
-.back-btn{
-  display:inline-block;
-  margin:12px 20px;
-  padding:8px 12px;
-  background:#111;
-  color:#fff;
-  border-radius:8px;
-  text-decoration:none;
-  font-weight:600;
-}
+/* =========================
+   TRENEŘI (INSTAGRAM KARTY)
+========================= */
 
-.back-btn:hover{
-  background:#e60000;
-}
-
-/* ================= TRENEŘI (INSTAGRAM STYLE) ================= */
 .treneri{
   display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap:16px;
+  margin-bottom:20px;
 }
 
 .trener{
   background:#fff;
   border-radius:16px;
   overflow:hidden;
-  box-shadow:0 6px 16px rgba(0,0,0,0.08);
-  display:flex;
-  flex-direction:column;
-  transition:0.2s;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+  transition:0.25s;
 }
 
 .trener:hover{
   transform:translateY(-4px);
 }
 
+.trener:active{
+  transform:scale(0.98);
+}
+
+/* FIX: žádné uříznuté nebo obří fotky */
 .trener img{
   width:100%;
-  height:auto;
+  height:240px;
+  object-fit:cover;
+  object-position:top;
   display:block;
 }
 
 .trener h3{
-  margin:10px 0 4px;
-  padding:0 10px;
-  font-size:1.1rem;
+  margin:10px 12px 4px;
+  font-size:1rem;
 }
 
 .trener p{
-  padding:0 10px 12px;
-  font-size:0.95rem;
+  margin:0 12px 14px;
+  font-size:0.9rem;
   color:#444;
 }
 
-/* ================= REZERVACE ================= */
-.container{
-  max-width:900px;
-  margin:auto;
-  padding:20px;
+/* =========================
+   GALERIE
+========================= */
+
+.gallery{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap:12px;
+  margin-top:15px;
 }
 
-.app-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#111;
-  color:#fff;
-  padding:10px;
-  border-radius:12px;
+.gallery-item{
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
 }
 
-.app-list{
-  margin-top:10px;
+.gallery-item img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  display:block;
 }
+
+/* =========================
+   ODKAZY (INDEX)
+========================= */
+
+.odkazy{
+  display:grid;
+  gap:14px;
+}
+
+.odkaz{
+  background:#fff;
+  padding:14px;
+  border-radius:14px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.1);
+}
+
+.odkaz a{
+  font-weight:700;
+  color:#e60000;
+  text-decoration:none;
+}
+
+/* =========================
+   APP KARTY (REZERVACE)
+========================= */
 
 .app-card{
   background:#fff;
+  border-radius:16px;
   padding:14px;
-  border-radius:12px;
-  margin-top:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.08);
-  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);
 }
 
-.green{border-left:4px solid #2ecc71;}
-.yellow{border-left:4px solid #f1c40f;}
-.red{border-left:4px solid #e74c3c;}
-
-/* ================= FORMY ================= */
-input,button{
-  width:100%;
-  padding:10px;
-  margin-top:8px;
-  border-radius:10px;
-  border:1px solid #ddd;
+.app-card:active{
+  transform:scale(0.98);
 }
 
-button{
-  background:#111;
-  color:#fff;
-  cursor:pointer;
-}
+.green{border-left:5px solid #2ecc71;}
+.yellow{border-left:5px solid #f1c40f;}
+.red{border-left:5px solid #e74c3c;}
 
-button:hover{
-  background:#e60000;
-}
+/* =========================
+   FOOTER
+========================= */
 
-/* ================= FOOTER ================= */
 footer{
-  background:#111;
+  margin-top:40px;
+  padding:15px;
+  background:#000;
   color:#fff;
   text-align:center;
-  padding:12px;
-  margin-top:40px;
 }
 
-/* ================= MOBILE ================= */
+/* =========================
+   MOBILE
+========================= */
+
 @media(max-width:600px){
   .header{
     flex-direction:column;
-    align-items:center;
+    text-align:center;
   }
 
-  .nav-logo,
-  .new-logo{
-    height:30px;
+  .nav{
+    justify-content:center;
   }
-  
-/* =========================
-   APP ANIMACE (SAFE LAYER)
-   - nezasahuje do layoutu
-   - jen vizuální efekt
-========================= */
 
-/* jemný vstup celé stránky */
-body{
-  animation: pageFade 0.35s ease-out;
-}
-
-@keyframes pageFade{
-  from{
-    opacity:0.98;
+  .trener img{
+    height:210px;
   }
-  to{
-    opacity:1;
+
+  .gallery-item img{
+    height:160px;
   }
-}
-
-/* animace karet (trenéři + rezervace) */
-.trener,
-.app-card{
-  animation: cardFade 0.25s ease-out;
-}
-
-@keyframes cardFade{
-  from{
-    opacity:0;
-    transform:translateY(6px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-/* mobilní "tap" efekt */
-.trener:active,
-.app-card:active,
-button:active,
-.back-btn:active,
-.nav a:active{
-  transform:scale(0.97);
-  transition:transform 0.08s ease;
-}
-
-/* plynulé hover přechody (bez změny layoutu) */
-.trener,
-.app-card,
-button,
-.back-btn,
-.nav a{
-  transition:transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-/* lehké zvýraznění při hoveru (jen vizuál) */
-.trener:hover,
-.app-card:hover{
-  box-shadow:0 8px 18px rgba(0,0,0,0.12);
-}
-
-/* header jako app bar (SAFE - jen vizuál) */
-.header{
-  position:sticky;
-  top:0;
-  z-index:10;
-  backdrop-filter: blur(6px);
-}
-
-/* jemné “soft load” pro obrázky */
-.trener img{
-  transition:opacity 0.3s ease, transform 0.3s ease;
-}
-
-.trener img{
-  animation: imgIn 0.4s ease-out;
-}
-
-@keyframes imgIn{
-  from{
-    opacity:0;
-    transform:scale(1.02);
-  }
-  to{
-    opacity:1;
-    transform:scale(1);
-  }
-}
 }
