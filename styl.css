@@ -199,7 +199,7 @@ img {
 
 @media (max-width: 768px) {
   .trener img {
-    height: 400px;
+    height: 500px;
     object-position: center 5%;
   }
 
@@ -272,7 +272,7 @@ img {
   }
 
   .trener img {
-    height: 200px;
+    height: 400px;
   }
    /* FIX – rezervace layout */
 
