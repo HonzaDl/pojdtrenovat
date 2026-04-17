@@ -212,4 +212,94 @@ footer{
   .new-logo{
     height:30px;
   }
+  
+/* =========================
+   APP ANIMACE (SAFE LAYER)
+   - nezasahuje do layoutu
+   - jen vizuální efekt
+========================= */
+
+/* jemný vstup celé stránky */
+body{
+  animation: pageFade 0.35s ease-out;
+}
+
+@keyframes pageFade{
+  from{
+    opacity:0.98;
+  }
+  to{
+    opacity:1;
+  }
+}
+
+/* animace karet (trenéři + rezervace) */
+.trener,
+.app-card{
+  animation: cardFade 0.25s ease-out;
+}
+
+@keyframes cardFade{
+  from{
+    opacity:0;
+    transform:translateY(6px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* mobilní "tap" efekt */
+.trener:active,
+.app-card:active,
+button:active,
+.back-btn:active,
+.nav a:active{
+  transform:scale(0.97);
+  transition:transform 0.08s ease;
+}
+
+/* plynulé hover přechody (bez změny layoutu) */
+.trener,
+.app-card,
+button,
+.back-btn,
+.nav a{
+  transition:transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+/* lehké zvýraznění při hoveru (jen vizuál) */
+.trener:hover,
+.app-card:hover{
+  box-shadow:0 8px 18px rgba(0,0,0,0.12);
+}
+
+/* header jako app bar (SAFE - jen vizuál) */
+.header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  backdrop-filter: blur(6px);
+}
+
+/* jemné “soft load” pro obrázky */
+.trener img{
+  transition:opacity 0.3s ease, transform 0.3s ease;
+}
+
+.trener img{
+  animation: imgIn 0.4s ease-out;
+}
+
+@keyframes imgIn{
+  from{
+    opacity:0;
+    transform:scale(1.02);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
 }
