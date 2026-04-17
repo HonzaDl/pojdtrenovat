@@ -34,66 +34,64 @@
 </main>
 
 <script>
+
 const supabaseClient = supabase.createClient(
   "https://kgmdyhiwkkviswluuwkg.supabase.co",
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
 );
 
-let all = [];
+let trainings = [];
 let days = [];
 let selectedDay = 0;
 let selectedTraining = null;
-let reservationCounts = {};
+let counts = {};
 
 /* ================= LOAD ================= */
 async function load(){
 
-  const { data: treninky } = await supabaseClient
+  const { data: t } = await supabaseClient
     .from("treninky")
     .select("*");
 
-  const { data: rezervace } = await supabaseClient
+  const { data: r } = await supabaseClient
     .from("rezervace")
     .select("trening_id");
 
-  reservationCounts = {};
+  trainings = t || [];
 
-  (rezervace || []).forEach(r=>{
-    if(!r.trening_id) return;
-    reservationCounts[r.trening_id] =
-      (reservationCounts[r.trening_id] || 0) + 1;
+  counts = {};
+  (r || []).forEach(x=>{
+    if(!x.trening_id) return;
+    counts[x.trening_id] = (counts[x.trening_id] || 0) + 1;
   });
 
-  all = treninky || [];
+  days = [...new Set(trainings.map(x => x.datum).filter(Boolean))]
+    .sort((a,b)=> new Date(a) - new Date(b));
 
-  const unique = [...new Set(all.map(t => t.datum).filter(Boolean))];
-  days = unique.sort((a,b)=> new Date(a) - new Date(b));
-
-  if(selectedDay < 0) selectedDay = 0;
   if(selectedDay >= days.length) selectedDay = 0;
 
-  renderDay();
+  render();
 }
 
-/* ================= DAY VIEW ================= */
-function renderDay(){
+/* ================= RENDER ================= */
+function render(){
 
-  const date = days[selectedDay];
-  const trainings = all.filter(t => t.datum === date);
+  const date = days[selectedDay] || "";
+  const list = trainings.filter(t => t.datum === date);
 
   let html = `
     <div class="app-header">
       <button onclick="changeDay(-1)">←</button>
-      <div>${formatDate(date)}</div>
+      <div>${format(date)}</div>
       <button onclick="changeDay(1)">→</button>
     </div>
 
     <div class="app-list">
   `;
 
-  trainings.forEach(t=>{
+  list.forEach(t=>{
 
-    const count = reservationCounts[t.id] || 0;
+    const count = counts[t.id] || 0;
     const cap = Number(t.kapacita || 0);
     const free = cap - count;
 
@@ -102,7 +100,7 @@ function renderDay(){
     else if(free <= 2) color = "yellow";
 
     html += `
-      <div class="app-card ${color}" onclick="openTraining('${t.id}')">
+      <div class="app-card ${color}" onclick="openDetail('${t.id}')">
         <h3>${t.nazev}</h3>
         <p>${t.cas_od} - ${t.cas_do}</p>
         <p>${count}/${cap}</p>
@@ -115,21 +113,18 @@ function renderDay(){
   document.getElementById("app").innerHTML = html;
 }
 
-/* ================= DAY CHANGE ================= */
+/* ================= CHANGE DAY ================= */
 function changeDay(dir){
   selectedDay += dir;
   if(selectedDay < 0) selectedDay = 0;
   if(selectedDay >= days.length) selectedDay = days.length - 1;
-  renderDay();
+  render();
 }
 
 /* ================= DETAIL ================= */
-function openTraining(id){
+function openDetail(id){
 
-  selectedTraining = all.find(t => t.id === id);
-
-  if(!selectedTraining) return;
-
+  selectedTraining = trainings.find(x => x.id === id);
   const t = selectedTraining;
 
   document.getElementById("app").innerHTML = `
@@ -142,16 +137,12 @@ function openTraining(id){
       <p>📍 ${t.misto || "-"}</p>
       <p>💰 ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
 
-      ${t.popis ? `<p style="margin-top:10px;background:#f4f4f4;padding:10px;border-radius:10px;">
-        ${t.popis}
-      </p>` : ""}
-
       <input id="hrac" placeholder="Jméno hráče">
       <input id="rocnik_klub" placeholder="Ročník / klub">
       <input id="email" placeholder="Email rodiče">
 
       <button onclick="reserve()">Rezervovat</button>
-      <button onclick="renderDay()">Zpět</button>
+      <button onclick="render()">Zpět</button>
 
     </div>
   `;
@@ -165,7 +156,7 @@ async function reserve(){
   const email = document.getElementById("email").value.trim();
 
   if(!hrac || !rocnik_klub || !email){
-    alert("Vyplň všechny údaje");
+    alert("Vyplň vše");
     return;
   }
 
@@ -185,26 +176,21 @@ async function reserve(){
     return;
   }
 
-  try{
-    await fetch("/.netlify/functions/send-email", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({
-        hrac,
-        email,
-        treningId: t.id
-      })
-    });
-  }catch(e){}
+  await fetch("/.netlify/functions/send-email", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ hrac, email, treningId: t.id })
+  });
 
-  alert("Rezervace hotová 💪");
+  alert("Hotovo");
 
-  await load();
+  load();
 }
 
 /* ================= FORMAT ================= */
-function formatDate(date){
-  return new Date(date).toLocaleDateString("cs-CZ", {
+function format(d){
+  if(!d) return "";
+  return new Date(d).toLocaleDateString("cs-CZ", {
     weekday:"long",
     day:"numeric",
     month:"numeric"
