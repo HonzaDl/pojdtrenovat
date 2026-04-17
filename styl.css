@@ -260,4 +260,44 @@ button:hover {
   .trener img {
     height: 200px;
   }
+   /* =========================
+   INDEX – ODKAZY (KARTY)
+========================= */
+
+.odkazy {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.odkaz {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  transition: 0.2s;
+  border-left: 4px solid #111;
+}
+
+.odkaz:hover {
+  transform: translateY(-3px);
+}
+
+.odkaz a {
+  display: block;
+  font-weight: 700;
+  text-decoration: none;
+  color: #111;
+  margin-bottom: 6px;
+}
+
+.odkaz a:hover {
+  color: #e00000;
+}
+
+.odkaz p {
+  margin: 0;
+  font-size: 14px;
+  color: #444;
+}
 }
