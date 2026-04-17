@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -24,8 +23,8 @@
   </nav>
 
   <div class="logos-right">
-    <img src="images/logoo.jpg" class="new-logo" alt="">
-    <img src="images/ssgihockey.jpg" class="nav-logo" alt="">
+    <img src="images/logoo.jpg" class="new-logo">
+    <img src="images/ssgihockey.jpg" class="nav-logo">
   </div>
 </header>
 
@@ -49,7 +48,7 @@ let days = [];
 let selectedDay = 0;
 let selectedTraining = null;
 
-/* LOAD */
+/* ================= LOAD ================= */
 async function load(){
 
   const { data: treninky } = await supabaseClient
@@ -60,26 +59,33 @@ async function load(){
     .from("rezervace")
     .select("trening_id");
 
-  reservationCounts = {};
-
-  (rezervace || []).forEach(r=>{
-    if(!r.trening_id) return;
-    reservationCounts[r.trening_id] =
-      (reservationCounts[r.trening_id] || 0) + 1;
-  });
-
   allData = treninky || [];
 
-  const unique = [...new Set(allData.map(t => t.datum).filter(Boolean))];
-  days = unique.sort((a,b)=> new Date(a) - new Date(b));
+  reservationCounts = {};
+  (rezervace || []).forEach(r=>{
+    if(r.trening_id){
+      reservationCounts[r.trening_id] =
+        (reservationCounts[r.trening_id] || 0) + 1;
+    }
+  });
 
-  if(selectedDay >= days.length) selectedDay = 0;
+  days = [...new Set(allData.map(t => t.datum).filter(Boolean))]
+    .sort((a,b)=> new Date(a) - new Date(b));
+
+  selectedDay = 0;
 
   renderDay();
 }
 
-/* RENDER DAY */
+/* ================= RENDER ================= */
 function renderDay(){
+
+  const app = document.getElementById("app");
+
+  if(!days.length){
+    app.innerHTML = "<p>Žádné tréninky</p>";
+    return;
+  }
 
   const date = days[selectedDay];
 
@@ -116,26 +122,25 @@ function renderDay(){
 
   html += `</div>`;
 
-  document.getElementById("app").innerHTML = html;
+  app.innerHTML = html;
 }
 
-/* CHANGE DAY */
+/* ================= DAY ================= */
 function changeDay(dir){
+
   selectedDay += dir;
+
   if(selectedDay < 0) selectedDay = 0;
   if(selectedDay >= days.length) selectedDay = days.length - 1;
+
   renderDay();
 }
 
-/* DETAIL */
+/* ================= DETAIL ================= */
 function openTraining(id){
 
   selectedTraining = allData.find(t => t.id === id);
-
-  if(!selectedTraining){
-    alert("Trénink nenalezen");
-    return;
-  }
+  if(!selectedTraining) return;
 
   const t = selectedTraining;
 
@@ -144,16 +149,14 @@ function openTraining(id){
 
       <h2>${t.nazev || ""}</h2>
 
-      <p>📅 <b>Datum:</b> ${t.datum || "-"}</p>
-      <p>⏰ <b>Čas:</b> ${t.cas_od || ""} - ${t.cas_do || ""}</p>
-      <p>📍 <b>Místo:</b> ${t.misto || "-"}</p>
-      <p>💰 <b>Cena:</b> ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
+      <p>📅 ${t.datum || ""}</p>
+      <p>⏰ ${t.cas_od || ""} - ${t.cas_do || ""}</p>
+      <p>📍 ${t.misto || ""}</p>
+      <p>💰 ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
 
-      ${t.popis ? `
-        <div style="margin-top:10px;padding:10px;border-radius:10px;background:#f4f4f4;">
-          ${t.popis}
-        </div>
-      ` : ""}
+      ${t.popis ? `<div style="margin-top:10px;padding:10px;background:#f4f4f4;border-radius:10px;">
+        ${t.popis}
+      </div>` : ""}
 
       <input id="hrac" placeholder="Jméno hráče">
       <input id="rocnik_klub" placeholder="Ročník, klub">
@@ -166,24 +169,19 @@ function openTraining(id){
   `;
 }
 
-/* RESERVE */
+/* ================= RESERVE ================= */
 async function reserve(){
 
-  const hrac = document.getElementById("hrac")?.value?.trim();
-  const rocnik_klub = document.getElementById("rocnik_klub")?.value?.trim();
-  const email = document.getElementById("email")?.value?.trim();
+  const hrac = document.getElementById("hrac").value;
+  const rocnik_klub = document.getElementById("rocnik_klub").value;
+  const email = document.getElementById("email").value;
 
   if(!hrac || !rocnik_klub || !email){
-    alert("Vyplň všechny údaje");
+    alert("Vyplň vše");
     return;
   }
 
   const t = selectedTraining;
-
-  if(!t){
-    alert("Chyba tréninku");
-    return;
-  }
 
   const { error } = await supabaseClient
     .from("rezervace")
@@ -207,14 +205,13 @@ async function reserve(){
     });
   }catch(e){}
 
-  alert("Rezervace hotová 💪");
+  alert("Hotovo 💪");
 
   await load();
 }
 
-/* FORMAT */
+/* ================= FORMAT ================= */
 function formatDate(date){
-  if(!date) return "";
   return new Date(date).toLocaleDateString("cs-CZ", {
     weekday:"long",
     day:"numeric",
