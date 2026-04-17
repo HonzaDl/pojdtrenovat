@@ -27,12 +27,15 @@
   </div>
 </header>
 
+<a href="javascript:history.back()" class="back-btn">← Zpět</a>
+
 <main class="container">
   <h2>Rezervace tréninků</h2>
   <div id="app">Načítám...</div>
 </main>
 
 <script>
+
 const supabaseClient = supabase.createClient(
   "https://kgmdyhiwkkviswluuwkg.supabase.co",
   "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
@@ -44,11 +47,16 @@ let selectedDay = 0;
 let selectedTraining = null;
 let counts = {};
 
-/* LOAD */
+/* LOAD DATA */
 async function load(){
 
-  const { data: t } = await supabaseClient.from("treninky").select("*");
-  const { data: r } = await supabaseClient.from("rezervace").select("trening_id");
+  const { data: t } = await supabaseClient
+    .from("treninky")
+    .select("*");
+
+  const { data: r } = await supabaseClient
+    .from("rezervace")
+    .select("trening_id");
 
   all = t || [];
 
@@ -73,7 +81,7 @@ function formatDate(date){
   });
 }
 
-/* RENDER */
+/* RENDER LIST */
 function render(){
 
   const date = days[selectedDay];
@@ -119,7 +127,7 @@ function render(){
   document.getElementById("app").innerHTML = html;
 }
 
-/* OPEN */
+/* OPEN DETAIL */
 function openTraining(id){
 
   selectedTraining = all.find(x => x.id === id);
@@ -135,7 +143,10 @@ function openTraining(id){
       <p>📍 ${t.misto || "-"}</p>
       <p>💰 ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
 
-      ${t.popis ? `<p style="background:#f4f4f4;padding:10px;border-radius:10px;">${t.popis}</p>` : ""}
+      ${t.popis ? `
+        <p style="background:#f4f4f4;padding:10px;border-radius:10px;margin-top:10px;">
+          ${t.popis}
+        </p>` : ""}
 
       <input id="hrac" placeholder="Jméno hráče">
       <input id="rocnik_klub" placeholder="Ročník / klub">
@@ -162,7 +173,12 @@ async function reserve(){
 
   await supabaseClient
     .from("rezervace")
-    .insert([{ trening_id: selectedTraining.id, hrac, rocnik_klub, email }]);
+    .insert([{
+      trening_id: selectedTraining.id,
+      hrac,
+      rocnik_klub,
+      email
+    }]);
 
   try{
     await fetch("/.netlify/functions/send-email", {
@@ -179,13 +195,17 @@ async function reserve(){
 
 /* DAY SWITCH */
 function changeDay(dir){
+
   selectedDay += dir;
+
   if(selectedDay < 0) selectedDay = 0;
   if(selectedDay >= days.length) selectedDay = days.length - 1;
+
   render();
 }
 
 load();
+
 </script>
 
 </body>
