@@ -206,6 +206,13 @@ img {
   .trener {
     border-radius: 14px;
   }
+   @media (max-width: 768px) {
+
+  .trener img[alt="Pavel Pelán"],
+  .trener img[alt="Petr Šudoma"] {
+    object-position: center top;
+    height: 300px;
+  }
 }
 
 /* =========================
