@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+const resend = require("resend");
 
 exports.handler = async (event) => {
   try {
@@ -49,7 +49,7 @@ exports.handler = async (event) => {
     // =========================
     const mailTrener = {
       from: "pojdtrenovat@gmail.com",
-      to: "pojdtrenovat@gmail.com", // 👈 tady můžeš dát i více emailů
+      to: "pojdtrenovat@gmail.com", mara.pavel@seznam.cz // 👈 tady můžeš dát i více emailů
       subject: "Nová rezervace tréninku 🔔",
       html: `
         <h2>Nová rezervace</h2>
