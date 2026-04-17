@@ -240,7 +240,7 @@ function openTraining(id){
       </p>` : ""}
 
       <input id="hrac" placeholder="Jméno hráče">
-      <input id="vek" placeholder="Věk">
+      <input id="rocnik,klub" placeholder="Ročník, klub">
       <input id="email" placeholder="Email rodiče">
 
       <button onclick="reserve()">Rezervovat</button>
@@ -259,10 +259,10 @@ async function reserve(){
   }
 
   const hrac = document.getElementById("hrac").value;
-  const vek = document.getElementById("vek").value;
+  const rocnik_klub = document.getElementById("rocnik_klub").value;
   const email = document.getElementById("email").value;
 
-  if(!hrac || !vek || !email){
+  if(!hrac || !rocnik_klub || !email){
     alert("Vyplň údaje");
     return;
   }
@@ -274,7 +274,7 @@ async function reserve(){
     .insert([{
       trening_id: t.id,
       hrac,
-      vek,
+      rocnik_klub,
       email
     }]);
 
