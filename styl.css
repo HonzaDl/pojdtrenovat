@@ -1,112 +1,88 @@
 /* =========================
-   RESET
+   RESET (bezpečný)
 ========================= */
+
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
-/* =========================
-   ZÁKLAD
-========================= */
 body {
+  margin: 0;
   font-family: 'Roboto', Arial, sans-serif;
-  background-color: #bbbbbb;
+  background: #bbbbbb;
   color: #111;
   line-height: 1.5;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
 }
 
-/* pozadí logo */
+/* jemné pozadí */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   background: url("images/ssgihockey.jpg") no-repeat center;
-  background-size: 800px;
-  opacity: 0.08;
+  background-size: 700px;
+  opacity: 0.05;
   z-index: -1;
 }
 
 /* =========================
-   HEADER
+   HEADER (APP STYLE)
 ========================= */
+
 .header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 15px 20px;
-  background-color: #111;
+  align-items: center;
+  padding: 14px 18px;
+  background: #111;
   color: #fff;
+  flex-wrap: wrap;
 }
 
 .site-title {
-  font-size: 1.8em;
-  font-weight: bold;
+  font-size: 1.6rem;
+  font-weight: 700;
 }
 
 .nav {
   display: flex;
-  gap: 20px;
-  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .nav a {
   color: #fff;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: 0.2s;
 }
 
 .nav a:hover {
   color: #e60000;
+  background: rgba(255,255,255,0.05);
 }
 
 .logos-right {
   display: flex;
-  gap: 40px;
+  gap: 16px;
   align-items: center;
 }
 
 .nav-logo,
 .new-logo {
-  height: 50px;
+  height: 42px;
 }
 
 /* =========================
-   BACK BUTTON
+   MAIN LAYOUT
 ========================= */
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 15px;
-  padding: 8px 14px;
-  background: #111;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 6px;
-  border: 2px solid #111;
-  font-weight: bold;
-  transition: 0.25s;
-}
 
-.back-btn:hover {
-  background: #e60000;
-  border-color: #e60000;
-}
-
-/* =========================
-   MAIN
-========================= */
 main {
-  padding: 20px;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: auto;
-  flex: 1;
+  padding: 20px;
 }
 
 main h2 {
@@ -116,58 +92,121 @@ main h2 {
 }
 
 /* =========================
-   TEXT ODKAZY
+   BACK BUTTON
 ========================= */
+
+.back-btn {
+  display: inline-block;
+  margin: 10px 20px;
+  padding: 8px 14px;
+  background: #111;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back-btn:hover {
+  background: #e60000;
+}
+
+/* =========================
+   ODKAZY (homepage)
+========================= */
+
 .odkazy {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.odkaz {
+  background: #fff;
+  padding: 14px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  border-left: 4px solid #e60000;
 }
 
 .odkaz a {
   color: #e60000;
-  font-weight: bold;
-  font-size: 1.2em;
+  font-weight: 700;
   text-decoration: none;
+  font-size: 1.1rem;
 }
 
-.odkaz a:hover {
-  color: #b80000;
+.odkaz p,
+.odkaz div {
+  margin-top: 6px;
+  color: #444;
 }
 
 /* =========================
-   TRAINERS
+   TRAINERS (MODERN APP CARDS)
 ========================= */
+
 .treneri {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-top: 20px;
 }
 
 .trener {
   background: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  width: 220px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  border-left: 4px solid #e60000;
   text-align: center;
+  transition: 0.2s;
+}
+
+.trener:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+}
+
+/* foto fix */
+.trener img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+}
+
+/* jméno */
+.trener h3 {
+  margin: 12px 0 6px;
+  font-size: 1.1rem;
+}
+
+/* popis */
+.trener p {
+  padding: 0 12px 14px;
+  color: #555;
+  font-size: 0.95rem;
 }
 
 /* =========================
-   CONTACT
+   BUTTONS / LINKS GLOBAL
 ========================= */
-.contact-filipa {
-  margin-top: 80px;
-  font-weight: bold;
+
+a {
+  color: inherit;
+}
+
+a:hover {
   color: #e60000;
 }
 
 /* =========================
    FOOTER
 ========================= */
+
 footer {
-  background: #000;
+  background: #111;
   color: #fff;
   text-align: center;
   padding: 15px;
@@ -175,85 +214,18 @@ footer {
 }
 
 /* =========================
-   GALLERY
+   MOBILE
 ========================= */
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  padding: 16px;
-}
 
-.gallery-item img {
-  width: 100%;
-  display: block;
-  transition: 0.3s;
-}
-
-.gallery-item:hover img {
-  transform: scale(1.05);
-}
-
-/* =========================
-   CALENDAR (FIXED)
-========================= */
-#calendar {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
-}
-
-.calendar-day {
-  background: #fff;
-  border-radius: 14px;
-  padding: 12px;
-  min-height: 140px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-}
-
-.calendar-day.active {
-  background: #111;
-  color: #fff;
-}
-
-/* =========================
-   TRAININGS
-========================= */
-.training {
-  padding: 8px;
-  border-radius: 10px;
-  margin-top: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  border: 1px solid rgba(0,0,0,0.05);
-  transition: 0.2s;
-}
-
-.training:hover {
-  transform: scale(1.03);
-}
-
-/* status barvy */
-.green { background: #eafaf1; border-left: 4px solid #2ecc71; }
-.yellow { background: #fff7e0; border-left: 4px solid #f1c40f; }
-.red { background: #ffe8e8; border-left: 4px solid #e74c3c; }
-
-/* =========================
-   RESPONSIVE
-========================= */
 @media (max-width: 600px) {
+
   .header {
     flex-direction: column;
     gap: 10px;
+    text-align: center;
   }
 
-  .nav {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .nav-logo,
-  .new-logo {
-    height: 30px;
+  .trener img {
+    height: 200px;
   }
 }
