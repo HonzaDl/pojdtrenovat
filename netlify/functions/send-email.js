@@ -1,17 +1,10 @@
-export async function handler(event) {
+exports.handler = async function (event) {
 
   try {
 
-    const { hrac, email, treningId } = JSON.parse(event.body);
+    const { hrac, email, treningId } = JSON.parse(event.body || "{}");
 
-    if (!hrac || !email || !treningId) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Missing data" })
-      };
-    }
-
-    // TEST EMAIL (jednoduchý – bez Supabase)
+    // TEST EMAIL
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -20,7 +13,7 @@ export async function handler(event) {
       },
       body: JSON.stringify({
         from: "info@pojdtrenovat.cz",
-        to: ["pojdtrenovat@gmail.com"],   // ⚠️ pošli jen sobě pro test
+        to: ["pojdtrenovat@gmail.com"],
         subject: "TEST EMAIL",
         html: `<p>Funguje to ✅</p>`
       })
@@ -36,6 +29,7 @@ export async function handler(event) {
     };
 
   } catch (e) {
+
     console.log("ERROR:", e);
 
     return {
@@ -43,5 +37,4 @@ export async function handler(event) {
       body: JSON.stringify({ error: e.message })
     };
   }
-}
-}
+};
