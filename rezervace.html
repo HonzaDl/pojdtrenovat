@@ -8,15 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-<style>
+<link rel="stylesheet" href="styl.css">
+</head>
 
-body{
-  font-family:Roboto;
-  margin:0;
-  background:#f2f2f2;
-  color:#111;
-}
+<body>
 
+<!-- HEADER (STEJNÝ VŠUDE) -->
 <header class="header">
   <h1 class="site-title">pojdtrenovat.cz</h1>
 
@@ -33,121 +30,8 @@ body{
 </header>
 
 <a href="javascript:history.back()" class="back-btn">← Zpět</a>
-/* CONTAINER */
-.container{
-  max-width:900px;
-  margin:auto;
-  padding:15px;
-}
 
-/* DATE HEADER */
-.app-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:14px;
-  background:#fff;
-  border-radius:14px;
-  box-shadow:0 4px 14px rgba(0,0,0,0.06);
-  margin-bottom:12px;
-  font-weight:bold;
-}
-
-.app-header button{
-  width:44px;
-  height:44px;
-  border-radius:10px;
-  border:none;
-  background:#111;
-  color:#fff;
-  cursor:pointer;
-}
-
-.app-header button:hover{
-  background:#e60000;
-}
-
-/* LIST */
-.app-list{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-
-/* CARD */
-.app-card{
-  background:#fff;
-  padding:14px;
-  border-radius:16px;
-  box-shadow:0 4px 14px rgba(0,0,0,0.06);
-  cursor:pointer;
-  transition:0.2s;
-  border-left:4px solid #111;
-}
-
-.app-card:hover{
-  transform:scale(1.02);
-}
-
-.app-card h3{
-  margin:0;
-  margin-bottom:6px;
-}
-
-/* COLORS */
-.green{ border-left-color:#111; }
-.yellow{ border-left-color:#e60000; }
-.red{ border-left-color:#e60000; opacity:0.6; }
-
-/* DETAIL */
-.bottom-sheet{
-  background:#fff;
-  padding:16px;
-  border-radius:18px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.12);
-}
-
-/* INPUTS */
-input,button{
-  width:100%;
-  padding:10px;
-  margin-top:8px;
-  border-radius:10px;
-  border:1px solid #ddd;
-}
-
-button{
-  background:#111;
-  color:#fff;
-  border:none;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-button:hover{
-  background:#e60000;
-}
-
-.back-btn{
-  background:#fff;
-  color:#111;
-  border:1px solid #ddd;
-}
-
-</style>
-</head>
-
-<body>
-
-<header class="header">
-  <h2>pojdtrenovat.cz</h2>
-  <nav class="nav">
-    <a href="index.html">Úvod</a>
-    <a href="treneri.html">Trenéři</a>
-    <a href="rezervace.html">Rezervace</a>
-  </nav>
-</header>
-
+<!-- CONTENT -->
 <div class="container">
   <h2>Tréninky</h2>
   <div id="app">Načítám...</div>
@@ -166,7 +50,7 @@ let days = [];
 let selectedDay = 0;
 let selectedTraining = null;
 
-/* LOAD */
+/* LOAD DATA */
 async function load(){
 
   const { data: treninky } = await supabaseClient
@@ -199,7 +83,6 @@ async function load(){
 function renderDay(){
 
   const date = days[selectedDay];
-
   const trainings = allData.filter(t => t.datum === date);
 
   let html = `
@@ -266,9 +149,7 @@ function openTraining(id){
       <p>📍 ${t.misto || "-"}</p>
       <p>💰 ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
 
-      ${t.popis ? `<p style="margin-top:10px;background:#f4f4f4;padding:10px;border-radius:10px;">
-        ${t.popis}
-      </p>` : ""}
+      ${t.popis ? `<p class="card">${t.popis}</p>` : ""}
 
       <input id="hrac" placeholder="Jméno hráče">
       <input id="rocnik_klub" placeholder="Ročník, klub">
@@ -295,11 +176,6 @@ async function reserve(){
 
   const t = selectedTraining;
 
-  if(!t){
-    alert("Chyba tréninku");
-    return;
-  }
-
   const { error } = await supabaseClient
     .from("rezervace")
     .insert([{
@@ -310,7 +186,6 @@ async function reserve(){
     }]);
 
   if(error){
-    console.log(error);
     alert("Chyba rezervace");
     return;
   }
@@ -330,7 +205,6 @@ async function reserve(){
 
 /* FORMAT */
 function formatDate(date){
-  if(!date) return "";
   return new Date(date).toLocaleDateString("cs-CZ", {
     weekday:"long",
     day:"numeric",
