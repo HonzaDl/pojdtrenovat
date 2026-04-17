@@ -4,94 +4,96 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trenéři | Pojdtrenovat.cz</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styl.css">
-
 </head>
+
 <body>
-  <header class="header">
-<div class="header-left">
+
+<header class="header">
   <h1 class="site-title">pojdtrenovat.cz</h1>
-</div>  
+
   <nav class="nav">
     <a href="index.html">Úvod</a>
     <a href="treneri.html">Trenéři</a>
     <a href="rezervace.html">Rezervace</a>
   </nav>
-<div class="logos-right">
-<img src="images/logoo.jpg" alt="POJĎ TRÉNOVAT" class="new-logo">
-<img src="images/ssgihockey.jpg" alt="SSGI logo" class="nav-logo"></div>
+
+  <div class="logos-right">
+    <img src="images/logoo.jpg" alt="POJĎ TRÉNOVAT" class="new-logo">
+    <img src="images/ssgihockey.jpg" alt="SSGI logo" class="nav-logo">
+  </div>
 </header>
 
 <a href="javascript:history.back()" class="back-btn">← Zpět</a>
 
-  <main>
-    <h2>Trenéři</h2>
+<main class="page">
 
-    <!-- Hlavní trenér -->
-    <section class="treneri">
-      <div class="trener">
-        <img src="images/pavelmarek.jpg" alt="Pavel Marek">
-        <h3>Pavel Marek</h3>
-        <p>Hlavní trenér, SSGI, tejpování, psychologie</p>
-      </div>
-    </section>
+  <h2>Trenéři</h2>
 
-    <!-- Off-Ice trenér -->
-    <section class="treneri">
-      <div class="trener">
-        <img src="images/dominikazapalacova.jpg" alt="Dominika Zapalacova">
-        <h3>Dominika Zapaĺačová</h3>
-        <p>Off-ice, SSGI, tejpování, DNS-zlepšení stability a koordinace</p>
-      </div>
-    </section>
+  <div class="trainer-grid">
 
-    <!-- Skill coach -->
-    <section class="treneri">
-      <div class="trener">
-        <img src="images/filipmarek.jpg" alt="Filip Marek">
-        <h3>Filip Marek</h3>
-        <p>Hlavní Skills trenér</p>
-      </div>
-    </section>
+    <div class="trainer-card main">
+      <img src="images/pavelmarek.jpg" alt="Pavel Marek">
+      <h3>Pavel Marek</h3>
+      <p>Hlavní trenér, SSGI, tejpování, psychologie</p>
+    </div>
 
-    <!-- Asistenti -->
-    <section class="treneri">
-      <div class="trener">
-        <img src="images/sudoma_petr.jpg" alt="Petr Šudoma">
-        <h3>Petr Šudoma</h3>
-        <p>Skills trenér</p>
-      </div>
-      <div class="trener">
-        <img src="images/max_kotrba.jpg" alt="Max Kotrba">
-        <h3>Max Kotrba</h3>
-        <p>Skills trenér</p>
-      </div>
-      <div class="trener">
-        <img src="images/pelan_pavel.jpg" alt="Pavel Pelán">
-        <h3>Pavel Pelán</h3>
-        <p>Trenér</p>
-      </div>
-      <div class="trener">
-        <img src="images/davidpetrzilek.jpg" alt="David Petržílek">
-        <h3>David Petržílek</h3>
-        <p>Trenér</p>
-      </div>
-      
-      <div class="trener">
-        <img src="images/tomassmetanka.jpg" alt="Tomáš Smetanka">
-        <h3>Tomáš Smetanka</h3>
-        <p>Trenér</p>
-      </div>
-    </section>
-  </main>
+    <div class="trainer-card">
+      <img src="images/dominikazapalacova.jpg" alt="Dominika Zapaĺačová">
+      <h3>Dominika Zapaĺačová</h3>
+      <p>Off-ice, SSGI, DNS, koordinace a stabilita</p>
+    </div>
 
-  <footer>
-    <p>Kontakt: Pavel Marek, tel. 608 910 109, email: <a href="mailto:pojdtrenovat@gmail.com?subject=Rezervace%20tréninku&body=Dobrý%20den,%20mám%20zájem%20o%20rezervaci..." class="red-link">
-  pojdtrenovat@gmail.com
-</a>
-</p>
-  </footer>
+    <div class="trainer-card main">
+      <img src="images/filipmarek.jpg" alt="Filip Marek">
+      <h3>Filip Marek</h3>
+      <p>Skills trenér</p>
+    </div>
+
+    <div class="trainer-card">
+      <img src="images/sudoma_petr.jpg" alt="Petr Šudoma">
+      <h3>Petr Šudoma</h3>
+      <p>Skills trenér</p>
+    </div>
+
+    <div class="trainer-card">
+      <img src="images/max_kotrba.jpg" alt="Max Kotrba">
+      <h3>Max Kotrba</h3>
+      <p>Skills trenér</p>
+    </div>
+
+    <div class="trainer-card">
+      <img src="images/pelan_pavel.jpg" alt="Pavel Pelán">
+      <h3>Pavel Pelán</h3>
+      <p>Trenér</p>
+    </div>
+
+    <div class="trainer-card">
+      <img src="images/davidpetrzilek.jpg" alt="David Petržílek">
+      <h3>David Petržílek</h3>
+      <p>Trenér</p>
+    </div>
+
+    <div class="trainer-card">
+      <img src="images/tomassmetanka.jpg" alt="Tomáš Smetanka">
+      <h3>Tomáš Smetanka</h3>
+      <p>Trenér</p>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  <p>
+    Kontakt: Pavel Marek, tel. 608 910 109, email:
+    <a href="mailto:pojdtrenovat@gmail.com" class="red-link">
+      pojdtrenovat@gmail.com
+    </a>
+  </p>
+</footer>
 
 </body>
 </html>
