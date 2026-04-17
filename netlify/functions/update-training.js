@@ -2,26 +2,27 @@ import { createClient } from "@supabase/supabase-js";
 
 export async function handler(event) {
   try {
-
-    let body = {};
-
-    try {
-      body = event.body ? JSON.parse(event.body) : {};
-    } catch (e) {
+    if (event.httpMethod !== "POST") {
       return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Invalid JSON" })
+        statusCode: 405,
+        body: JSON.stringify({ error: "Method not allowed" })
       };
     }
 
-    if (!body.id) {
+    const body = JSON.parse(event.body || "{}");
+
+    const { id, ...update } = body;
+
+    if (!id) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "missing id" })
       };
     }
 
-    const { id, ...update } = body;
+    // bezpečnostní čištění
+    delete update.id;
+    delete update.created_at;
 
     const supabase = createClient(
       "https://kgmdyhiwkkviswluuwkg.supabase.co",
@@ -52,4 +53,5 @@ export async function handler(event) {
       body: JSON.stringify({ error: e.message })
     };
   }
+}
 }
