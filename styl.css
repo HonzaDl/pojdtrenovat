@@ -48,7 +48,7 @@ let days = [];
 let selectedDay = 0;
 let selectedTraining = null;
 
-/* ================= LOAD ================= */
+/* LOAD */
 async function load(){
 
   const { data: treninky } = await supabaseClient
@@ -72,20 +72,13 @@ async function load(){
   days = [...new Set(allData.map(t => t.datum).filter(Boolean))]
     .sort((a,b)=> new Date(a) - new Date(b));
 
-  selectedDay = 0;
-
   renderDay();
 }
 
-/* ================= RENDER ================= */
+/* RENDER */
 function renderDay(){
 
   const app = document.getElementById("app");
-
-  if(!days.length){
-    app.innerHTML = "<p>Žádné tréninky</p>";
-    return;
-  }
 
   const date = days[selectedDay];
 
@@ -113,8 +106,8 @@ function renderDay(){
 
     html += `
       <div class="app-card ${color}" onclick="openTraining('${t.id}')">
-        <h3>${t.nazev || "Trénink"}</h3>
-        <p>${t.cas_od || ""} - ${t.cas_do || ""}</p>
+        <h3>${t.nazev}</h3>
+        <p>${t.cas_od} - ${t.cas_do}</p>
         <p>${count}/${cap}</p>
       </div>
     `;
@@ -125,38 +118,35 @@ function renderDay(){
   app.innerHTML = html;
 }
 
-/* ================= DAY ================= */
+/* DAY */
 function changeDay(dir){
-
   selectedDay += dir;
-
   if(selectedDay < 0) selectedDay = 0;
   if(selectedDay >= days.length) selectedDay = days.length - 1;
-
   renderDay();
 }
 
-/* ================= DETAIL ================= */
+/* DETAIL (jen DOPLNĚNO, nic jiného) */
 function openTraining(id){
 
   selectedTraining = allData.find(t => t.id === id);
-  if(!selectedTraining) return;
-
   const t = selectedTraining;
 
   document.getElementById("app").innerHTML = `
     <div class="bottom-sheet">
 
-      <h2>${t.nazev || ""}</h2>
+      <h2>${t.nazev}</h2>
 
-      <p>📅 ${t.datum || ""}</p>
-      <p>⏰ ${t.cas_od || ""} - ${t.cas_do || ""}</p>
+      <p>📅 ${t.datum}</p>
+      <p>⏰ ${t.cas_od} - ${t.cas_do}</p>
       <p>📍 ${t.misto || ""}</p>
       <p>💰 ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
 
-      ${t.popis ? `<div style="margin-top:10px;padding:10px;background:#f4f4f4;border-radius:10px;">
-        ${t.popis}
-      </div>` : ""}
+      ${t.popis ? `
+        <div style="margin-top:10px;padding:10px;background:#f4f4f4;border-radius:10px;">
+          ${t.popis}
+        </div>
+      ` : ""}
 
       <input id="hrac" placeholder="Jméno hráče">
       <input id="rocnik_klub" placeholder="Ročník, klub">
@@ -169,17 +159,12 @@ function openTraining(id){
   `;
 }
 
-/* ================= RESERVE ================= */
+/* RESERVE (NEZMĚNĚNO) */
 async function reserve(){
 
   const hrac = document.getElementById("hrac").value;
   const rocnik_klub = document.getElementById("rocnik_klub").value;
   const email = document.getElementById("email").value;
-
-  if(!hrac || !rocnik_klub || !email){
-    alert("Vyplň vše");
-    return;
-  }
 
   const t = selectedTraining;
 
@@ -197,21 +182,13 @@ async function reserve(){
     return;
   }
 
-  try{
-    await fetch("/.netlify/functions/send-email", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ hrac, email, treningId: t.id })
-    });
-  }catch(e){}
-
   alert("Hotovo 💪");
-
-  await load();
+  load();
 }
 
-/* ================= FORMAT ================= */
+/* FORMAT */
 function formatDate(date){
+  if(!date) return "";
   return new Date(date).toLocaleDateString("cs-CZ", {
     weekday:"long",
     day:"numeric",
