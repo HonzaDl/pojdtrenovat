@@ -32,12 +32,12 @@ export async function handler(event) {
     }
 
     // =========================
-    // RODIČ - POTVRZENÍ
+    // EMAIL RODIČ
     // =========================
     const userRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.RESEND_KEY}`,
+        "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -47,7 +47,6 @@ export async function handler(event) {
         html: `
           <div style="font-family:Arial;background:#f6f6f6;padding:20px;border-radius:10px">
             <h2 style="color:#e60000">Rezervace potvrzena ✅</h2>
-
             <p>Dobrý den,</p>
             <p>vaše rezervace byla úspěšně vytvořena.</p>
 
@@ -67,22 +66,21 @@ export async function handler(event) {
     const userJson = await userRes.json();
 
     // =========================
-    // TRENÉR - NOTIFIKACE
+    // EMAIL TRENÉR
     // =========================
     const coachRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.RESEND_KEY}`,
+        "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
         from: "info@pojdtrenovat.cz",
         to: ["mara.pavel@seznam.cz", "pojdtrenovat@gmail.com"],
-        subject: "🔥 Nová rezervace na trénink",
+        subject: "🔥 Nová rezervace",
         html: `
           <div style="font-family:Arial;background:#111;color:#fff;padding:20px;border-radius:10px">
-
-            <h2 style="color:#ff3b3b">Nový hráč přihlášen 🔥</h2>
+            <h2 style="color:#ff3b3b">Nový hráč 🔥</h2>
 
             <div style="background:#222;padding:15px;border-radius:10px">
               <p><b>Hráč:</b> ${hrac}</p>
@@ -94,7 +92,6 @@ export async function handler(event) {
               <p><b>Datum:</b> ${trening.datum}</p>
               <p><b>Čas:</b> ${trening.cas_od} - ${trening.cas_do}</p>
             </div>
-
           </div>
         `
       })
@@ -102,16 +99,12 @@ export async function handler(event) {
 
     const coachJson = await coachRes.json();
 
-    console.log("USER EMAIL:", userJson);
-    console.log("COACH EMAIL:", coachJson);
+    console.log("USER:", userRes.status, userJson);
+    console.log("COACH:", coachRes.status, coachJson);
 
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        ok: true,
-        userEmail: userJson,
-        coachEmail: coachJson
-      })
+      body: JSON.stringify({ ok: true })
     };
 
   } catch (e) {
@@ -123,4 +116,5 @@ export async function handler(event) {
       body: JSON.stringify({ ok: false, error: e.message })
     };
   }
+}
 }
