@@ -1,107 +1,84 @@
-exports.handler = async function (event) {
-  try {
-    const { hrac, email, treningId } = JSON.parse(event.body || "{}");
+const nodemailer = require("nodemailer");
 
-    if (!hrac || !email || !treningId) {
+exports.handler = async (event) => {
+  try {
+    const body = JSON.parse(event.body || "{}");
+
+    const { hrac, email, rocnik_klub, trening_id } = body;
+
+    if (!hrac || !email || !trening_id) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "missing data" })
+        body: JSON.stringify({ error: "chybějící data" })
       };
     }
 
-    const supabaseUrl = "https://kgmdyhiwkkviswluuwkg.supabase.co";
-    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
-
-    // 🔥 načtení detailu tréninku
-    const trainingRes = await fetch(`${supabaseUrl}/rest/v1/treninky?id=eq.${treningId}`, {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
+    // 🔧 SMTP nastavení (doplníš svoje údaje)
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
       }
     });
 
-    const trainings = await trainingRes.json();
-    const t = trainings?.[0];
+    // =========================
+    // 📩 EMAIL 1 – HRÁČ
+    // =========================
+    const mailHraci = {
+      from: "pojdtrenovat@gmail.com",
+      to: email,
+      subject: "Potvrzení rezervace tréninku 💪",
+      html: `
+        <h2>Rezervace potvrzena</h2>
+        <p>Ahoj <b>${hrac}</b>,</p>
+        <p>tvoje rezervace byla úspěšně vytvořena.</p>
 
-    if (!t) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({ error: "training not found" })
-      };
-    }
+        <p><b>Ročník / klub:</b> ${rocnik_klub || "-"}</p>
+        <p>Uvidíme se na tréninku 💪</p>
 
-    const emailBodyParent = `
-      <h2>Rezervace potvrzena</h2>
-      <p>Dobrý den,</p>
-      <p>hráč <b>${hrac}</b> byl úspěšně přihlášen.</p>
+        <hr>
+        <p>Pojď trénovat</p>
+      `
+    };
 
-      <hr>
+    // =========================
+    // 📩 EMAIL 2 – TRENÉR
+    // =========================
+    const mailTrener = {
+      from: "pojdtrenovat@gmail.com",
+      to: "pojdtrenovat@gmail.com", // 👈 tady můžeš dát i více emailů
+      subject: "Nová rezervace tréninku 🔔",
+      html: `
+        <h2>Nová rezervace</h2>
 
-      <p><b>Trénink:</b> ${t.nazev}</p>
-      <p><b>Datum:</b> ${t.datum}</p>
-      <p><b>Čas:</b> ${t.cas_od} - ${t.cas_do}</p>
-      <p><b>Místo:</b> ${t.misto || "-"}</p>
+        <p><b>Hráč:</b> ${hrac}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Ročník / klub:</b> ${rocnik_klub || "-"}</p>
+        <p><b>Trénink ID:</b> ${trening_id}</p>
 
-      <br>
-      <p>Děkujeme 👊</p>
-    `;
+        <hr>
+        <p>Systém pojdtrenovat.cz</p>
+      `
+    };
 
-    const emailBodyTrainer = `
-      <h2>Nová rezervace</h2>
-
-      <p><b>Hráč:</b> ${hrac}</p>
-      <p><b>Email rodiče:</b> ${email}</p>
-
-      <hr>
-
-      <p><b>Trénink:</b> ${t.nazev}</p>
-      <p><b>Datum:</b> ${t.datum}</p>
-      <p><b>Čas:</b> ${t.cas_od} - ${t.cas_do}</p>
-      <p><b>Místo:</b> ${t.misto || "-"}</p>
-    `;
-
-    // 📩 rodič
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        from: "pojdtrenovat@tvujweb.cz",
-        to: [email],
-        subject: "Potvrzení rezervace tréninku",
-        html: emailBodyParent
-      })
-    });
-
-    // 📩 trenéři
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        from: "pojdtrenovat@tvujweb.cz",
-        to: [
-          "pojdtrenovat@gmail.com",
-          "mara.pavel@seznam.cz"
-        ],
-        subject: "Nová rezervace tréninku",
-        html: emailBodyTrainer
-      })
-    });
+    // 🔥 ODESLÁNÍ
+    await transporter.sendMail(mailHraci);
+    await transporter.sendMail(mailTrener);
 
     return {
       statusCode: 200,
       body: JSON.stringify({ ok: true })
     };
 
-  } catch (e) {
+  } catch (err) {
+    console.log("EMAIL ERROR:", err);
+
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: e.message })
+      body: JSON.stringify({ error: "email error" })
     };
   }
 };
