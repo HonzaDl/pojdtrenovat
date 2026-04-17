@@ -1,275 +1,233 @@
-/* =========================
-   RESET
-========================= */
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+/* =======================
+   RESET + ZÁKLAD
+======================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-html, body{
-  height:100%;
+body {
+  font-family: "Roboto", Arial, sans-serif;
+  background: #bbbbbb;
+  color: #111;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
-body{
-  font-family:'Roboto', Arial, sans-serif;
-  background:#bbbbbb;
-  color:#111;
-  line-height:1.5;
-  overflow-x:hidden; /* 🔥 fix pohybu stránky */
+/* jemné pozadí logo */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("images/ssgihockey.jpg") center/700px no-repeat;
+  opacity: 0.06;
+  z-index: -1;
 }
 
-/* =========================
-   POZADÍ
-========================= */
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:url("images/ssgihockey.jpg") no-repeat center;
-  background-size:600px;
-  opacity:0.06;
-  z-index:-1;
+/* =======================
+   HEADER (UNIVERSAL)
+======================= */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 12px 16px;
+  background: #111;
+  color: #fff;
+  flex-wrap: wrap;
 }
 
-/* =========================
-   HEADER
-========================= */
-
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-  padding:12px 16px;
-  background:#111;
-  color:#fff;
+.site-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
 }
 
-.site-title{
-  font-size:1.3rem;
-  font-weight:700;
+/* navigace vždy uprostřed */
+.nav {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.nav{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
+.nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: 0.2s;
 }
 
-.nav a{
-  color:#fff;
-  text-decoration:none;
-  font-weight:600;
-  padding:6px 10px;
-  border-radius:8px;
-  transition:0.2s;
+.nav a:hover {
+  background: #e60000;
 }
 
-.nav a:hover{
-  background:#e60000;
-}
-
-.logos-right{
-  display:flex;
-  gap:10px;
-  align-items:center;
+/* loga vpravo */
+.logos-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .nav-logo,
-.new-logo{
-  height:38px;
-  object-fit:contain;
+.new-logo {
+  height: 40px;
+  object-fit: contain;
 }
 
-/* =========================
-   BACK BUTTON
-========================= */
-
-.back-btn{
-  display:inline-block;
-  margin:12px 14px;
-  padding:8px 12px;
-  background:#111;
-  color:#fff;
-  border-radius:10px;
-  text-decoration:none;
-  font-weight:600;
-  transition:0.2s;
+/* =======================
+   BACK BUTTON (GLOBAL FIX)
+======================= */
+.back-btn {
+  display: inline-block;
+  margin: 12px 16px;
+  padding: 8px 12px;
+  background: #111;
+  color: #fff !important;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: 0.2s;
 }
 
-.back-btn:hover{
-  background:#e60000;
+.back-btn:hover {
+  background: #e60000;
 }
 
-/* =========================
-   MAIN
-========================= */
-
-main{
-  max-width:1100px;
-  margin:auto;
-  padding:20px;
+/* =======================
+   MAIN LAYOUT
+======================= */
+main {
+  flex: 1;
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px 16px;
 }
 
-h2{
-  text-align:center;
-  color:#e60000;
-  margin-bottom:18px;
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #e60000;
 }
 
-/* =========================
-   TRENEŘI (INSTAGRAM KARTY)
-========================= */
-
-.treneri{
-  display:grid;
+/* =======================
+   TRÉNEŘI (INSTAGRAM CARDS)
+======================= */
+.treneri {
+  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap:16px;
-  margin-bottom:20px;
+  gap: 16px;
+  margin-top: 20px;
 }
 
-.trener{
-  background:#fff;
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow:0 6px 18px rgba(0,0,0,0.12);
-  transition:0.25s;
+.trener {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  transition: 0.25s;
 }
 
-.trener:hover{
-  transform:translateY(-4px);
+.trener:hover {
+  transform: translateY(-5px);
 }
 
-.trener:active{
-  transform:scale(0.98);
+.trener img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;   /* FIX: žádné uříznuté hlavy */
+  display: block;
 }
 
-/* 🔥 FIX FOTEK TRENERŮ */
-.trener img{
-  width:100%;
-  height:240px;
-  object-fit:cover;
-  object-position:top;
-  display:block;
+.trener h3 {
+  padding: 10px 12px 0;
+  color: #e60000;
 }
 
-/* text */
-.trener h3{
-  margin:10px 12px 4px;
-  font-size:1rem;
+.trener p {
+  padding: 6px 12px 14px;
+  font-size: 0.9rem;
+  color: #333;
 }
 
-.trener p{
-  margin:0 12px 14px;
-  font-size:0.9rem;
-  color:#444;
+/* =======================
+   GALLERY (FIX NA MALÉ MOBILY)
+======================= */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
 }
 
-/* =========================
-   GALERIE (HLAVNÍ FIX CENTRUM)
-========================= */
-
-.gallery{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap:12px;
-  margin-top:15px;
+.gallery-item {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
 }
 
-/* 🔥 KLÍČ FIX – stabilní box */
-.gallery-item{
-  position:relative;
-  overflow:hidden;
-  border-radius:14px;
-  background:#fff;
-  aspect-ratio: 4 / 3;
-  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+.gallery-item img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  transition: 0.3s;
 }
 
-/* 🔥 TOTO DRŽÍ VŠE STEJNÉ */
-.gallery-item img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
+.gallery-item:hover img {
+  transform: scale(1.05);
 }
 
-/* =========================
-   ODKAZY INDEX
-========================= */
-
-.odkazy{
-  display:grid;
-  gap:14px;
+/* =======================
+   ODPOVĚDNÉ TEXTY
+======================= */
+p {
+  line-height: 1.6;
+  margin-bottom: 10px;
 }
 
-.odkaz{
-  background:#fff;
-  padding:14px;
-  border-radius:14px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.1);
-}
-
-.odkaz a{
-  font-weight:700;
-  color:#e60000;
-  text-decoration:none;
-}
-
-/* =========================
-   APP KARTY (REZERVACE)
-========================= */
-
-.app-card{
-  background:#fff;
-  border-radius:16px;
-  padding:14px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.12);
-}
-
-.app-card:active{
-  transform:scale(0.98);
-}
-
-.green{border-left:5px solid #2ecc71;}
-.yellow{border-left:5px solid #f1c40f;}
-.red{border-left:5px solid #e74c3c;}
-
-/* =========================
+/* =======================
    FOOTER
-========================= */
-
-footer{
-  margin-top:40px;
-  padding:15px;
-  background:#000;
-  color:#fff;
-  text-align:center;
+======================= */
+footer {
+  background: #000;
+  color: #fff;
+  text-align: center;
+  padding: 14px;
+  margin-top: 40px;
 }
 
-/* =========================
-   MOBILE FIX
-========================= */
+/* =======================
+   MOBILE FIX (DŮLEŽITÉ)
+======================= */
+@media (max-width: 768px) {
 
-@media(max-width:600px){
-  .header{
-    flex-direction:column;
-    text-align:center;
+  .header {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .nav{
-    justify-content:center;
+  .nav {
+    justify-content: center;
   }
 
-  .trener img{
-    height:210px;
+  .nav-logo,
+  .new-logo {
+    height: 30px;
   }
 
-  .gallery-item{
-    aspect-ratio: 4 / 3;
+  .trener img {
+    height: 200px;
+  }
+
+  .gallery-item img {
+    height: 160px;
   }
 }
