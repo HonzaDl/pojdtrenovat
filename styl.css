@@ -47,6 +47,7 @@ body {
   font-weight: 600;
   padding: 6px 10px;
   border-radius: 6px;
+  transition: 0.2s;
 }
 
 .nav a:hover {
@@ -93,6 +94,7 @@ h2 {
   color: #fff;
   border-radius: 8px;
   text-decoration: none;
+  font-weight: 600;
 }
 
 .back-btn:hover {
@@ -129,7 +131,7 @@ h2 {
 }
 
 /* =========================
-   TRENEŘI (100% FIX)
+   TRENEŘI (CLEAN FIX)
 ========================= */
 .treneri {
   display: grid;
@@ -149,30 +151,30 @@ h2 {
   flex-direction: column;
 }
 
-/* 🔥 KLÍČ FIX - obrázky */
+/* FOTO - HLAVNÍ FIX */
 .trener img {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
+  height: 200px;      /* 🔥 KLÍČ: jednotná výška */
+  object-fit: cover;  /* ořízne, ale nezkazí poměr */
   display: block;
 }
 
-/* jméno */
+/* JMÉNO */
 .trener h3 {
   margin: 10px 10px 6px;
+  font-size: 1.1rem;
 }
 
-/* popis */
+/* POPIS */
 .trener p {
   margin: 0 10px 12px;
   color: #555;
   line-height: 1.4;
-  white-space: normal;
-  word-break: break-word;
+  font-size: 0.95rem;
 }
 
 /* =========================
-   REZERVACE
+   REZERVACE APP
 ========================= */
 .app-header {
   display: flex;
@@ -210,19 +212,21 @@ h2 {
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
-/* inputs */
+/* INPUTY */
 input, button {
   width: 100%;
   padding: 10px;
   margin-top: 8px;
   border-radius: 10px;
   border: 1px solid #ddd;
+  font-family: inherit;
 }
 
 button {
   background: #111;
   color: #fff;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 button:hover {
