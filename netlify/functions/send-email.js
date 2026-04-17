@@ -14,7 +14,7 @@ exports.handler = async (event) => {
     }
 
     // 🔧 SMTP nastavení (doplníš svoje údaje)
-    const transporter = nodemailer.createTransport({
+    const transporter = smtp.resend.com.createTransport({
       host: process.env.SMTP_HOST,
       port: 587,
       secure: false,
