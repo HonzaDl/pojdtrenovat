@@ -348,23 +348,62 @@ async function save(){
 
   let obj = {};
 
+  // 1) načtení všech inputů z formuláře
   document.querySelectorAll("#form input").forEach(i => {
-    obj[i.id.replace("f-","")] = i.value.trim();
+    const key = i.id.replace("f-","").toLowerCase();
+    obj[key] = i.value ? i.value.trim() : "";
   });
 
-  obj.kapacita = Number(obj.kapacita || 0);
-  obj.cena = Number(obj.cena || 0);
+  // 2) bezpečné číselné hodnoty
+  obj.kapacita = obj.kapacita ? Number(obj.kapacita) : 0;
+  obj.cena = obj.cena ? Number(obj.cena) : 0;
 
-  if(current && current.id){
-    await supabaseClient.from("treninky").update(obj).eq("id", current.id);
-  } else {
-    await supabaseClient.from("treninky").insert([obj]);
+  // 3) debug (doporučuju nechat)
+  console.log("SAVE DATA →", obj);
+
+  try {
+
+    // UPDATE
+    if(current && current.id){
+
+      const { error } = await supabaseClient
+        .from("treninky")
+        .update(obj)
+        .eq("id", current.id);
+
+      if(error){
+        console.error(error);
+        alert("Chyba při ukládání (update)");
+        return;
+      }
+
+    } 
+    // INSERT
+    else {
+
+      const { error } = await supabaseClient
+        .from("treninky")
+        .insert([obj]);
+
+      if(error){
+        console.error(error);
+        alert("Chyba při vytváření (insert)");
+        return;
+      }
+    }
+
+    alert("Uloženo 👍");
+
+    // reload UI
+    load();
+    document.getElementById("form").innerHTML = "";
+    document.getElementById("players").innerHTML = "";
+    current = null;
+
+  } catch (e) {
+    console.error(e);
+    alert("Neočekávaná chyba");
   }
-
-  load();
-  document.getElementById("form").innerHTML = "";
-  document.getElementById("players").innerHTML = "";
-  current = null;
 }
 
 /* DELETE TRAINING */
