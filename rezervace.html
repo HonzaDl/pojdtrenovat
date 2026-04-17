@@ -171,7 +171,20 @@ async function reserve(){
     return;
   }
 
-  await supabaseClient
+  // 🔍 kontrola duplicity
+  const { data: exist } = await supabaseClient
+    .from("rezervace")
+    .select("*")
+    .eq("trening_id", selectedTraining.id)
+    .eq("email", email);
+
+  if(exist && exist.length > 0){
+    alert("Na tento trénink už máš rezervaci 👌");
+    return;
+  }
+
+  // 📌 uložit
+  const { error } = await supabaseClient
     .from("rezervace")
     .insert([{
       trening_id: selectedTraining.id,
@@ -180,19 +193,15 @@ async function reserve(){
       email
     }]);
 
-  try{
-    await fetch("/.netlify/functions/send-email", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ hrac, email, treningId: selectedTraining.id })
-    });
-  }catch(e){}
+  if(error){
+    alert("Chyba rezervace");
+    return;
+  }
 
   alert("Rezervace hotová 💪");
 
   load();
 }
-
 /* DAY SWITCH */
 function changeDay(dir){
 
