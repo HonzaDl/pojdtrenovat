@@ -199,19 +199,12 @@ img {
 
 @media (max-width: 768px) {
   .trener img {
-    height: 280px;
+    height: 400px;
     object-position: center 5%;
   }
 
   .trener {
     border-radius: 14px;
-  }
-   @media (max-width: 768px) {
-
-  .trener img[alt="Pavel Pelán"],
-  .trener img[alt="Petr Šudoma"] {
-    object-position: center top;
-    height: 500px;
   }
 }
 
