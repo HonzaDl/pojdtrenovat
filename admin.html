@@ -356,7 +356,8 @@ async function save(){
 
   // 2) bezpečné číselné hodnoty
   obj.kapacita = obj.kapacita ? Number(obj.kapacita) : 0;
-  obj.cena = obj.cena ? Number(obj.cena) : 0;
+  // cena jako TEXT (kvůli "300/hráč")
+obj.cena = obj.cena ? obj.cena.trim() : "";
 
   // 3) debug (doporučuju nechat)
   console.log("SAVE DATA →", obj);
