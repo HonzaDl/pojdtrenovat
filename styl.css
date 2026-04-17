@@ -1,5 +1,5 @@
 /* =========================
-   RESET (bezpečný)
+   ZÁKLAD + RESET (BEZPEČNÝ)
 ========================= */
 
 * {
@@ -20,13 +20,13 @@ body::before {
   position: fixed;
   inset: 0;
   background: url("images/ssgihockey.jpg") no-repeat center;
-  background-size: 700px;
+  background-size: 650px;
   opacity: 0.05;
   z-index: -1;
 }
 
 /* =========================
-   HEADER (APP STYLE)
+   HEADER
 ========================= */
 
 .header {
@@ -66,7 +66,7 @@ body::before {
 
 .logos-right {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   align-items: center;
 }
 
@@ -76,7 +76,7 @@ body::before {
 }
 
 /* =========================
-   MAIN LAYOUT
+   HLAVNÍ OBSAH
 ========================= */
 
 main {
@@ -92,26 +92,31 @@ main h2 {
 }
 
 /* =========================
-   BACK BUTTON
+   ZPĚT TLAČÍTKO (UNIFIED)
 ========================= */
 
 .back-btn {
-  display: inline-block;
-  margin: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px 14px;
+  margin: 10px 20px;
   background: #111;
-  color: #fff;
+  color: #fff !important;
   border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
+  text-decoration: none !important;
+  font-weight: 700;
+  border: 2px solid #111;
+  transition: 0.2s ease;
 }
 
 .back-btn:hover {
   background: #e60000;
+  border-color: #e60000;
 }
 
 /* =========================
-   ODKAZY (homepage)
+   ODKAZY (HOMEPAGE KARTY)
 ========================= */
 
 .odkazy {
@@ -143,7 +148,7 @@ main h2 {
 }
 
 /* =========================
-   TRAINERS (MODERN APP CARDS)
+   TRENEŘI (FIX + UNIFIED CARD SYSTEM)
 ========================= */
 
 .treneri {
@@ -168,21 +173,26 @@ main h2 {
   box-shadow: 0 10px 22px rgba(0,0,0,0.12);
 }
 
-/* foto fix */
+/* 🔥 KLÍČ FIX: STEJNÉ FOTKY VŠUDE */
 .trener img {
   width: 100%;
-  height: 240px;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
   display: block;
 }
 
-/* jméno */
+/* fallback */
+@supports not (aspect-ratio: 4 / 5) {
+  .trener img {
+    height: 260px;
+  }
+}
+
 .trener h3 {
   margin: 12px 0 6px;
   font-size: 1.1rem;
 }
 
-/* popis */
 .trener p {
   padding: 0 12px 14px;
   color: #555;
@@ -190,15 +200,11 @@ main h2 {
 }
 
 /* =========================
-   BUTTONS / LINKS GLOBAL
+   BUTTONS GLOBAL
 ========================= */
 
-a {
-  color: inherit;
-}
-
-a:hover {
-  color: #e60000;
+button {
+  cursor: pointer;
 }
 
 /* =========================
@@ -226,6 +232,6 @@ footer {
   }
 
   .trener img {
-    height: 200px;
+    aspect-ratio: 4 / 5;
   }
 }
