@@ -87,7 +87,6 @@ button{
 
 <body>
 
-<!-- LOGIN -->
 <div id="login">
   <h2>Administrace treninků</h2>
   <input id="email" placeholder="Email">
@@ -95,7 +94,6 @@ button{
   <button onclick="login()">Přihlásit</button>
 </div>
 
-<!-- APP -->
 <div id="app">
 
   <h1>Admin panel</h1>
@@ -142,11 +140,6 @@ async function login(){
   }
 
   start();
-}
-
-async function check(){
-  const { data } = await supabaseClient.auth.getUser();
-  if(data.user) start();
 }
 
 function start(){
@@ -283,7 +276,6 @@ async function save(){
   obj.kapacita = Number(obj.kapacita || 0);
   obj.cena = Number(obj.cena || 0);
 
-  // UPDATE
   if(current && current.id){
 
     obj.id = current.id;
@@ -324,7 +316,6 @@ async function save(){
 async function deleteTraining(){
 
   if(!current) return;
-
   if(!confirm("Smazat trénink?")) return;
 
   const res = await fetch("/.netlify/functions/delete-training", {
@@ -347,7 +338,7 @@ async function deleteTraining(){
   document.getElementById("players").innerHTML="";
 }
 
-/* PLAYERS */
+/* PLAYERS - FIXED */
 async function loadPlayers(id){
 
   const { data } = await supabaseClient
@@ -369,7 +360,7 @@ async function loadPlayers(id){
     div.className="player";
 
     div.innerHTML=`
-      <b>${r.hrac}</b> (${r.vek})<br>
+      <b>${r.hrac}</b>${r.rocnik_klub ? ` (${r.rocnik_klub})` : ""}<br>
       ${r.email}<br>
       <button onclick="deletePlayer('${r.id}')">❌ Smazat</button>
     `;
@@ -391,9 +382,12 @@ async function deletePlayer(id){
   loadPlayers(current.id);
 }
 
-check();
+start();
 
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
