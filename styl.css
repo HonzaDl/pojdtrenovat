@@ -322,5 +322,24 @@ img {
   background: #f4f4f4;
   color: #111;
 }
+   @media (min-width: 900px) {
+
+  .bottom-sheet {
+    max-width: 650px;
+    margin: 20px auto;
+    padding: 24px;
+  }
+
+  .bottom-sheet input {
+    font-size: 17px;
+    padding: 16px 14px;
+  }
+
+  .bottom-sheet button {
+    font-size: 17px;
+    padding: 16px;
+  }
+
+}
 }
 
