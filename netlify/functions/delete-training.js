@@ -2,11 +2,20 @@ import { createClient } from "@supabase/supabase-js";
 
 export async function handler(event) {
   try {
+    if (event.httpMethod !== "POST") {
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: "Method not allowed" })
+      };
+    }
 
     const { id } = JSON.parse(event.body || "{}");
 
-    if(!id){
-      return { statusCode: 400, body: JSON.stringify({ error: "missing id" }) };
+    if (!id) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "missing id" })
+      };
     }
 
     const supabase = createClient(
@@ -19,7 +28,7 @@ export async function handler(event) {
       .delete()
       .eq("id", id);
 
-    if(error){
+    if (error) {
       return {
         statusCode: 500,
         body: JSON.stringify({ error: error.message })
