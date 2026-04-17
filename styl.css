@@ -144,35 +144,68 @@ img {
    TRENÉŘI
 ========================= */
 
+/* =========================
+   TRAINERS (INSTAGRAM KARTY FIX)
+========================= */
+
 .treneri {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
+  padding: 10px 0;
 }
 
+/* karta */
 .trener {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   text-align: center;
+  transition: 0.2s ease;
 }
+
+.trener:hover {
+  transform: translateY(-4px);
+}
+
+/* =========================
+   OBRAZEK – FIX (HLAVNÍ ČÁST)
+========================= */
 
 .trener img {
   width: 100%;
-  height: 220px;
+  height: 240px;
   object-fit: cover;
-  object-position: center top;
+  object-position: center 20%; /* 👈 klíč: hlava vždy vidět */
 }
 
+/* text */
 .trener h3 {
   margin: 10px 0 4px;
+  font-size: 16px;
 }
 
 .trener p {
-  margin-bottom: 12px;
+  margin: 0 0 14px;
+  padding: 0 10px;
   font-size: 14px;
   color: #444;
+}
+
+/* =========================
+   MOBILE FIX
+========================= */
+
+@media (max-width: 768px) {
+  .trener img {
+    height: 260px;
+    object-position: center 15%;
+  }
+
+  .trener {
+    border-radius: 14px;
+  }
 }
 
 /* =========================
