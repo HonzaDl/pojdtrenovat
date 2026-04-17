@@ -402,11 +402,11 @@ async function loadPlayers(id){
     div.className = "player";
 
     div.innerHTML = `
-      <b>${r.hrac || "-"}</b><br>
-      <span class="small">${r.email || "-"}</span><br>
-      <button onclick="deletePlayer('${r.id}')">❌ Smazat</button>
-    `;
-
+  <b>${r.hrac || "-"}</b><br>
+  <span class="small">${r.rocnik_klub ? r.rocnik_klub + "<br>" : ""}</span>
+  <span class="small">${r.email || "-"}</span><br>
+  <button onclick="deletePlayer('${r.id}')">❌ Smazat</button>
+`;
     box.appendChild(div);
   });
 }
