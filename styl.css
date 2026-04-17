@@ -17,12 +17,12 @@ body {
 }
 
 /* =========================
-   HEADER (VŠECHNY STRÁNKY)
+   HEADER
 ========================= */
 .header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   background: #000;
   color: #fff;
   padding: 12px 18px;
@@ -37,9 +37,8 @@ body {
 
 .nav {
   display: flex;
-  gap: 18px;
+  gap: 16px;
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .nav a {
@@ -57,12 +56,12 @@ body {
 .logos-right {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
 
 .nav-logo,
 .new-logo {
-  height: 42px;
+  height: 40px;
   object-fit: contain;
 }
 
@@ -130,7 +129,7 @@ h2 {
 }
 
 /* =========================
-   TRENEŘI (FIX HLAVNÍ PROBLÉM)
+   TRENEŘI (100% FIX)
 ========================= */
 .treneri {
   display: grid;
@@ -145,24 +144,25 @@ h2 {
   overflow: hidden;
   box-shadow: 0 4px 14px rgba(0,0,0,0.08);
   border-left: 4px solid #e60000;
+
   display: flex;
   flex-direction: column;
 }
 
-/* FOTO - FIX (stejná velikost všude) */
+/* 🔥 KLÍČ FIX - obrázky */
 .trener img {
   width: 100%;
-  height: 220px;
+  height: 200px;
   object-fit: cover;
   display: block;
 }
 
-/* JMÉNO */
+/* jméno */
 .trener h3 {
   margin: 10px 10px 6px;
 }
 
-/* POPIS - FIX aby se neztrácel */
+/* popis */
 .trener p {
   margin: 0 10px 12px;
   color: #555;
@@ -172,7 +172,7 @@ h2 {
 }
 
 /* =========================
-   REZERVACE APP
+   REZERVACE
 ========================= */
 .app-header {
   display: flex;
@@ -210,7 +210,7 @@ h2 {
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
-/* INPUTY */
+/* inputs */
 input, button {
   width: 100%;
   padding: 10px;
