@@ -9,17 +9,19 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <style>
+
 body{
   font-family:Roboto;
   margin:0;
-  background:#f4f6f8;
+  background:#f2f2f2;
   color:#111;
 }
 
+/* HEADER */
 .header{
-  background:#000;
+  background:#111;
   color:#fff;
-  padding:10px 15px;
+  padding:12px 16px;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -29,86 +31,121 @@ body{
   color:#fff;
   margin:0 8px;
   text-decoration:none;
+  font-weight:bold;
 }
 
+.nav a:hover{
+  color:#e60000;
+}
+
+/* CONTAINER */
 .container{
   max-width:900px;
-  margin:20px auto;
-  padding:10px;
+  margin:auto;
+  padding:15px;
 }
 
+/* DATE HEADER */
 .app-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:12px;
-  background:#000;
-  color:#fff;
-  border-radius:12px;
-  margin-bottom:10px;
+  padding:14px;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.06);
+  margin-bottom:12px;
+  font-weight:bold;
 }
 
 .app-header button{
-  background:#fff;
-  color:#000;
-  border:none;
-  padding:6px 10px;
-  border-radius:8px;
-  cursor:pointer;
   width:44px;
   height:44px;
+  border-radius:10px;
+  border:none;
+  background:#111;
+  color:#fff;
+  cursor:pointer;
 }
 
+.app-header button:hover{
+  background:#e60000;
+}
+
+/* LIST */
 .app-list{
   display:flex;
   flex-direction:column;
-  gap:10px;
+  gap:12px;
 }
 
+/* CARD */
 .app-card{
   background:#fff;
   padding:14px;
-  border-radius:14px;
-  box-shadow:0 4px 14px rgba(0,0,0,0.08);
+  border-radius:16px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.06);
   cursor:pointer;
+  transition:0.2s;
+  border-left:4px solid #111;
 }
 
-.green{border-left:4px solid #2ecc71;}
-.yellow{border-left:4px solid #f1c40f;}
-.red{border-left:4px solid #e74c3c;}
+.app-card:hover{
+  transform:scale(1.02);
+}
 
+.app-card h3{
+  margin:0;
+  margin-bottom:6px;
+}
+
+/* COLORS */
+.green{ border-left-color:#111; }
+.yellow{ border-left-color:#e60000; }
+.red{ border-left-color:#e60000; opacity:0.6; }
+
+/* DETAIL */
 .bottom-sheet{
   background:#fff;
   padding:16px;
-  border-radius:16px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.15);
+  border-radius:18px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.12);
 }
 
+/* INPUTS */
 input,button{
   width:100%;
   padding:10px;
   margin-top:8px;
   border-radius:10px;
   border:1px solid #ddd;
-  font-size:14px;
 }
 
 button{
   background:#111;
   color:#fff;
+  border:none;
   cursor:pointer;
+  font-weight:bold;
 }
 
 button:hover{
   background:#e60000;
 }
+
+.back-btn{
+  background:#fff;
+  color:#111;
+  border:1px solid #ddd;
+}
+
 </style>
 </head>
 
 <body>
 
 <header class="header">
-  <h1>pojdtrenovat.cz</h1>
+  <h2>pojdtrenovat.cz</h2>
   <nav class="nav">
     <a href="index.html">Úvod</a>
     <a href="treneri.html">Trenéři</a>
@@ -134,43 +171,40 @@ let days = [];
 let selectedDay = 0;
 let selectedTraining = null;
 
-// ================= LOAD =================
+/* LOAD */
 async function load(){
 
-  const { data: treninky, error: err1 } = await supabaseClient
+  const { data: treninky } = await supabaseClient
     .from("treninky")
     .select("*");
 
-  const { data: rezervace, error: err2 } = await supabaseClient
+  const { data: rezervace } = await supabaseClient
     .from("rezervace")
     .select("trening_id");
 
-  if(err1 || err2){
-    document.getElementById("app").innerHTML = "Chyba načítání dat";
-    return;
-  }
-
   reservationCounts = {};
+
   (rezervace || []).forEach(r=>{
+    if(!r.trening_id) return;
     reservationCounts[r.trening_id] =
       (reservationCounts[r.trening_id] || 0) + 1;
   });
 
   allData = treninky || [];
 
-  const unique = [...new Set(allData.map(t=>t.datum))];
+  const unique = [...new Set(allData.map(t => t.datum).filter(Boolean))];
   days = unique.sort((a,b)=> new Date(a) - new Date(b));
 
-  selectedDay = Math.min(selectedDay, days.length - 1);
-  if(selectedDay < 0) selectedDay = 0;
+  if(selectedDay >= days.length) selectedDay = 0;
 
   renderDay();
 }
 
-// ================= RENDER DAY =================
+/* RENDER DAY */
 function renderDay(){
 
   const date = days[selectedDay];
+
   const trainings = allData.filter(t => t.datum === date);
 
   let html = `
@@ -186,17 +220,18 @@ function renderDay(){
   trainings.forEach(t=>{
 
     const count = reservationCounts[t.id] || 0;
-    const free = t.kapacita - count;
+    const cap = Number(t.kapacita || 0);
+    const free = cap - count;
 
     let color = "green";
-    if(free === 0) color = "red";
+    if(free <= 0) color = "red";
     else if(free <= 2) color = "yellow";
 
     html += `
       <div class="app-card ${color}" onclick="openTraining('${t.id}')">
-        <h3>${t.nazev}</h3>
-        <p>${t.cas_od} - ${t.cas_do}</p>
-        <p>${count}/${t.kapacita}</p>
+        <h3>${t.nazev || "Trénink"}</h3>
+        <p>${t.cas_od || ""} - ${t.cas_do || ""}</p>
+        <p>${count}/${cap}</p>
       </div>
     `;
   });
@@ -206,31 +241,33 @@ function renderDay(){
   document.getElementById("app").innerHTML = html;
 }
 
-// ================= DAY =================
+/* CHANGE DAY */
 function changeDay(dir){
-
   selectedDay += dir;
-
   if(selectedDay < 0) selectedDay = 0;
   if(selectedDay >= days.length) selectedDay = days.length - 1;
-
   renderDay();
 }
 
-// ================= DETAIL =================
+/* OPEN DETAIL */
 function openTraining(id){
 
-  selectedTraining = allData.find(t=>t.id===id);
+  selectedTraining = allData.find(t => t.id === id);
+
+  if(!selectedTraining){
+    alert("Trénink nenalezen");
+    return;
+  }
 
   const t = selectedTraining;
 
   document.getElementById("app").innerHTML = `
     <div class="bottom-sheet">
 
-      <h2>${t.nazev}</h2>
+      <h2>${t.nazev || ""}</h2>
 
-      <p>📅 ${t.datum}</p>
-      <p>⏰ ${t.cas_od} - ${t.cas_do}</p>
+      <p>📅 ${t.datum || "-"}</p>
+      <p>⏰ ${t.cas_od || ""} - ${t.cas_do || ""}</p>
       <p>📍 ${t.misto || "-"}</p>
       <p>💰 ${t.cena ? t.cena + " Kč" : "Zdarma"}</p>
 
@@ -243,23 +280,18 @@ function openTraining(id){
       <input id="email" placeholder="Email rodiče">
 
       <button onclick="reserve()">Rezervovat</button>
-      <button onclick="renderDay()">Zpět</button>
+      <button class="back-btn" onclick="renderDay()">Zpět</button>
 
     </div>
   `;
 }
 
-// ================= RESERVE =================
+/* RESERVE */
 async function reserve(){
 
-  if(!selectedTraining){
-    alert("Chyba: není vybraný trénink");
-    return;
-  }
-
-  const hrac = document.getElementById("hrac")?.value;
-  const rocnik_klub = document.getElementById("rocnik_klub")?.value;
-  const email = document.getElementById("email")?.value;
+  const hrac = document.getElementById("hrac")?.value?.trim();
+  const rocnik_klub = document.getElementById("rocnik_klub")?.value?.trim();
+  const email = document.getElementById("email")?.value?.trim();
 
   if(!hrac || !rocnik_klub || !email){
     alert("Vyplň všechny údaje");
@@ -267,6 +299,11 @@ async function reserve(){
   }
 
   const t = selectedTraining;
+
+  if(!t){
+    alert("Chyba tréninku");
+    return;
+  }
 
   const { error } = await supabaseClient
     .from("rezervace")
@@ -278,31 +315,27 @@ async function reserve(){
     }]);
 
   if(error){
+    console.log(error);
     alert("Chyba rezervace");
-    console.error(error);
     return;
   }
 
-  try {
+  try{
     await fetch("/.netlify/functions/send-email", {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({
-        hrac,
-        email,
-        treningId: t.id
-      })
+      body: JSON.stringify({ hrac, email, treningId: t.id })
     });
-  } catch(e){
-    console.log("Email error:", e);
-  }
+  }catch(e){}
 
   alert("Rezervace hotová 💪");
 
   await load();
 }
 
+/* FORMAT */
 function formatDate(date){
+  if(!date) return "";
   return new Date(date).toLocaleDateString("cs-CZ", {
     weekday:"long",
     day:"numeric",
