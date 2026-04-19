@@ -199,7 +199,7 @@ function openTraining(id){
       <input id="hrac" placeholder="Jméno hráče">
       <input id="rocnik_klub" placeholder="Ročník / klub">
       <input id="email" placeholder="Email rodiče">
-      <input id="telefon" placeholder="Telefonní číslo">
+      <input id="telefon" placeholder="Telefonní číslo" maxlength="9" inputmode="numeric">
 
       <button onclick="reserve()">Rezervovat</button>
       <button onclick="render()">Zpět</button>
@@ -214,9 +214,15 @@ async function reserve(){
   const hrac = document.getElementById("hrac").value.trim();
   const rocnik_klub = document.getElementById("rocnik_klub").value.trim();
   const email = document.getElementById("email").value.trim();
+  const telefon = document.getElementById("telefon").value.trim();
 
-  if(!hrac || !rocnik_klub || !email){
+  if(!hrac || !rocnik_klub || !email || !telefon){
     alert("Vyplň všechny údaje");
+    return;
+  }
+
+  if(!/^\d{9}$/.test(telefon)){
+    alert("Telefon musí mít 9 číslic");
     return;
   }
 
@@ -237,7 +243,8 @@ async function reserve(){
       trening_id: selectedTraining.id,
       hrac,
       rocnik_klub,
-      email
+      email,
+      telefon
     }]);
 
   if(error){
