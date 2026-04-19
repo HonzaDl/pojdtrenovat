@@ -43,7 +43,7 @@ const supabaseClient = supabase.createClient(
 
 let all = [];
 let days = [];
-let selectedDay = 0;
+let selectedWeek = 0;
 let selectedTraining = null;
 let counts = {};
 
@@ -81,53 +81,101 @@ function formatDate(date){
   });
 }
 
-/* RENDER LIST */
+/* GET WEEK */
+function getWeek(startDate){
+
+  const start = new Date(startDate);
+  const day = start.getDay();
+  const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+
+  const monday = new Date(start.setDate(diff));
+
+  let week = [];
+
+  for(let i=0;i<7;i++){
+    let d = new Date(monday);
+    d.setDate(monday.getDate()+i);
+    week.push(d.toISOString().split("T")[0]);
+  }
+
+  return week;
+}
+
+/* RENDER */
 function render(){
 
-  const date = days[selectedDay];
-
-  if(!date){
+  if(days.length === 0){
     document.getElementById("app").innerHTML = "<p>Žádné tréninky</p>";
     return;
   }
 
-  const list = all.filter(t => t.datum === date);
+  const baseDate = days[0];
+  const firstWeek = getWeek(baseDate);
+
+  const weekStart = new Date(firstWeek[0]);
+  weekStart.setDate(weekStart.getDate() + selectedWeek * 7);
+
+  let week = [];
+
+  for(let i=0;i<7;i++){
+    let d = new Date(weekStart);
+    d.setDate(weekStart.getDate()+i);
+    week.push(d.toISOString().split("T")[0]);
+  }
 
   let html = `
     <div class="app-header">
-      <button onclick="changeDay(-1)">←</button>
-      <div>${formatDate(date)}</div>
-      <button onclick="changeDay(1)">→</button>
+      <button onclick="changeWeek(-1)">←</button>
+      <div>${formatDate(week[0])} – ${formatDate(week[6])}</div>
+      <button onclick="changeWeek(1)">→</button>
     </div>
-
-    <div class="app-list">
   `;
 
-  list.forEach(t=>{
+  week.forEach(date => {
 
-    const count = counts[t.id] || 0;
-    const cap = Number(t.kapacita || 0);
-    const free = cap - count;
+    const list = all.filter(t => t.datum === date);
+    const hasTraining = list.length > 0;
 
-    let color = "green";
-    if(free <= 0) color = "red";
-    else if(free <= 2) color = "yellow";
+    let dayClass = "week-day";
+    if(hasTraining) dayClass += " active";
+    else dayClass += " empty";
 
-    html += `
-      <div class="app-card ${color}" onclick="openTraining('${t.id}')">
-        <h3>${t.nazev}</h3>
-        <p>${t.cas_od} - ${t.cas_do}</p>
-        <p>${count}/${cap}</p>
-      </div>
-    `;
+    html += `<div class="${dayClass}">`;
+
+    html += `<h3>${formatDate(date)}</h3>`;
+
+    if(!hasTraining){
+      html += `<p>Žádné tréninky</p>`;
+    }
+
+    html += `<div class="app-list">`;
+
+    list.forEach(t=>{
+
+      const count = counts[t.id] || 0;
+      const cap = Number(t.kapacita || 0);
+      const free = cap - count;
+
+      let color = "green";
+      if(free <= 0) color = "red";
+      else if(free <= 2) color = "yellow";
+
+      html += `
+        <div class="app-card ${color}" onclick="openTraining('${t.id}')">
+          <h3>${t.nazev}</h3>
+          <p>${t.cas_od} - ${t.cas_do}</p>
+          <p>${count}/${cap}</p>
+        </div>
+      `;
+    });
+
+    html += `</div></div>`;
   });
-
-  html += "</div>";
 
   document.getElementById("app").innerHTML = html;
 }
 
-/* OPEN DETAIL */
+/* DETAIL */
 function openTraining(id){
 
   selectedTraining = all.find(x => x.id === id);
@@ -171,7 +219,6 @@ async function reserve(){
     return;
   }
 
-  // 🔍 kontrola duplicity
   const { data: exist } = await supabaseClient
     .from("rezervace")
     .select("*")
@@ -183,7 +230,6 @@ async function reserve(){
     return;
   }
 
-  // 📌 uložit
   const { error } = await supabaseClient
     .from("rezervace")
     .insert([{
@@ -202,14 +248,10 @@ async function reserve(){
 
   load();
 }
-/* DAY SWITCH */
-function changeDay(dir){
 
-  selectedDay += dir;
-
-  if(selectedDay < 0) selectedDay = 0;
-  if(selectedDay >= days.length) selectedDay = days.length - 1;
-
+/* WEEK SWITCH */
+function changeWeek(dir){
+  selectedWeek += dir;
   render();
 }
 
