@@ -27,7 +27,7 @@
   </div>
 </header>
 
-<a href="javascript:history.back()" class="back-btn">← Zpět</a>
+<a href="#" onclick="history.back(); return false;" class="back-btn">← Zpět</a>
 
 <main class="container">
   <h2>Rezervace tréninků</h2>
@@ -141,7 +141,6 @@ function render(){
     else dayClass += " empty";
 
     html += `<div class="${dayClass}">`;
-
     html += `<h3>${formatDate(date)}</h3>`;
 
     if(!hasTraining){
@@ -201,7 +200,7 @@ function openTraining(id){
       <input id="email" placeholder="Email rodiče">
       <input id="telefon" placeholder="Telefonní číslo" maxlength="9" inputmode="numeric">
 
-      <button onclick="reserve()">Rezervovat</button>
+      <button id="btn-rezervovat" onclick="reserve()">Rezervovat</button>
       <button onclick="render()">Zpět</button>
 
     </div>
@@ -211,6 +210,10 @@ function openTraining(id){
 /* RESERVE */
 async function reserve(){
 
+  const btn = document.getElementById("btn-rezervovat");
+  btn.disabled = true;
+  btn.textContent = "Odesílám...";
+
   const hrac = document.getElementById("hrac").value.trim();
   const rocnik_klub = document.getElementById("rocnik_klub").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -218,11 +221,15 @@ async function reserve(){
 
   if(!hrac || !rocnik_klub || !email || !telefon){
     alert("Vyplň všechny údaje");
+    btn.disabled = false;
+    btn.textContent = "Rezervovat";
     return;
   }
 
   if(!/^\d{9}$/.test(telefon)){
     alert("Telefon musí mít 9 číslic");
+    btn.disabled = false;
+    btn.textContent = "Rezervovat";
     return;
   }
 
@@ -234,6 +241,8 @@ async function reserve(){
 
   if(exist && exist.length > 0){
     alert("Na tento trénink už máš rezervaci 👌");
+    btn.disabled = false;
+    btn.textContent = "Rezervovat";
     return;
   }
 
@@ -249,63 +258,34 @@ async function reserve(){
 
   if(error){
     alert("Chyba rezervace");
+    btn.disabled = false;
+    btn.textContent = "Rezervovat";
     return;
   }
 
-  // --- EMAILY ---
-  const RESEND_API_KEY = "re_aE7eECVe_31rzE6uuVvtF55ZLnmNvsQaD"; // ← sem dej svůj klíč z resend.com
+  // --- EMAILY přes Edge Function ---
   const t = selectedTraining;
 
-  const detaily = `
-    <b>Hráč:</b> ${hrac}<br>
-    <b>Ročník / klub:</b> ${rocnik_klub}<br>
-    <b>Email rodiče:</b> ${email}<br>
-    <b>Telefon:</b> ${telefon}<br>
-    <b>Trénink:</b> ${t.nazev}<br>
-    <b>Datum:</b> ${formatDate(t.datum)}<br>
-    <b>Čas:</b> ${t.cas_od} - ${t.cas_do}<br>
-    <b>Místo:</b> ${t.misto || "-"}<br>
-    <b>Cena:</b> ${t.cena ? t.cena + " Kč" : "Zdarma"}
-  `;
-
-  // Email rodiči
-  await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${RESEND_API_KEY}`
-    },
-    body: JSON.stringify({
-      from: "pojdtrenovat.cz <rezervace@pojdtrenovat.cz>",
-      to: [email],
-      subject: `Potvrzení rezervace – ${t.nazev}`,
-      html: `
-        <h2>Rezervace potvrzena! 💪</h2>
-        <p>Dobrý den, vaše rezervace byla úspěšně vytvořena.</p>
-        ${detaily}
-        <p>Těšíme se na vás!</p>
-        <p>— Tým pojdtrenovat.cz</p>
-      `
-    })
-  });
-
-  // Email trenérovi + druhé adrese
-  await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${RESEND_API_KEY}`
-    },
-    body: JSON.stringify({
-      from: "pojdtrenovat.cz <rezervace@pojdtrenovat.cz>",
-      to: ["pojdtrenovat@gmail.com", "mara.pavel@seznam.cz"],
-      subject: `Nová rezervace – ${t.nazev}`,
-      html: `
-        <h2>Nová rezervace 📋</h2>
-        ${detaily}
-      `
-    })
-  });
+  try {
+    await fetch("https://kgmdyhiwkkviswluuwkg.supabase.co/functions/v1/send-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
+      },
+      body: JSON.stringify({
+        hrac, rocnik_klub, email, telefon,
+        nazev: t.nazev,
+        datum: formatDate(t.datum),
+        cas_od: t.cas_od,
+        cas_do: t.cas_do,
+        misto: t.misto,
+        cena: t.cena
+      })
+    });
+  } catch(e) {
+    console.error("Chyba odesílání emailu:", e);
+  }
 
   alert("Rezervace hotová 💪");
   load();
