@@ -252,8 +252,62 @@ async function reserve(){
     return;
   }
 
-  alert("Rezervace hotová 💪");
+  // --- EMAILY ---
+  const RESEND_API_KEY = "re_TVUJ_API_KLIC"; // ← sem dej svůj klíč z resend.com
+  const t = selectedTraining;
 
+  const detaily = `
+    <b>Hráč:</b> ${hrac}<br>
+    <b>Ročník / klub:</b> ${rocnik_klub}<br>
+    <b>Email rodiče:</b> ${email}<br>
+    <b>Telefon:</b> ${telefon}<br>
+    <b>Trénink:</b> ${t.nazev}<br>
+    <b>Datum:</b> ${formatDate(t.datum)}<br>
+    <b>Čas:</b> ${t.cas_od} - ${t.cas_do}<br>
+    <b>Místo:</b> ${t.misto || "-"}<br>
+    <b>Cena:</b> ${t.cena ? t.cena + " Kč" : "Zdarma"}
+  `;
+
+  // Email rodiči
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${RESEND_API_KEY}`
+    },
+    body: JSON.stringify({
+      from: "pojdtrenovat.cz <rezervace@pojdtrenovat.cz>",
+      to: [email],
+      subject: `Potvrzení rezervace – ${t.nazev}`,
+      html: `
+        <h2>Rezervace potvrzena! 💪</h2>
+        <p>Dobrý den, vaše rezervace byla úspěšně vytvořena.</p>
+        ${detaily}
+        <p>Těšíme se na vás!</p>
+        <p>— Tým pojdtrenovat.cz</p>
+      `
+    })
+  });
+
+  // Email trenérovi + druhé adrese
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${RESEND_API_KEY}`
+    },
+    body: JSON.stringify({
+      from: "pojdtrenovat.cz <rezervace@pojdtrenovat.cz>",
+      to: ["pojdtrenovat@gmail.com", "mara.pavel@seznam.cz"],
+      subject: `Nová rezervace – ${t.nazev}`,
+      html: `
+        <h2>Nová rezervace 📋</h2>
+        ${detaily}
+      `
+    })
+  });
+
+  alert("Rezervace hotová 💪");
   load();
 }
 
