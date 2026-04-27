@@ -263,20 +263,21 @@ async function reserve(){
     return;
   }
 
- // --- EMAILY přes Edge Function ---
-const t = selectedTraining;
+  // --- EMAILY přes Edge Function ---
+  const t = selectedTraining;
 
-await supabaseClient.functions.invoke('send-email', {
-  body: {
-    hrac, rocnik_klub, email, telefon,
-    nazev: t.nazev,
-    datum: formatDate(t.datum),
-    cas_od: t.cas_od,
-    cas_do: t.cas_do,
-    misto: t.misto,
-    cena: t.cena
-  }
-});
+  try {
+    await supabaseClient.functions.invoke('send-email', {
+      body: {
+        hrac, rocnik_klub, email, telefon,
+        nazev: t.nazev,
+        datum: formatDate(t.datum),
+        cas_od: t.cas_od,
+        cas_do: t.cas_do,
+        misto: t.misto,
+        cena: t.cena
+      }
+    });
   } catch(e) {
     console.error("Chyba odesílání emailu:", e);
   }
