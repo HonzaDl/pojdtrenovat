@@ -267,7 +267,7 @@ async function reserve(){
   const t = selectedTraining;
 
   try {
-    await fetch("https://kgmdyhiwkkviswluuwkg.supabase.co/functions/v1/send-email", {
+    await fetch("https://kgmdyhiwkkviswluuwkg.supabase.co/functions/v1/smooth-worker", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
