@@ -104,6 +104,8 @@ function getWeek(startDate){
 /* RENDER */
 function render(){
 
+  selectedTraining = null;
+
   if(days.length === 0){
     document.getElementById("app").innerHTML = "<p>Žádné tréninky</p>";
     return;
@@ -129,6 +131,7 @@ function render(){
       <div>${formatDate(week[0])} – ${formatDate(week[6])}</div>
       <button onclick="changeWeek(1)">→</button>
     </div>
+    <div class="week-days-grid">
   `;
 
   week.forEach(date => {
@@ -170,6 +173,8 @@ function render(){
 
     html += `</div></div>`;
   });
+
+  html += `</div>`;
 
   document.getElementById("app").innerHTML = html;
 }
@@ -263,7 +268,7 @@ async function reserve(){
     return;
   }
 
- // --- EMAILY přes Edge Function ---
+  // --- EMAILY přes Edge Function ---
   const t = selectedTraining;
 
   try {
@@ -298,7 +303,7 @@ function changeWeek(dir){
   render();
 }
 
-  /* BACK */
+/* BACK */
 function goBack(){
   if(selectedTraining){
     selectedTraining = null;
@@ -307,6 +312,7 @@ function goBack(){
     window.location.href = "index.html";
   }
 }
+
 load();
 
 </script>
