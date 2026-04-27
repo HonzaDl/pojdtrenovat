@@ -267,7 +267,7 @@ async function reserve(){
   const t = selectedTraining;
 
   try {
-    await supabaseClient.functions.invoke('send-email', {
+    await supabaseClient.functions.invoke('smooth-worker', {
       body: {
         hrac, rocnik_klub, email, telefon,
         nazev: t.nazev,
