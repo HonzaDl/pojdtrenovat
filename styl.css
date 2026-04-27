@@ -13,7 +13,7 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, sans-serif;
-  background: #f4f4f4;
+  background: #d0d0d0;
   color: #111;
   display: flex;
   flex-direction: column;
