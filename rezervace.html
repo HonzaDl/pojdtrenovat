@@ -267,22 +267,22 @@ async function reserve(){
   const t = selectedTraining;
 
   try {
-    await fetch("https://kgmdyhiwkkviswluuwkg.supabase.co/functions/v1/smooth-worker", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": "sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
-      },
-      body: JSON.stringify({
-        hrac, rocnik_klub, email, telefon,
-        nazev: t.nazev,
-        datum: formatDate(t.datum),
-        cas_od: t.cas_od,
-        cas_do: t.cas_do,
-        misto: t.misto,
-        cena: t.cena
-      })
-    });
+await fetch("https://kgmdyhiwkkviswluuwkg.supabase.co/functions/v1/smooth-worker", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer sb_publishable_kfn3T6iQ94DE9KLhH82jvw_zEJF-CqI"
+  },
+  body: JSON.stringify({
+    hrac, rocnik_klub, email, telefon,
+    nazev: t.nazev,
+    datum: formatDate(t.datum),
+    cas_od: t.cas_od,
+    cas_do: t.cas_do,
+    misto: t.misto,
+    cena: t.cena
+  })
+});
   } catch(e) {
     console.error("Chyba odesílání emailu:", e);
   }
