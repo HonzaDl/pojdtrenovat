@@ -13,7 +13,7 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, sans-serif;
-  background: #d0d0d0;
+  background: #f4f6f8;
   color: #111;
   display: flex;
   flex-direction: column;
@@ -40,14 +40,13 @@ img {
   flex-wrap: wrap;
   gap: 15px;
   padding: 12px 18px;
-  background: #111;
+  background: #000;
   color: #fff;
 }
 
 .site-title {
   font-size: 20px;
   font-weight: 700;
-  color: #fff;
 }
 
 .nav {
@@ -60,7 +59,6 @@ img {
 .nav a {
   color: #fff;
   text-decoration: none;
-  font-weight: 500;
 }
 
 .nav a:hover {
@@ -84,7 +82,7 @@ img {
 ========================= */
 
 .container {
-  max-width: 1100px;
+  max-width: 1000px;
   margin: auto;
   padding: 15px;
 }
@@ -96,20 +94,12 @@ img {
 .back-btn {
   display: inline-block;
   margin: 12px 16px;
-  padding: 8px 14px;
+  padding: 8px 12px;
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
   text-decoration: none;
   color: #111;
-  font-weight: 500;
-  transition: 0.2s;
-}
-
-.back-btn:hover {
-  background: #e00000;
-  color: #fff;
-  border-color: #e00000;
 }
 
 /* =========================
@@ -120,7 +110,6 @@ img {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 14px;
-  padding: 20px 0;
 }
 
 .odkaz {
@@ -128,41 +117,35 @@ img {
   padding: 16px;
   border-radius: 14px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-  border-left: 4px solid #e00000;
+  border-left: 4px solid #111;
   transition: 0.2s;
-  text-decoration: none;
-  color: #111;
-  display: block;
-  cursor: pointer;
-}
-
-.odkaz,
-.odkaz * {
-  text-decoration: none;
-  color: #111;
-}
-
-.odkaz strong {
-  font-size: 16px;
-  font-weight: 700;
-  display: block;
-  margin-bottom: 6px;
-}
-
-.odkaz p {
-  font-size: 14px;
-  color: #555;
-  margin: 0;
 }
 
 .odkaz:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-  border-left-color: #111;
+}
+
+.odkaz a {
+  font-weight: 700;
+  text-decoration: none;
+  color: #111;
+}
+
+.odkaz a:hover {
+  color: #e00000;
+}
+
+.odkaz p {
+  font-size: 14px;
+  color: #444;
 }
 
 /* =========================
    TRENÉŘI
+========================= */
+
+/* =========================
+   TRAINERS (INSTAGRAM KARTY FIX)
 ========================= */
 
 .treneri {
@@ -172,6 +155,7 @@ img {
   padding: 10px 0;
 }
 
+/* karta */
 .trener {
   background: #fff;
   border-radius: 16px;
@@ -185,13 +169,18 @@ img {
   transform: translateY(-4px);
 }
 
+/* =========================
+   OBRAZEK – FIX (HLAVNÍ ČÁST)
+========================= */
+
 .trener img {
   width: 100%;
   height: 240px;
   object-fit: cover;
-  object-position: center 10%;
+  object-position: center 10%; /* 👈 klíč: hlava vždy vidět */
 }
 
+/* text */
 .trener h3 {
   margin: 10px 0 4px;
   font-size: 16px;
@@ -201,7 +190,22 @@ img {
   margin: 0 0 14px;
   padding: 0 10px;
   font-size: 14px;
-  color: #555;
+  color: #444;
+}
+
+/* =========================
+   MOBILE FIX
+========================= */
+
+@media (max-width: 768px) {
+  .trener img {
+    height: 500px;
+    object-position: center 5%;
+  }
+
+  .trener {
+    border-radius: 14px;
+  }
 }
 
 /* =========================
@@ -217,3 +221,197 @@ img {
 .gallery img {
   height: 180px;
   object-fit: cover;
+  border-radius: 12px;
+}
+
+/* =========================
+   REZERVACE
+========================= */
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  background: #fff;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.app-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-card {
+  background: #fff;
+  padding: 14px;
+  border-radius: 14px;
+  border-left: 4px solid #111;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+/* ===== WEEK VIEW ===== */
+
+.week-day{
+  background:#fff;
+  padding:12px;
+  border-radius:12px;
+  margin-top:12px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.06);
+}
+
+.week-day.active{
+  border-left:4px solid #e00000;
+}
+
+.week-day.empty{
+  opacity:0.5;
+}
+
+.week-day h3{
+  margin:0 0 8px;
+  font-size:16px;
+}
+
+/* MOBILE TIGHT */
+@media(max-width:600px){
+
+  .app-header{
+    padding:10px;
+  }
+
+  .app-header div{
+    font-size:14px;
+  }
+
+  .week-day{
+    padding:10px;
+  }
+
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+  background: #fff;
+  border-top: 1px solid #eee;
+  text-align: center;
+  padding: 20px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .trener img {
+    height: 400px;
+  }
+   /* FIX – rezervace layout */
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.app-header button {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: #111;
+  color: #fff;
+}
+
+.app-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-card {
+  background: #fff;
+  padding: 14px;
+  border-radius: 12px;
+  border-left: 4px solid #111;
+  cursor: pointer;
+}
+
+.bottom-sheet {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+}
+   .bottom-sheet input {
+  width: 100%;
+  padding: 14px 12px;
+  margin-top: 10px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  outline: none;
+}
+
+.bottom-sheet input:focus {
+  border-color: #111;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.08);
+}
+
+.bottom-sheet button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* hlavní tlačítko (Rezervovat) */
+.bottom-sheet button:first-of-type {
+  background: #111;
+  color: #fff;
+}
+
+/* hover efekt */
+.bottom-sheet button:first-of-type:hover {
+  background: #e00000;
+}
+
+/* zpět tlačítko */
+.bottom-sheet button:last-of-type {
+  background: #f4f4f4;
+  color: #111;
+}
+   @media (min-width: 900px) {
+
+  .bottom-sheet {
+    max-width: 650px;
+    margin: 20px auto;
+    padding: 24px;
+  }
+
+  .bottom-sheet input {
+    font-size: 17px;
+    padding: 16px 14px;
+  }
+
+  .bottom-sheet button {
+    font-size: 17px;
+    padding: 16px;
+  }
+
+}
+}
+
