@@ -469,6 +469,10 @@ img {
   .trener img {
     height: 400px;
     object-position: center 5%;
+ }
+    }
+  .main-bg {
+    min-height: unset;
   }
 }
 
