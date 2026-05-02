@@ -239,10 +239,11 @@ async function reserve(){
   }
 
   const { data: exist } = await supabaseClient
-    .from("rezervace")
-    .select("*")
-    .eq("trening_id", selectedTraining.id)
-    .eq("email", email);
+  .from("rezervace")
+  .select("*")
+  .eq("trening_id", selectedTraining.id)
+  .eq("email", email)
+  .eq("hrac", hrac);
 
   if(exist && exist.length > 0){
     alert("Na tento trénink už máš rezervaci 👌");
