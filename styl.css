@@ -448,7 +448,14 @@ img {
 .footer a:hover {
   color: #111;
 }
-
+.main-bg {
+  position: relative;
+  min-height: calc(100vh - 250px);
+  background-image: url('images/ssgihockey.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 60%;
+}
 /* =========================
    MOBILE
 ========================= */
