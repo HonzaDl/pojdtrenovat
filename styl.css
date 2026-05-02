@@ -22,7 +22,26 @@ body {
 main {
   flex: 1;
 }
+.main-bg {
+  position: relative;
+  background-image: url('images/ssgihockey.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  background-attachment: fixed;
+}
 
+.main-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(208, 208, 208, 0.85);
+}
+
+.main-bg .container {
+  position: relative;
+  z-index: 1;
+}
 img {
   max-width: 100%;
   height: auto;
