@@ -450,7 +450,7 @@ img {
 }
 .main-bg {
   position: relative;
-  min-height: calc(100vh - 300px);
+  min-height: calc(100vh - 200px);
   background-image: url('images/ssgihockey.jpg');
   background-repeat: no-repeat;
   background-position: center center;
