@@ -22,26 +22,7 @@ body {
 main {
   flex: 1;
 }
-.main-bg {
-  position: relative;
-  background-image: url('images/ssgihockey.jpg');
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: contain;
-  background-attachment: fixed;
-}
 
-.main-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(208, 208, 208, 0.85);
-}
-
-.main-bg .container {
-  position: relative;
-  z-index: 1;
-}
 img {
   max-width: 100%;
   height: auto;
@@ -132,13 +113,39 @@ img {
 }
 
 /* =========================
+   INDEX — POZADÍ S LOGEM
+========================= */
+
+.main-bg {
+  position: relative;
+  min-height: calc(100vh - 70px);
+  background-image: url('images/ssgihockey.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 60%;
+}
+
+.main-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(208, 208, 208, 0.92);
+}
+
+.main-bg .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================
    INDEX KARTY
 ========================= */
 
 .odkazy {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
+  padding: 20px 0;
 }
 
 .odkaz {
@@ -148,25 +155,35 @@ img {
   box-shadow: 0 4px 14px rgba(0,0,0,0.06);
   border-left: 4px solid #e00000;
   transition: 0.2s;
+  text-decoration: none;
+  color: #111;
+  display: block;
+  cursor: pointer;
 }
 
-.odkaz:hover {
-  transform: translateY(-3px);
-}
-
-.odkaz a {
-  font-weight: 700;
+.odkaz,
+.odkaz * {
   text-decoration: none;
   color: #111;
 }
 
-.odkaz a:hover {
-  color: #e00000;
+.odkaz strong {
+  font-size: 15px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 6px;
 }
 
 .odkaz p {
-  font-size: 14px;
+  font-size: 13px;
   color: #555;
+  margin: 0;
+}
+
+.odkaz:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  border-left-color: #111;
 }
 
 /* =========================
@@ -266,7 +283,6 @@ img {
 
 /* =========================
    REZERVACE — TÝDENNÍ VIEW
-   Mobil: sloupec / PC: grid do šířky
 ========================= */
 
 .week-days-grid {
@@ -424,6 +440,15 @@ img {
   color: #555;
 }
 
+.footer a {
+  color: #e00000;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #111;
+}
+
 /* =========================
    MOBILE
 ========================= */
@@ -441,13 +466,17 @@ img {
 }
 
 /* =========================
-   PC — KALENDÁŘ DO ŠÍŘKY
+   PC — KALENDÁŘ DO ŠÍŘKY + KARTY DO ŘADY
 ========================= */
 
 @media (min-width: 769px) {
 
   .trener img {
     height: 240px;
+  }
+
+  .odkazy {
+    grid-template-columns: repeat(5, 1fr);
   }
 
   .week-days-grid {
