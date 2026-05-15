@@ -438,6 +438,7 @@ img {
   text-align: center;
   padding: 20px;
   color: #555;
+  margin-top: 0;
 }
 
 .footer a {
@@ -450,7 +451,6 @@ img {
 }
 .main-bg {
   position: relative;
-  min-height: calc(100vh - 100px);
   background-image: url('images/ssgihockey.jpg');
   background-repeat: no-repeat;
   background-position: center center;
